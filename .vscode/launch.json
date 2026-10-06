@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run main",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/2d-shooter-game",
+      "cwd": "${workspaceFolder}",
+      "MIMode": "lldb",
+      "externalConsole": false,
+      "preLaunchTask": "cmake: build"
+    }
+  ]
+}
