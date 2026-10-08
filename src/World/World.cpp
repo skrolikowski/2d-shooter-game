@@ -26,22 +26,29 @@ void World::AddFormation(std::unique_ptr<Formation> formation)
     formation_ = std::move(formation);
 }
 
-bool World::SpawnPlayerBullet(Vector2<float> v)
+bool World::SpawnBunker(Vector2<float> pos)
 {
-    Bullet* b = playerBullets_.Spawn(v);
+    Bunker* b = bunkers_.Spawn(pos);
     return b != nullptr;
 }
 
-void World::SetPlayerPosition(Vector2<float> v)
+bool World::SpawnPlayerBullet(Vector2<float> pos)
+{
+    Bullet* b = playerBullets_.Spawn(pos);
+    return b != nullptr;
+}
+
+void World::SetPlayerPosition(Vector2<float> pos)
 {
     if (player_ != nullptr)
-        player_->SetPosition(v);
+        player_->SetPosition(pos);
 }
 
 void World::Clear()
 {
     player_ = nullptr;
     playerBullets_.Clear();
+    bunkers_.Clear();
 
     if (formation_ != nullptr)
         formation_->Clear();
@@ -70,11 +77,11 @@ void World::Update(float dt)
             }
         }
 
-        playerBullets_.ForEach([&](Bullet& b)
+        playerBullets_.ForEach([&](Bullet& bullet)
         {
-            if (formation_->TryHit(b.GetRect()))
+            if (formation_->TryHit(bullet.GetRect()))
             {
-                b.Damage(1);
+                bullet.Damage(1);
 
                 if (onEnemyKilled)
                     onEnemyKilled();
@@ -87,9 +94,19 @@ void World::Update(float dt)
         player_->Update(dt);
 
     // Update Player Bullets..
-    playerBullets_.ForEach([&](Bullet& b)
+    playerBullets_.ForEach([&](Bullet& bullet)
     {
-        b.Update(dt);
+        bullet.Update(dt);
+
+        // Check Bullet / Bunker Collision..
+        bunkers_.ForEach([&](Bunker& bunker)
+        {
+            if (bunker.TryHit(bullet.GetRect()))
+            {
+                bullet.Damage(1);
+                bunker.Erode(bullet.GetRect());
+            }
+        });
     });
 }
 
@@ -99,6 +116,11 @@ void World::Draw(SDL_Renderer* renderer) const
         player_->Draw(renderer);
 
     playerBullets_.ForEach([&](const Bullet& b)
+    {
+        b.Draw(renderer);
+    });
+
+    bunkers_.ForEach([&](const Bunker& b)
     {
         b.Draw(renderer);
     });

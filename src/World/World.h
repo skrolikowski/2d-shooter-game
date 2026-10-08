@@ -7,8 +7,8 @@
 #include <vector>
 #include <functional>
 
+#include "Bunker.h"
 #include "Bullet.h"
-#include "Entity.h"
 #include "Formation.h"
 #include "Util/Pool.h"
 #include "Util/TextureManager.h"
@@ -26,8 +26,9 @@ public:
     void AddFormation(std::unique_ptr<Formation> formation);
     void Clear();
 
-    bool SpawnPlayerBullet(Vector2<float> v);
-    void SetPlayerPosition(Vector2<float> v);
+    bool SpawnBunker(Vector2<float> pos);
+    bool SpawnPlayerBullet(Vector2<float> pos);
+    void SetPlayerPosition(Vector2<float> pos);
 
     std::function<void()> onPlayerShoot;
     std::function<void()> onPlayerHit;
@@ -41,6 +42,7 @@ private:
     std::unique_ptr<Formation> formation_ = nullptr;
     std::unique_ptr<Player> player_ = nullptr;
     Pool<Bullet, 3> playerBullets_;
+    Pool<Bunker, 3> bunkers_;
 
 };
 
