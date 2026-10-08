@@ -6,8 +6,8 @@
 #include <memory>
 
 #include "Defs.h"
-#include "Texture.h"
-#include "Vector2.h"
+#include "Util/Texture.h"
+#include "Util/Vector2.h"
 
 class World;   // forward declaration, NOT #include "World.h"
 

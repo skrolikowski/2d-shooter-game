@@ -48,18 +48,18 @@ FetchContent_MakeAvailable(SDL3 SDL3_image SDL3_ttf)
 # manually..
 add_library(src STATIC
   src/App.cpp
-  src/Input.cpp
-  src/World.cpp
+  src/Util/Input.cpp
+  src/Util/Texture.cpp
+  src/Util/TextureManager.cpp
+  src/World/World.cpp
+  src/World/Formation.cpp
+  src/World/Entity.cpp
+  src/World/Bullet.cpp
+  src/World/Player.cpp
   src/GameStates/GameOverState.cpp
   src/GameStates/TitleState.cpp
   src/GameStates/PlayingState.cpp
-  src/GameStates/PlayerDyingState.cpp
-  src/Formation.cpp
-  src/Texture.cpp
-  src/TextureManager.cpp
-  src/Entity.cpp
-  src/Bullet.cpp
-  src/Player.cpp)
+  src/GameStates/PlayerDyingState.cpp)
 
 target_include_directories(src PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(src PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)

@@ -5,8 +5,8 @@
 
 #include "Defs.h"
 #include "Bullet.h"
-#include "Input.h"
 #include "Entity.h"
+#include "Util/Input.h"
 
 class Player : public Entity
 {

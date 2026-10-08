@@ -1,6 +1,5 @@
 #include "Entity.h"
 
-
 void Entity::Damage(int amount)
 {
     health_ -= amount;

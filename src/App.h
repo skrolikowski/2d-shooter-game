@@ -7,13 +7,13 @@
 #include <SDL3_ttf/SDL_ttf.h>
 
 #include "Defs.h"
-#include "Utility.h"
 #include "GameStates/GameState.h"
-#include "TextureManager.h"
-#include "Texture.h"
-#include "World.h"
-#include "Input.h"
-#include "Player.h"
+#include "Util/Input.h"
+#include "Util/Utility.h"
+#include "Util/Texture.h"
+#include "Util/TextureManager.h"
+#include "World/World.h"
+#include "World/Player.h"
 
 #include <iostream>
 #include <cstdio>

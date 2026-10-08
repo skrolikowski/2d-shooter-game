@@ -9,8 +9,8 @@
 
 #include "Entity.h"
 #include "Formation.h"
-#include "TextureManager.h"
-#include "Vector2.h"
+#include "Util/TextureManager.h"
+#include "Util/Vector2.h"
 
 class Player; // forward declaration
 

@@ -4,8 +4,8 @@
 #include <vector>
 
 #include "Defs.h"
-#include "TextureManager.h"
 #include "Entity.h"
+#include "Util/TextureManager.h"
 
 class World; // forward declaration
 
