@@ -4,8 +4,8 @@
 #include <algorithm>
 
 #include "Defs.h"
-#include "Bullet.h"
 #include "Entity.h"
+#include "Util/Pool.h"
 #include "Util/Input.h"
 
 class Player : public Entity
@@ -22,6 +22,7 @@ public:
 private:
     bool isShooting = false;
     float shootTimer = 0.f;
+
 };
 
 #endif // PLAYER_H

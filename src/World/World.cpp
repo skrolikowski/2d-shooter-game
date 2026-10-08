@@ -1,26 +1,35 @@
 #include "World.h"
 #include "Player.h"
 
-void World::Add(std::unique_ptr<Entity> entity)
-{
-    entity->SetWorld(this);
-    pending_.push_back(std::move(entity));
-}
+/**
+ * Notes:
+ * Now that player_ is a unique_ptr<Player>, destroying World means
+ * deleting a Player, and the header only has the forward declaration. 
+ * 
+ * Rule of thumb: a unique_ptr<T> member of a forward-declared T means
+ * the destructor body goes in the .cpp. It's a common C++ idiom, often
+ * called "pimpl-style" destruction.
+ */
+World::~World() = default;
 
 void World::AddPlayer(std::unique_ptr<Player> player)
 {
-    player_ = player.get();
-    player_->onShoot = [this]
-    {
-        if (onPlayerShoot) onPlayerShoot();
-    };
-    Add(std::move(player));
+    player_ = std::move(player);
+    player_->SetWorld(this);
+    player_->onShoot = [this]{ if (onPlayerShoot) onPlayerShoot(); };
+    // Add(std::move(player));
 }
 
 void World::AddFormation(std::unique_ptr<Formation> formation)
 {
     formation->SetWorld(this);
     formation_ = std::move(formation);
+}
+
+bool World::SpawnPlayerBullet(Vector2<float> v)
+{
+    Bullet* b = playerBullets_.Spawn(v);
+    return b != nullptr;
 }
 
 void World::SetPlayerPosition(Vector2<float> v)
@@ -32,8 +41,7 @@ void World::SetPlayerPosition(Vector2<float> v)
 void World::Clear()
 {
     player_ = nullptr;
-    pending_.clear();
-    entities_.clear();
+    playerBullets_.Clear();
 
     if (formation_ != nullptr)
         formation_->Clear();
@@ -41,8 +49,8 @@ void World::Clear()
 
 void World::HandleInput()
 {
-    for (const auto& e : entities_)
-        e->HandleInput();
+    if (player_ != nullptr)
+        player_->HandleInput();
 }
 
 void World::Update(float dt)
@@ -52,55 +60,48 @@ void World::Update(float dt)
         // Update formation..
         formation_->Update(dt);
 
-        // Update entities..
-        for (const auto& e : entities_)
+        // Check Player / Formation Collision..
+        if (player_ != nullptr)
         {
-            if (formation_->TryHit(e->GetRect()))
+            if (formation_->TryHit(player_->GetRect()))
             {
-                switch(e->GetType())
-                {
-                    case EntityType::Player:
-                        if (onPlayerHit)
-                            onPlayerHit();
-                        break;
-                    case EntityType::Bullet:
-                        e->Damage(1);
-                        if (onEnemyKilled)
-                            onEnemyKilled();
-                        break;
-                    default:
-                        break;
-                }
-            }
-            else
-            {
-                e->Update(dt);
+                if (onPlayerHit)
+                    onPlayerHit();
             }
         }
+
+        playerBullets_.ForEach([&](Bullet& b)
+        {
+            if (formation_->TryHit(b.GetRect()))
+            {
+                b.Damage(1);
+
+                if (onEnemyKilled)
+                    onEnemyKilled();
+            }
+        });
     }
-    else
+
+    // Update Player..
+    if (player_ != nullptr)
+        player_->Update(dt);
+
+    // Update Player Bullets..
+    playerBullets_.ForEach([&](Bullet& b)
     {
-        // Update entities..
-        for (const auto& e : entities_)
-        {
-            e->Update(dt);
-        }
-    }
-
-
-    // Remove dead entities..
-    std::erase_if(entities_, [](auto& e){ return e->IsDead(); });
-    
-    // Adding pending_ entities..
-    for (auto& e : pending_)
-        entities_.push_back(std::move(e));
-    pending_.clear();
+        b.Update(dt);
+    });
 }
 
 void World::Draw(SDL_Renderer* renderer) const
 {
-    for (const auto& e : entities_)
-        e->Draw(renderer);
+    if (player_ != nullptr)
+        player_->Draw(renderer);
+
+    playerBullets_.ForEach([&](const Bullet& b)
+    {
+        b.Draw(renderer);
+    });
 
     if (formation_ != nullptr)
         formation_->Draw(renderer);

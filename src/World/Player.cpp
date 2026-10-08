@@ -25,6 +25,8 @@ void Player::HandleInput()
     {
         isShooting = true;
         shootTimer = 0.f;
+
+        if (onShoot) onShoot();
     }
 }
 
@@ -39,12 +41,9 @@ void Player::Update(float dt)
         {
             float bx = pos_.x + GetWidth() * 0.5;
             float by = pos_.y;
-            std::unique_ptr<Bullet> bullet = std::make_unique<Bullet>();
-            bullet->SetPosition(Vector2<float>{ bx, by });
-            world_->Add(std::move(bullet));
-
-            if (onShoot)
-                onShoot();
+            if (world_->SpawnPlayerBullet(Vector2{ bx, by }))
+                if (onShoot)
+                    onShoot();
         }
 
         // --
