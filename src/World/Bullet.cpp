@@ -2,14 +2,15 @@
 
 Bullet::Bullet()
 {
-    type_ = EntityType::Bullet;
     speed_ = 500.f;
     dir_.y = -1;
+    width_ = 4.f;
+    height_ = 4.f;
 }
 
 void Bullet::Draw(SDL_Renderer* renderer) const
 {
-    SDL_FRect rect{ pos_.x, pos_.y, 8, 8 };
+    SDL_FRect rect{ pos_.x, pos_.y, width_, height_ };
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderFillRect(renderer, &rect);
 }

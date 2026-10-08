@@ -11,8 +11,6 @@
 
 class World;   // forward declaration, NOT #include "World.h"
 
-enum class EntityType { Player, Bullet, Invader };
-
 class Entity
 {
 public:
@@ -24,9 +22,6 @@ public:
     void SetTexture(std::shared_ptr<Texture> texture) { texture_ = texture; }
     void SetHealth(int health) noexcept { health_ = health; }
     void SetWorld(World* world) noexcept { world_ = world; }
-
-    void SetType(EntityType type) { type_ = type; }
-    EntityType GetType() const { return type_; }
 
     void SetDir(Vector2<float> dir) { dir_ = dir; }
     
@@ -46,7 +41,6 @@ public:
     virtual void Draw(SDL_Renderer* renderer) const;
 
 protected:
-    EntityType type_;
     int health_ = 1;
     float speed_ = 50.f;
     Vector2<float> dir_;

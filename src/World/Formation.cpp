@@ -21,7 +21,6 @@ Formation::Formation(TextureManager& textures)
 
             Entity e(Vector2<float>{ x, y });
             e.SetTexture(texture);
-            e.SetType(EntityType::Invader);
             invaders_.push_back(std::move(e));
         }
     }

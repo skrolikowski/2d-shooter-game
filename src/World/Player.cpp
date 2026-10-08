@@ -3,7 +3,6 @@
 
 Player::Player()
 {
-    type_ = EntityType::Player;
     speed_ = 250.f;
 }
 
