@@ -18,6 +18,7 @@ public:
     bool TryHit(const SDL_FRect& rect);
     void SetWorld(World* world) { world_ = world; }
     void StepFormation();
+    void Clear();
     void Update(float dt);
     void Draw(SDL_Renderer* renderer) const;
 

@@ -1,19 +1,17 @@
 #ifndef TITLESTATE_H
 #define TITLESTATE_H
 
-#include "App.h"
 #include "GameState.h"
 
 class TitleState : public GameState
 {
 public:
     using GameState::GameState;
-    ~TitleState() { }
+    ~TitleState() {}
 
     void Enter() override;
     void Exit() override;
     void HandleInput() override;
-    void Update(float dt) override;
     void Draw(SDL_Renderer* renderer) const override;
 
 private:

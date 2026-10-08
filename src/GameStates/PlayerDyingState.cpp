@@ -1,3 +1,4 @@
+#include "App.h"
 #include "PlayerDyingState.h"
 
 void PlayerDyingState::Enter()
@@ -15,19 +16,11 @@ void PlayerDyingState::Exit()
     TTF_DestroyText(subtitleText_);
 }
 
-void PlayerDyingState::HandleInput()
-{
-    
-}
-
 void PlayerDyingState::Update(float dt)
 {
     stateTimer_ += dt;
     if (stateTimer_ >= stateEndTime_)
-    {
-        app_->ChangeState(GameStateID::Playing);
-    }
-    // TTF_SetTextString(subtitleText_, std::format("Wait for respawn... {:02}", startTimer_).c_str(), 0);
+        app_->SetPendingState(GameStateID::Playing);
 }
 
 void PlayerDyingState::Draw(SDL_Renderer* renderer) const

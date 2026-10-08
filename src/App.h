@@ -9,10 +9,6 @@
 #include "Defs.h"
 #include "Utility.h"
 #include "GameStates/GameState.h"
-#include "GameStates/TitleState.h"
-#include "GameStates/PlayingState.h"
-#include "GameStates/PlayerDyingState.h"
-#include "GameStates/GameOverState.h"
 #include "TextureManager.h"
 #include "Texture.h"
 #include "World.h"
@@ -51,7 +47,9 @@ public:
     void Draw();
     void Quit();
 
-    void ChangeState(GameStateID stateID);
+    void RefreshHud();
+    void ResetPlayerStats();
+    void SetPendingState(GameStateID stateID) { pendingStateID_ = stateID; }
 
 private:
     SDL_Window* window_ = nullptr;
@@ -59,25 +57,28 @@ private:
     bool isRunning_ = false;
     bool isPlaying_ = false;
 
-    TTF_Text* playerScoreText_;
-    TTF_Text* playerLivesText_;
-    int playerScore_;
-    int playerLives_;
+    TTF_Text* playerScoreText_ = nullptr;
+    TTF_Text* playerLivesText_ = nullptr;
+    int playerScore_ = 0;
+    int playerLives_ = 0;
     int playerInitLives_ = 3;
 
-    GameStateID stateID_;
+    GameStateID stateID_ = GameStateID::Title;
+    std::optional<GameStateID> pendingStateID_;
     std::unique_ptr<GameState> state_ = nullptr;
     
-    TTF_Font* fontH1_;
-    TTF_Font* fontH2_;
-    TTF_Font* fontH3_;
-    TTF_TextEngine* fontEngine_;
+    TTF_Font* fontH1_ = nullptr;
+    TTF_Font* fontH2_ = nullptr;
+    TTF_Font* fontH3_ = nullptr;
+    TTF_TextEngine* fontEngine_ = nullptr;
 
-    std::unique_ptr<TextureManager> textureManager_;
-    std::unique_ptr<World> world_;
+    std::unique_ptr<TextureManager> textureManager_ = nullptr;
+    std::unique_ptr<World> world_ = nullptr;
 
     void handlePlayerHit();
     void handleInvaderKill();
+    void changeState(GameStateID stateID);
+  
 };
 
 #endif // APP_H

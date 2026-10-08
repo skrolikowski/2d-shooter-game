@@ -1,4 +1,8 @@
 #include "App.h"
+#include "GameStates/TitleState.h"
+#include "GameStates/PlayingState.h"
+#include "GameStates/PlayerDyingState.h"
+#include "GameStates/GameOverState.h"
 
 void App::Init(const WindowParams& params)
 {
@@ -58,7 +62,8 @@ void App::Init(const WindowParams& params)
     world_->onPlayerHit   = [this]{ handlePlayerHit(); };
     world_->onEnemyKilled = [this]{ handleInvaderKill(); };
 
-    ChangeState(GameStateID::Title);
+    // --
+    changeState(GameStateID::Title);
     MainLoop();
 }
 
@@ -109,7 +114,7 @@ void App::HandleInput()
         }
     }
 
-    // World input..
+    // Handle World input..
     switch (stateID_)
     {
         case GameStateID::Playing:
@@ -119,14 +124,14 @@ void App::HandleInput()
             break;
     }
 
-    // Call state's Draw method..
+    // Handle State input..
     if (state_ != nullptr)
         state_->HandleInput();
 }
 
 void App::Update(float dt)
 {
-    // World update..
+    // Handle World update..
     switch (stateID_)
     {
         case GameStateID::Playing:
@@ -136,9 +141,16 @@ void App::Update(float dt)
             break;
     }
 
-    // Call state's Draw method..
+    // Handle State update..
     if (state_ != nullptr)
         state_->Update(dt);
+
+    // Handle requested state change..
+    if (pendingStateID_)
+    {
+        changeState(*pendingStateID_);
+        pendingStateID_.reset();
+    }
 }
 
 void App::Draw()
@@ -151,7 +163,7 @@ void App::Draw()
     DrawText(playerScoreText_, 16.f, 16.f, TextAlign::Left);
     DrawText(playerLivesText_, SCREEN_WIDTH - 16.f, 16.f, TextAlign::Right);
 
-    // World draw..
+    // Handle World draw..
     switch (stateID_)
     {
         case GameStateID::Playing:
@@ -162,7 +174,7 @@ void App::Draw()
             break;
     }
 
-    // Call state's Draw method..
+    // Handle State draw..
     if (state_ != nullptr)
         state_->Draw(renderer_);
 
@@ -172,6 +184,18 @@ void App::Draw()
 
 void App::Quit()
 {
+    if (state_ != nullptr)
+    {
+        state_->Exit();
+        state_.reset(); // release ownership;
+    }
+
+    if (textureManager_ != nullptr)
+    {
+        textureManager_->Destroy();
+        textureManager_.reset(); // release ownership;
+    }
+
     TTF_DestroyText(playerScoreText_);
     TTF_DestroyText(playerLivesText_);
 
@@ -181,14 +205,12 @@ void App::Quit()
     TTF_CloseFont(fontH3_);
     TTF_Quit();
 
-    textureManager_->Destroy();
-
     SDL_DestroyRenderer(renderer_);
     SDL_DestroyWindow(window_);
     SDL_Quit();
 }
 
-void App::ChangeState(GameStateID stateID)
+void App::changeState(GameStateID stateID)
 {
     if (state_ != nullptr)
     {
@@ -216,18 +238,32 @@ void App::ChangeState(GameStateID stateID)
     stateID_ = stateID;
 }
 
+void App::ResetPlayerStats()
+{
+    playerLives_ = playerInitLives_;
+    playerScore_ = 0;
+    RefreshHud();
+}
+
+void App::RefreshHud()
+{
+    TTF_SetTextString(playerLivesText_, std::format("LIVES {:01}x", playerLives_).c_str(), 0);
+    TTF_SetTextString(playerScoreText_, std::format("SCORE {:04}", playerScore_).c_str(), 0);
+}
+
 void App::handlePlayerHit()
 {
     playerLives_ -= 1;
+    RefreshHud();
     
     if (playerLives_ == 0)
-        ChangeState(GameStateID::GameOver);
+        SetPendingState(GameStateID::GameOver);
     else
-        ChangeState(GameStateID::PlayerDying);
+        SetPendingState(GameStateID::PlayerDying);
 }
 
 void App::handleInvaderKill()
 {
     playerScore_ += 1;
-    TTF_SetTextString(playerScoreText_, std::format("SCORE {:04}", playerScore_).c_str(), 0);
+    RefreshHud();
 }

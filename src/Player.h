@@ -7,7 +7,6 @@
 #include "Bullet.h"
 #include "Input.h"
 #include "Entity.h"
-#include "World.h"
 
 class Player : public Entity
 {

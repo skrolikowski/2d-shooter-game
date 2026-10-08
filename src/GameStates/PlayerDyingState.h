@@ -1,20 +1,16 @@
 #ifndef PLAYERDYINGSTATE_H
 #define PLAYERDYINGSTATE_H
 
-#include <format>
-
-#include "App.h"
 #include "GameState.h"
 
 class PlayerDyingState : public GameState
 {
 public:
     using GameState::GameState;
-    ~PlayerDyingState() { }
+    ~PlayerDyingState() {}
 
     void Enter() override;
     void Exit() override;
-    void HandleInput() override;
     void Update(float dt) override;
     void Draw(SDL_Renderer* renderer) const override;
 

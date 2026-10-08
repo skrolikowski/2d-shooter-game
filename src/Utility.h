@@ -5,7 +5,7 @@
 
 enum class TextAlign { Left, Center, Right };
 
-static void DrawText(TTF_Text* text, float x, float y, TextAlign align = TextAlign::Left)
+inline void DrawText(TTF_Text* text, float x, float y, TextAlign align = TextAlign::Left)
 {
     int w = 0, h = 0;
     TTF_GetTextSize(text, &w, &h);

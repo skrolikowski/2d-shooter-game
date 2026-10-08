@@ -4,6 +4,8 @@ Formation::Formation(TextureManager& textures)
 {
     int cols = 8;
     int rows = 5;
+    invaders_.reserve(cols*rows);
+    // --
     float formationWidth = cols * ENTITY_SIZE + (cols - 1) * INVADER_GAP;
     float startX = (SCREEN_WIDTH - formationWidth) / 2.f;
     float startY = 64.f;
@@ -44,6 +46,11 @@ bool Formation::TryHit(const SDL_FRect& rect)
     }
 
     return false;
+}
+
+void Formation::Clear()
+{
+    invaders_.clear();
 }
 
 void Formation::Update(float dt)

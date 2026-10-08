@@ -1,7 +1,10 @@
+#include "App.h"
 #include "TitleState.h"
 
 void TitleState::Enter()
 {
+    app_->isPlaying_ = false;
+
     titleText_ = TTF_CreateText(app_->fontEngine_, app_->fontH1_, "2D Shooter Game", 0);
     TTF_SetTextColor(titleText_, 255, 255, 255, 255);
 
@@ -17,15 +20,10 @@ void TitleState::Exit()
 
 void TitleState::HandleInput()
 {
-    if (Input::IsDown(SDL_SCANCODE_ESCAPE))
+    if (Input::IsPressed(SDL_SCANCODE_ESCAPE))
         app_->isRunning_ = false;
-    else if (Input::IsDown(SDL_SCANCODE_RETURN))
-        app_->ChangeState(GameStateID::Playing);
-}
-
-void TitleState::Update(float dt)
-{
-    // nothing..
+    else if (Input::IsPressed(SDL_SCANCODE_RETURN))
+        app_->SetPendingState(GameStateID::Playing);
 }
 
 void TitleState::Draw(SDL_Renderer* renderer) const

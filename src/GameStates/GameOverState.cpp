@@ -1,3 +1,4 @@
+#include "App.h"
 #include "GameOverState.h"
 
 void GameOverState::Enter()
@@ -19,15 +20,10 @@ void GameOverState::Exit()
 
 void GameOverState::HandleInput()
 {
-    if (Input::IsDown(SDL_SCANCODE_ESCAPE))
+    if (Input::IsPressed(SDL_SCANCODE_ESCAPE))
         app_->isRunning_ = false;   
-    else if (Input::IsDown(SDL_SCANCODE_RETURN))
-        app_->ChangeState(GameStateID::Title);
-}
-
-void GameOverState::Update(float dt)
-{
-    
+    else if (Input::IsPressed(SDL_SCANCODE_RETURN))
+        app_->SetPendingState(GameStateID::Title);
 }
 
 void GameOverState::Draw(SDL_Renderer* renderer) const
