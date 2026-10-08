@@ -25,6 +25,7 @@ public:
     void AddFormation(std::unique_ptr<Formation> formation);
     void Clear();
 
+    std::function<void()> onPlayerShoot;
     std::function<void()> onPlayerHit;
     std::function<void()> onEnemyKilled;
 

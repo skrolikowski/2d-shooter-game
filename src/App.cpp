@@ -6,7 +6,7 @@
 
 void App::Init(const WindowParams& params)
 {
-    if (!SDL_Init(SDL_INIT_VIDEO))
+    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
     {
         SDL_Log("SDL_Init failed: %s", SDL_GetError());
         return;
@@ -56,9 +56,28 @@ void App::Init(const WindowParams& params)
     playerLivesText_ = TTF_CreateText(fontEngine_, fontH3_, "LIVES 3x", 0);
     TTF_SetTextColor(playerLivesText_, 255, 255, 255, 255);
 
+    // Audio..
+    SDL_AudioSpec spec;
+    if (!SDL_LoadWAV("res/audio/laserShoot.wav", &spec, &wavBuffer_, &wavLength_))
+    {
+        SDL_Log("SDL_LoadWAV failed: %s", SDL_GetError());
+        return;
+    }
+
+    audioStream_ = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec, NULL, NULL);
+    if (!audioStream_)
+    {
+        SDL_Log("SDL_OpenAudioDeviceStream failed: %s", SDL_GetError());
+        return;
+    }
+
+    // SDL_PutAudioStreamData(audioStream_, buf, len);
+    SDL_ResumeAudioStreamDevice(audioStream_);
+
     // Create world..
     world_ = std::make_unique<World>();
     // callbacks
+    world_->onPlayerShoot = [this]{ handlePlayerShoot(); };
     world_->onPlayerHit   = [this]{ handlePlayerHit(); };
     world_->onEnemyKilled = [this]{ handleInvaderKill(); };
 
@@ -196,6 +215,11 @@ void App::Quit()
         textureManager_.reset(); // release ownership;
     }
 
+    // Destroy audio..
+    SDL_DestroyAudioStream(audioStream_);
+    SDL_free(wavBuffer_);
+
+    // Destroy TTF
     TTF_DestroyText(playerScoreText_);
     TTF_DestroyText(playerLivesText_);
 
@@ -266,4 +290,9 @@ void App::handleInvaderKill()
 {
     playerScore_ += 1;
     RefreshHud();
+}
+
+void App::handlePlayerShoot()
+{
+    SDL_PutAudioStreamData(audioStream_, wavBuffer_, static_cast<int>(wavLength_));
 }

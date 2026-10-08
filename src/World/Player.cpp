@@ -42,6 +42,9 @@ void Player::Update(float dt)
             std::unique_ptr<Bullet> bullet = std::make_unique<Bullet>();
             bullet->SetPosition(Vector2<float>{ bx, by });
             world_->Add(std::move(bullet));
+
+            if (onShoot)
+                onShoot();
         }
 
         // --

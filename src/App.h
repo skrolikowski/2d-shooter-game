@@ -2,6 +2,7 @@
 #define APP_H
 
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_audio.h>
 #include <SDL3/SDL_events.h>
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
@@ -67,6 +68,10 @@ private:
     std::optional<GameStateID> pendingStateID_;
     std::unique_ptr<GameState> state_ = nullptr;
     
+    SDL_AudioStream* audioStream_ = nullptr;
+    Uint8* wavBuffer_ = nullptr;
+    Uint32 wavLength_ = 0;
+
     TTF_Font* fontH1_ = nullptr;
     TTF_Font* fontH2_ = nullptr;
     TTF_Font* fontH3_ = nullptr;
@@ -76,6 +81,7 @@ private:
     std::unique_ptr<World> world_ = nullptr;
 
     void handlePlayerHit();
+    void handlePlayerShoot();
     void handleInvaderKill();
     void changeState(GameStateID stateID);
   

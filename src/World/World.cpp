@@ -10,6 +10,10 @@ void World::Add(std::unique_ptr<Entity> entity)
 void World::AddPlayer(std::unique_ptr<Player> player)
 {
     player_ = player.get();
+    player_->onShoot = [this]
+    {
+        if (onPlayerShoot) onPlayerShoot();
+    };
     Add(std::move(player));
 }
 
