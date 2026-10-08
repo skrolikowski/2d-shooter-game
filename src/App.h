@@ -9,6 +9,7 @@
 
 #include "Defs.h"
 #include "GameStates/GameState.h"
+#include "Util/SDLPtr.h"
 #include "Util/Input.h"
 #include "Util/Utility.h"
 #include "Util/Texture.h"
@@ -17,8 +18,11 @@
 #include "World/Player.h"
 
 #include <iostream>
-#include <cstdio>
+#include <format>
+#include <optional>
+#include <memory>
 #include <string>
+#include <cstdio>
 
 struct WindowParams
 {
@@ -53,32 +57,32 @@ public:
     void SetPendingState(GameStateID stateID) { pendingStateID_ = stateID; }
 
 private:
-    SDL_Window* window_ = nullptr;
-    SDL_Renderer* renderer_ = nullptr;
+    WindowPtr window_;
+    RendererPtr renderer_;
     bool isRunning_ = false;
     bool isPlaying_ = false;
 
-    TTF_Text* playerScoreText_ = nullptr;
-    TTF_Text* playerLivesText_ = nullptr;
+    TTF_TextPtr playerScoreText_;
+    TTF_TextPtr playerLivesText_;
     int playerScore_ = 0;
     int playerLives_ = 0;
     int playerInitLives_ = 3;
 
     GameStateID stateID_ = GameStateID::Title;
     std::optional<GameStateID> pendingStateID_;
-    std::unique_ptr<GameState> state_ = nullptr;
+    std::unique_ptr<GameState> state_;
     
-    SDL_AudioStream* audioStream_ = nullptr;
-    Uint8* wavBuffer_ = nullptr;
+    SDL_AudioStreamPtr audioStream_;
+    SDL_WaveBufferPtr wavBuffer_;
     Uint32 wavLength_ = 0;
 
-    TTF_Font* fontH1_ = nullptr;
-    TTF_Font* fontH2_ = nullptr;
-    TTF_Font* fontH3_ = nullptr;
-    TTF_TextEngine* fontEngine_ = nullptr;
+    TTF_FontPtr fontH1_;
+    TTF_FontPtr fontH2_;
+    TTF_FontPtr fontH3_;
+    TTF_TextEnginePtr fontEngine_;
 
-    std::unique_ptr<TextureManager> textureManager_ = nullptr;
-    std::unique_ptr<World> world_ = nullptr;
+    std::unique_ptr<TextureManager> textureManager_;
+    std::unique_ptr<World> world_;
 
     void handlePlayerHit();
     void handlePlayerShoot();

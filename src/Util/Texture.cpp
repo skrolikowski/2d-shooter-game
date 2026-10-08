@@ -10,33 +10,23 @@ Texture::Texture(const std::string& path)
 void Texture::LoadFromFile(const std::string& path)
 {
     path_ = path;
-    texture_ = IMG_LoadTexture(Texture::Renderer, path.c_str());
+    texture_.reset(IMG_LoadTexture(Texture::Renderer, path.c_str()));
     if (!texture_)
     {
         SDL_Log("Failed to load texture: %s", SDL_GetError());
+        return;
     }
 
-    SDL_GetTextureSize(texture_, &width_, &height_);
+    SDL_GetTextureSize(texture_.get(), &width_, &height_);
 }
 
 void Texture::UnloadFile()
 {
-    if (texture_)
-    {
-        SDL_DestroyTexture(texture_);
-        texture_ = nullptr;
-    }
+    texture_.reset();
 }
 
 void Texture::Draw(SDL_Renderer* renderer, float x, float y, float scaleX, float scaleY)
 {
-    // Note: use full image
-    // const SDL_FRect srcRect
-    // {
-    //     .w = width_,
-    //     .h = height_,
-    // };
-
     const SDL_FRect dstRect
     {
         .x = x,
@@ -45,5 +35,5 @@ void Texture::Draw(SDL_Renderer* renderer, float x, float y, float scaleX, float
         .h = height_ * scaleY,
     };
 
-    SDL_RenderTexture(renderer, texture_, nullptr, &dstRect);
+    SDL_RenderTexture(renderer, texture_.get(), nullptr, &dstRect);
 }

@@ -19,7 +19,7 @@ void App::Init(const WindowParams& params)
     SDL_SetNumberProperty(winProps, SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, params.height);
     SDL_SetBooleanProperty(winProps, SDL_PROP_WINDOW_CREATE_RESIZABLE_BOOLEAN, params.isResizeable);
     SDL_SetBooleanProperty(winProps, SDL_PROP_WINDOW_CREATE_FULLSCREEN_BOOLEAN, params.isFullscreen);
-    window_ = SDL_CreateWindowWithProperties(winProps);
+    window_.reset(SDL_CreateWindowWithProperties(winProps));
     SDL_DestroyProperties(winProps);
     if (!window_)
     {
@@ -29,8 +29,8 @@ void App::Init(const WindowParams& params)
 
     // Create renderer..
     SDL_PropertiesID renderProps = SDL_CreateProperties();
-    SDL_SetPointerProperty(renderProps, SDL_PROP_RENDERER_CREATE_WINDOW_POINTER, window_);
-    renderer_ = SDL_CreateRendererWithProperties(renderProps);
+    SDL_SetPointerProperty(renderProps, SDL_PROP_RENDERER_CREATE_WINDOW_POINTER, window_.get());
+    renderer_.reset(SDL_CreateRendererWithProperties(renderProps));
     SDL_DestroyProperties(renderProps);
     if (!renderer_)
     {
@@ -41,30 +41,32 @@ void App::Init(const WindowParams& params)
     // TextureManager..
     textureManager_ = std::make_unique<TextureManager>();
     // Texture (set default renderer)..
-    Texture::SetDefaultRenderer(renderer_);
+    Texture::SetDefaultRenderer(renderer_.get());
 
     // Set Font..
     TTF_Init();
-    fontH1_ = TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 24.0f);
-    fontH2_ = TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 16.0f);
-    fontH3_ = TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 8.0f);
-    fontEngine_ = TTF_CreateRendererTextEngine(renderer_);
+    fontH1_.reset(TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 24.0f));
+    fontH2_.reset(TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 16.0f));
+    fontH3_.reset(TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 8.0f));
+    fontEngine_.reset(TTF_CreateRendererTextEngine(renderer_.get()));
     
     // --
-    playerScoreText_ = TTF_CreateText(fontEngine_, fontH3_, "SCORE 0000", 0);
-    TTF_SetTextColor(playerScoreText_, 255, 255, 255, 255);
-    playerLivesText_ = TTF_CreateText(fontEngine_, fontH3_, "LIVES 3x", 0);
-    TTF_SetTextColor(playerLivesText_, 255, 255, 255, 255);
+    playerScoreText_.reset(TTF_CreateText(fontEngine_.get(), fontH3_.get(), "SCORE 0000", 0));
+    TTF_SetTextColor(playerScoreText_.get(), 255, 255, 255, 255);
+    playerLivesText_.reset(TTF_CreateText(fontEngine_.get(), fontH3_.get(), "LIVES 3x", 0));
+    TTF_SetTextColor(playerLivesText_.get(), 255, 255, 255, 255);
 
     // Audio..
     SDL_AudioSpec spec;
-    if (!SDL_LoadWAV("res/audio/laserShoot.wav", &spec, &wavBuffer_, &wavLength_))
+    Uint8* buf = nullptr;
+    if (!SDL_LoadWAV("res/audio/laserShoot.wav", &spec, &buf, &wavLength_))
     {
         SDL_Log("SDL_LoadWAV failed: %s", SDL_GetError());
         return;
     }
+    wavBuffer_.reset(buf);
 
-    audioStream_ = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec, NULL, NULL);
+    audioStream_.reset(SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec, NULL, NULL));
     if (!audioStream_)
     {
         SDL_Log("SDL_OpenAudioDeviceStream failed: %s", SDL_GetError());
@@ -72,7 +74,7 @@ void App::Init(const WindowParams& params)
     }
 
     // SDL_PutAudioStreamData(audioStream_, buf, len);
-    SDL_ResumeAudioStreamDevice(audioStream_);
+    SDL_ResumeAudioStreamDevice(audioStream_.get());
 
     // Create world..
     world_ = std::make_unique<World>();
@@ -174,20 +176,20 @@ void App::Update(float dt)
 
 void App::Draw()
 {
-    SDL_SetRenderDrawColor(renderer_, 25, 15, 16, 0);
-    SDL_RenderClear(renderer_);
+    SDL_SetRenderDrawColor(renderer_.get(), 25, 15, 16, 0);
+    SDL_RenderClear(renderer_.get());
     // --
 
     // Draw Score or High Score..
-    DrawText(playerScoreText_, 16.f, 16.f, TextAlign::Left);
-    DrawText(playerLivesText_, SCREEN_WIDTH - 16.f, 16.f, TextAlign::Right);
+    DrawText(playerScoreText_.get(), 16.f, 16.f, TextAlign::Left);
+    DrawText(playerLivesText_.get(), SCREEN_WIDTH - 16.f, 16.f, TextAlign::Right);
 
     // Handle World draw..
     switch (stateID_)
     {
         case GameStateID::Playing:
         case GameStateID::PlayerDying:
-            world_->Draw(renderer_);
+            world_->Draw(renderer_.get());
             break;
         default:
             break;
@@ -195,19 +197,26 @@ void App::Draw()
 
     // Handle State draw..
     if (state_ != nullptr)
-        state_->Draw(renderer_);
+        state_->Draw(renderer_.get());
 
     // --
-    SDL_RenderPresent(renderer_);
+    SDL_RenderPresent(renderer_.get());
 }
 
 void App::Quit()
 {
+    if (world_ != nullptr)
+        world_->Clear();
+
     if (state_ != nullptr)
     {
         state_->Exit();
         state_.reset(); // release ownership;
     }
+
+    // Destroy audio..
+    audioStream_.reset();
+    wavBuffer_.reset();
 
     if (textureManager_ != nullptr)
     {
@@ -215,22 +224,17 @@ void App::Quit()
         textureManager_.reset(); // release ownership;
     }
 
-    // Destroy audio..
-    SDL_DestroyAudioStream(audioStream_);
-    SDL_free(wavBuffer_);
-
     // Destroy TTF
-    TTF_DestroyText(playerScoreText_);
-    TTF_DestroyText(playerLivesText_);
-
-    TTF_DestroyRendererTextEngine(fontEngine_);
-    TTF_CloseFont(fontH1_);
-    TTF_CloseFont(fontH2_);
-    TTF_CloseFont(fontH3_);
+    playerScoreText_.reset();
+    playerLivesText_.reset();
+    fontEngine_.reset();
+    fontH1_.reset();
+    fontH2_.reset();
+    fontH3_.reset();
     TTF_Quit();
 
-    SDL_DestroyRenderer(renderer_);
-    SDL_DestroyWindow(window_);
+    renderer_.reset();
+    window_.reset();
     SDL_Quit();
 }
 
@@ -271,8 +275,8 @@ void App::ResetPlayerStats()
 
 void App::RefreshHud()
 {
-    TTF_SetTextString(playerLivesText_, std::format("LIVES {:01}x", playerLives_).c_str(), 0);
-    TTF_SetTextString(playerScoreText_, std::format("SCORE {:04}", playerScore_).c_str(), 0);
+    TTF_SetTextString(playerLivesText_.get(), std::format("LIVES {:01}x", playerLives_).c_str(), 0);
+    TTF_SetTextString(playerScoreText_.get(), std::format("SCORE {:04}", playerScore_).c_str(), 0);
 }
 
 void App::handlePlayerHit()
@@ -294,5 +298,5 @@ void App::handleInvaderKill()
 
 void App::handlePlayerShoot()
 {
-    SDL_PutAudioStreamData(audioStream_, wavBuffer_, static_cast<int>(wavLength_));
+    SDL_PutAudioStreamData(audioStream_.get(), wavBuffer_.get(), static_cast<int>(wavLength_));
 }

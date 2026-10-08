@@ -15,9 +15,9 @@ void Player::HandleInput()
     //     dir_.y -= 1;
     // if (Input::IsDown(SDL_SCANCODE_S))
     //     dir_.y += 1;
-    if (Input::IsDown(SDL_SCANCODE_A))
+    if (Input::IsDown(SDL_SCANCODE_A) || Input::IsDown(SDL_SCANCODE_LEFT))
         dir_.x -= 1;
-    if (Input::IsDown(SDL_SCANCODE_D))
+    if (Input::IsDown(SDL_SCANCODE_D) || Input::IsDown(SDL_SCANCODE_RIGHT))
         dir_.x += 1;
 
     // Shooting..

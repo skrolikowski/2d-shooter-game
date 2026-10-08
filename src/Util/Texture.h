@@ -7,6 +7,8 @@
 #include <memory>
 #include <string>
 
+#include "SDLPtr.h"
+
 class Texture
 {
 public:
@@ -25,10 +27,10 @@ public:
 
 private:
     std::string path_;
-    float width_;
-    float height_;
+    float width_ = 0.f;
+    float height_ = 0.f;
 
-    SDL_Texture* texture_ = nullptr;
+    SDL_TexturePtr texture_;
     static SDL_Renderer* Renderer;
 };
 

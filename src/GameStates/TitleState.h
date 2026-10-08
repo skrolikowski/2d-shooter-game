@@ -10,13 +10,12 @@ public:
     ~TitleState() {}
 
     void Enter() override;
-    void Exit() override;
     void HandleInput() override;
     void Draw(SDL_Renderer* renderer) const override;
 
 private:
-    TTF_Text* titleText_;
-    TTF_Text* subtitleText_;
+    TTF_TextPtr titleText_;
+    TTF_TextPtr subtitleText_;
 };
 
 #endif // TITLESTATE_H
