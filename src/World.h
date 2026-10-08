@@ -19,7 +19,7 @@ public:
 
     void Add(std::unique_ptr<Entity> entity);
     void AddFormation(std::unique_ptr<Formation> formation);
-    void Remove();
+    void Clear();
 
     std::function<void()> onPlayerHit;
     std::function<void()> onEnemyKilled;

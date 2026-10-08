@@ -7,7 +7,12 @@
 #include <SDL3_ttf/SDL_ttf.h>
 
 #include "Defs.h"
-#include "Formation.h"
+#include "Utility.h"
+#include "GameStates/GameState.h"
+#include "GameStates/TitleState.h"
+#include "GameStates/PlayingState.h"
+#include "GameStates/PlayerDyingState.h"
+#include "GameStates/GameOverState.h"
 #include "TextureManager.h"
 #include "Texture.h"
 #include "World.h"
@@ -27,42 +32,52 @@ struct WindowParams
     bool isFullscreen = false;
 };
 
-enum class State { Title, Playing, PlayerDying, GameOver };
-
 class App
 {
+    friend class TitleState;
+    friend class PlayingState;
+    friend class PlayerDyingState;
+    friend class GameOverState;
+
 public:
     App() = default;
-    ~App() { Quit();}
+    ~App() { Quit(); }
 
     void Init(const WindowParams& params);
     void MainLoop();
-    void Start();
-    void HandleHit();
-    void HandleKill();
+
     void HandleInput();
     void Update(float dt);
     void Draw();
     void Quit();
 
-    void onKeyDown(SDL_KeyboardEvent e);
+    void ChangeState(GameStateID stateID);
 
 private:
     SDL_Window* window_ = nullptr;
     SDL_Renderer* renderer_ = nullptr;
     bool isRunning_ = false;
+    bool isPlaying_ = false;
 
-    State state_;
+    TTF_Text* playerScoreText_;
+    TTF_Text* playerLivesText_;
     int playerScore_;
     int playerLives_;
     int playerInitLives_ = 3;
+
+    GameStateID stateID_;
+    std::unique_ptr<GameState> state_ = nullptr;
     
-    TTF_Font* font_;
+    TTF_Font* fontH1_;
+    TTF_Font* fontH2_;
+    TTF_Font* fontH3_;
     TTF_TextEngine* fontEngine_;
-    TTF_Text* scoreText_;
 
     std::unique_ptr<TextureManager> textureManager_;
     std::unique_ptr<World> world_;
+
+    void handlePlayerHit();
+    void handleInvaderKill();
 };
 
 #endif // APP_H

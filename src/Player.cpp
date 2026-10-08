@@ -10,10 +10,10 @@ void Player::HandleInput()
 {
     // Direction controls..
     dir_.Reset();
-    if (Input::IsDown(SDL_SCANCODE_W))
-        dir_.y -= 1;
-    if (Input::IsDown(SDL_SCANCODE_S))
-        dir_.y += 1;
+    // if (Input::IsDown(SDL_SCANCODE_W))
+    //     dir_.y -= 1;
+    // if (Input::IsDown(SDL_SCANCODE_S))
+    //     dir_.y += 1;
     if (Input::IsDown(SDL_SCANCODE_A))
         dir_.x -= 1;
     if (Input::IsDown(SDL_SCANCODE_D))

@@ -49,8 +49,12 @@ FetchContent_MakeAvailable(SDL3 SDL3_image SDL3_ttf)
 add_library(src STATIC
   src/App.cpp
   src/Input.cpp
-  src/Formation.cpp
   src/World.cpp
+  src/GameStates/GameOverState.cpp
+  src/GameStates/TitleState.cpp
+  src/GameStates/PlayingState.cpp
+  src/GameStates/PlayerDyingState.cpp
+  src/Formation.cpp
   src/Texture.cpp
   src/TextureManager.cpp
   src/Entity.cpp

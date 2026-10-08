@@ -34,42 +34,31 @@ void App::Init(const WindowParams& params)
         return;
     }
 
-    TTF_Init();
-    font_ = TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 8.0f);   // size in points
-    fontEngine_ = TTF_CreateRendererTextEngine(renderer_);
-    scoreText_ = TTF_CreateText(fontEngine_, font_, "SCORE 0000", 0);
-    TTF_SetTextColor(scoreText_, 255, 255, 255, 255);
-
-    Start();
-}
-
-void App::Start()
-{
     // TextureManager..
     textureManager_ = std::make_unique<TextureManager>();
-    // Texture..
+    // Texture (set default renderer)..
     Texture::SetDefaultRenderer(renderer_);
-    
-    // Add Player..
-    std::unique_ptr<Player> player = std::make_unique<Player>();
-    player->SetPosition(Vector2<float>{ SCREEN_WIDTH / 2.f, SCREEN_HEIGHT - 64.f });
-    std::shared_ptr<Texture> playerTexture = textureManager_->Get("res/player_red.png");
-    player->SetTexture(playerTexture);
 
-    // Add Formation / enemies..
-    std::unique_ptr<Formation> formation = std::make_unique<Formation>(*textureManager_);
+    // Set Font..
+    TTF_Init();
+    fontH1_ = TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 24.0f);
+    fontH2_ = TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 16.0f);
+    fontH3_ = TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 8.0f);
+    fontEngine_ = TTF_CreateRendererTextEngine(renderer_);
     
-    // World..
+    // --
+    playerScoreText_ = TTF_CreateText(fontEngine_, fontH3_, "SCORE 0000", 0);
+    TTF_SetTextColor(playerScoreText_, 255, 255, 255, 255);
+    playerLivesText_ = TTF_CreateText(fontEngine_, fontH3_, "LIVES 3x", 0);
+    TTF_SetTextColor(playerLivesText_, 255, 255, 255, 255);
+
+    // Create world..
     world_ = std::make_unique<World>();
-    world_->Add(std::move(player));
-    world_->AddFormation(std::move(formation));
-    // ..callbacks..
-    world_->onPlayerHit   = [this]{ HandleHit(); };
-    world_->onEnemyKilled = [this]{ HandleKill(); };
+    // callbacks
+    world_->onPlayerHit   = [this]{ handlePlayerHit(); };
+    world_->onEnemyKilled = [this]{ handleInvaderKill(); };
 
-    playerScore_ = 0;
-    playerLives_ = playerInitLives_;
-
+    ChangeState(GameStateID::Title);
     MainLoop();
 }
 
@@ -104,25 +93,8 @@ void App::MainLoop()
     }
 }
 
-void App::HandleHit()
-{
-    playerLives_ -= 1;
-    if (playerLives_ == 0)
-    {
-        //TODO: game over
-    }
-}
-
-void App::HandleKill()
-{
-    playerScore_ += 1;
-    TTF_SetTextString(scoreText_, std::format("SCORE {:04}", playerScore_).c_str(), 0);
-}
-
 void App::HandleInput()
 {
-    world_->HandleInput();
-
     SDL_Event e;
     while (SDL_PollEvent(&e))
     {
@@ -131,43 +103,82 @@ void App::HandleInput()
             case SDL_EVENT_QUIT:
                 isRunning_ = false;
                 break;
-            case SDL_EVENT_KEY_DOWN:
-                switch(e.key.key)
-                {
-                    case SDLK_ESCAPE:
-                        isRunning_ = false;
-                        break;
-                }
-                break;
             case SDL_EVENT_WINDOW_RESIZED:
                 // SDL_GetWindowSize(window, &camera.mWidth, &camera.mHeight);
                 break;
         }
     }
+
+    // World input..
+    switch (stateID_)
+    {
+        case GameStateID::Playing:
+            world_->HandleInput();
+            break;
+        default:
+            break;
+    }
+
+    // Call state's Draw method..
+    if (state_ != nullptr)
+        state_->HandleInput();
 }
 
 void App::Update(float dt)
 {
-    world_->Update(dt);
+    // World update..
+    switch (stateID_)
+    {
+        case GameStateID::Playing:
+            world_->Update(dt);
+            break;
+        default:
+            break;
+    }
+
+    // Call state's Draw method..
+    if (state_ != nullptr)
+        state_->Update(dt);
 }
 
 void App::Draw()
 {
     SDL_SetRenderDrawColor(renderer_, 25, 15, 16, 0);
     SDL_RenderClear(renderer_);
+    // --
 
-    TTF_DrawRendererText(scoreText_, 16.f, 16.f);
+    // Draw Score or High Score..
+    DrawText(playerScoreText_, 16.f, 16.f, TextAlign::Left);
+    DrawText(playerLivesText_, SCREEN_WIDTH - 16.f, 16.f, TextAlign::Right);
 
-    world_->Draw(renderer_);
+    // World draw..
+    switch (stateID_)
+    {
+        case GameStateID::Playing:
+        case GameStateID::PlayerDying:
+            world_->Draw(renderer_);
+            break;
+        default:
+            break;
+    }
 
+    // Call state's Draw method..
+    if (state_ != nullptr)
+        state_->Draw(renderer_);
+
+    // --
     SDL_RenderPresent(renderer_);
 }
 
 void App::Quit()
 {
-    TTF_DestroyText(scoreText_);
+    TTF_DestroyText(playerScoreText_);
+    TTF_DestroyText(playerLivesText_);
+
     TTF_DestroyRendererTextEngine(fontEngine_);
-    TTF_CloseFont(font_);
+    TTF_CloseFont(fontH1_);
+    TTF_CloseFont(fontH2_);
+    TTF_CloseFont(fontH3_);
     TTF_Quit();
 
     textureManager_->Destroy();
@@ -175,4 +186,48 @@ void App::Quit()
     SDL_DestroyRenderer(renderer_);
     SDL_DestroyWindow(window_);
     SDL_Quit();
+}
+
+void App::ChangeState(GameStateID stateID)
+{
+    if (state_ != nullptr)
+    {
+        state_->Exit();
+        state_ = nullptr;
+    }
+
+    switch(stateID)
+    {
+        case GameStateID::Title:
+            state_ = std::make_unique<TitleState>(this);
+            break;
+        case GameStateID::Playing:
+            state_ = std::make_unique<PlayingState>(this);
+            break;
+        case GameStateID::PlayerDying:
+            state_ = std::make_unique<PlayerDyingState>(this);
+            break;
+        case GameStateID::GameOver:
+            state_ = std::make_unique<GameOverState>(this);
+            break;
+    }
+
+    state_->Enter();
+    stateID_ = stateID;
+}
+
+void App::handlePlayerHit()
+{
+    playerLives_ -= 1;
+    
+    if (playerLives_ == 0)
+        ChangeState(GameStateID::GameOver);
+    else
+        ChangeState(GameStateID::PlayerDying);
+}
+
+void App::handleInvaderKill()
+{
+    playerScore_ += 1;
+    TTF_SetTextString(playerScoreText_, std::format("SCORE {:04}", playerScore_).c_str(), 0);
 }

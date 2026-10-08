@@ -25,7 +25,6 @@ private:
     World* world_;
     std::vector<Entity> invaders_;
 
-    int invader_total_ = 0;
     int dir_ = 1;
     int frame_ = 0;
     float stepTimer_ = 0.f;

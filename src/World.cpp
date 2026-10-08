@@ -12,9 +12,9 @@ void World::AddFormation(std::unique_ptr<Formation> formation)
     formation_ = std::move(formation);
 }
 
-void World::Remove()
+void World::Clear()
 {
-    //TODO:
+    entities_.clear();
 }
 
 void World::HandleInput()

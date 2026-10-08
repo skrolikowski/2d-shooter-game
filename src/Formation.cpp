@@ -8,8 +8,6 @@ Formation::Formation(TextureManager& textures)
     float startX = (SCREEN_WIDTH - formationWidth) / 2.f;
     float startY = 64.f;
 
-    invader_total_ = cols * rows;
-
     std::shared_ptr<Texture> texture = textures.Get("res/invader_blue.png");
     
     for (int r = 0; r < rows; ++r)
@@ -62,7 +60,8 @@ void Formation::Update(float dt)
     {
         StepFormation();
         stepTimer_ = stepInterval_ - (stepTimer_ - 0);
-        stepInterval_ = 0.8f * invaders_.size() / invader_total_;
+        stepInterval_ = 0.02f + 0.78f * invaders_.size() / 55.0f;
+        
     }
 }
 
