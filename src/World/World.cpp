@@ -113,7 +113,7 @@ void World::Update(float dt)
             if (collisionPoint.has_value())
             {
                 bullet.Damage(1);
-                bunker.Erode(collisionPoint.value(), 4);
+                bunker.Erode(collisionPoint.value());
             }
         });
     });
