@@ -96,15 +96,24 @@ void World::Update(float dt)
     // Update Player Bullets..
     playerBullets_.ForEach([&](Bullet& bullet)
     {
+        /**
+         * Dev notes:
+         * Create a SDL_FRect of the full Bullet path to combat Collision Tunneling
+         */
+        SDL_FRect before = bullet.GetRect();
         bullet.Update(dt);
-
+        SDL_FRect after = bullet.GetRect();
+        SDL_FRect swept;
+        SDL_GetRectUnionFloat(&before, &after, &swept);
+        
         // Check Bullet / Bunker Collision..
         bunkers_.ForEach([&](Bunker& bunker)
         {
-            if (bunker.TryHit(bullet.GetRect()))
+            std::optional<SDL_FPoint> collisionPoint = bunker.FindImpact(swept);
+            if (collisionPoint.has_value())
             {
                 bullet.Damage(1);
-                bunker.Erode(bullet.GetRect());
+                bunker.Erode(collisionPoint.value(), 4);
             }
         });
     });

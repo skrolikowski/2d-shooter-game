@@ -7,5 +7,8 @@
 #define PLAYER_SHOOT_DT 0.25f
 #define INVADER_GAP     16.f
 #define ENTITY_SIZE     48.f
+#define BUNKER_WIDTH    64
+#define BUNKER_HEIGHT   16
+#define BUNKER_BLAST_RADIUS 16
 
 #endif // DEFS_H
