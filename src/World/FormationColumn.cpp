@@ -28,10 +28,10 @@ const Entity* FormationColumn::GetLowestInvader() const
 
 bool FormationColumn::TryHit(const SDL_FRect& other)
 {
-    for (Entity& inv : invaders_)
+    for (auto& inv : std::views::reverse(invaders_))
     {
         if (inv.IsDead()) continue;
-        
+
         SDL_FRect invRect = inv.GetRect();
         if (SDL_HasRectIntersectionFloat(&invRect, &other))
         {

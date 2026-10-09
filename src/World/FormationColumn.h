@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <ranges>
 #include <vector>
 
 class FormationColumn

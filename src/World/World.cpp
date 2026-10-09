@@ -107,7 +107,6 @@ void World::Update(float dt)
 
     // --
     // Update Invader Bullets..
-    SDL_FRect ibBefore, ibAfter, ibSweep;
     invaderBullets_.ForEach([&](Bullet& bullet)
     {
         /**
@@ -142,6 +141,8 @@ void World::Update(float dt)
     {
         playerBullets_.ForEach([&](Bullet& bullet)
         {
+            if (bullet.IsDead()) return;  // bullet may have died already..
+            
             if (formation_->TryHit(bullet.GetSweep()))
             {
                 bullet.Damage(1);  // Warning: bullets may die
@@ -157,6 +158,8 @@ void World::Update(float dt)
     {
         invaderBullets_.ForEach([&](Bullet& bullet)
         {
+            if (bullet.IsDead()) return;  // bullet may have died already..
+            
             SDL_FRect playerRect = player_->GetRect();
             if (SDL_HasRectIntersectionFloat(&playerRect, &bullet.GetSweep()))
             {
