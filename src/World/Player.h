@@ -7,6 +7,7 @@
 #include "Entity.h"
 #include "Util/Pool.h"
 #include "Util/Input.h"
+#include "Util/Vector2.h"
 
 class Player : public Entity
 {

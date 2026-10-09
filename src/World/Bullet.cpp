@@ -2,8 +2,7 @@
 
 Bullet::Bullet()
 {
-    speed_ = 500.f;
-    dir_.y = -1;
+    speed_ = 300.f;
     width_ = 4.f;
     height_ = 4.f;
 }

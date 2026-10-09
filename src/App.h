@@ -85,7 +85,7 @@ private:
     std::unique_ptr<World> world_;
 
     void handlePlayerHit();
-    void handlePlayerShoot();
+    void handleBulletShoot();
     void handleInvaderKill();
     void changeState(GameStateID stateID);
   

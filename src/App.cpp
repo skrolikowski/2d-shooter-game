@@ -79,7 +79,8 @@ void App::Init(const WindowParams& params)
     // Create world..
     world_ = std::make_unique<World>();
     // callbacks
-    world_->onPlayerShoot = [this]{ handlePlayerShoot(); };
+    world_->onPlayerShoot = [this]{ handleBulletShoot(); };
+    world_->onInvaderShoot = [this]{ handleBulletShoot(); };
     world_->onPlayerHit   = [this]{ handlePlayerHit(); };
     world_->onEnemyKilled = [this]{ handleInvaderKill(); };
 
@@ -296,7 +297,7 @@ void App::handleInvaderKill()
     RefreshHud();
 }
 
-void App::handlePlayerShoot()
+void App::handleBulletShoot()
 {
     SDL_PutAudioStreamData(audioStream_.get(), wavBuffer_.get(), static_cast<int>(wavLength_));
 }

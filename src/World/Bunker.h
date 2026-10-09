@@ -22,7 +22,7 @@ public:
     void SetPosition(Vector2<float> pos) { pos_ = pos; }
     void SetHealth(int health) noexcept { health_ = health; }
     bool IsDead() const noexcept { return health_ <= 0; }
-    std::optional<SDL_FPoint> FindImpact(const SDL_FRect& swept) const;
+    std::optional<SDL_FPoint> FindImpact(const SDL_FRect& swept, bool fromBelow = true) const;
     void Erode(const SDL_FPoint& point);
     void Draw(SDL_Renderer* renderer) const;
 

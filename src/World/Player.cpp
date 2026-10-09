@@ -24,8 +24,6 @@ void Player::HandleInput()
     {
         isShooting = true;
         shootTimer = 0.f;
-
-        if (onShoot) onShoot();
     }
 }
 

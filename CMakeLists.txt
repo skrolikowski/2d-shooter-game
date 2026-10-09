@@ -53,6 +53,7 @@ add_library(src STATIC
   src/Util/TextureManager.cpp
   src/World/World.cpp
   src/World/Bunker.cpp
+  src/World/FormationColumn.cpp
   src/World/Formation.cpp
   src/World/Entity.cpp
   src/World/Bullet.cpp

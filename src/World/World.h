@@ -27,10 +27,12 @@ public:
     void Clear();
 
     bool SpawnBunker(Vector2<float> pos);
+    bool SpawnInvaderBullet(Vector2<float> pos);
     bool SpawnPlayerBullet(Vector2<float> pos);
     void SetPlayerPosition(Vector2<float> pos);
 
     std::function<void()> onPlayerShoot;
+    std::function<void()> onInvaderShoot;
     std::function<void()> onPlayerHit;
     std::function<void()> onEnemyKilled;
 
@@ -42,6 +44,7 @@ private:
     std::unique_ptr<Formation> formation_ = nullptr;
     std::unique_ptr<Player> player_ = nullptr;
     Pool<Bullet, 3> playerBullets_;
+    Pool<Bullet, 2> invaderBullets_;
     Pool<Bunker, 3> bunkers_;
 
 };

@@ -17,13 +17,13 @@ void World::AddPlayer(std::unique_ptr<Player> player)
     player_ = std::move(player);
     player_->SetWorld(this);
     player_->onShoot = [this]{ if (onPlayerShoot) onPlayerShoot(); };
-    // Add(std::move(player));
 }
 
 void World::AddFormation(std::unique_ptr<Formation> formation)
 {
     formation->SetWorld(this);
     formation_ = std::move(formation);
+    formation_->onShoot = [this]{ if (onInvaderShoot) onInvaderShoot(); };
 }
 
 bool World::SpawnBunker(Vector2<float> pos)
@@ -32,10 +32,26 @@ bool World::SpawnBunker(Vector2<float> pos)
     return b != nullptr;
 }
 
+bool World::SpawnInvaderBullet(Vector2<float> pos)
+{
+    Bullet* b = invaderBullets_.Spawn(pos);
+    if (b != nullptr)
+    {
+        b->SetDir(Vector2<float>{ 0.f, 1.f });
+        return true;
+    }
+    return false;
+}
+
 bool World::SpawnPlayerBullet(Vector2<float> pos)
 {
     Bullet* b = playerBullets_.Spawn(pos);
-    return b != nullptr;
+    if (b != nullptr)
+    {
+        b->SetDir(Vector2<float>{ 0.f, -1.f });
+        return true;
+    }
+    return false;
 }
 
 void World::SetPlayerPosition(Vector2<float> pos)
@@ -48,6 +64,7 @@ void World::Clear()
 {
     player_ = nullptr;
     playerBullets_.Clear();
+    invaderBullets_.Clear();
     bunkers_.Clear();
 
     if (formation_ != nullptr)
@@ -62,37 +79,17 @@ void World::HandleInput()
 
 void World::Update(float dt)
 {
+    // --
+    // Update Formation..
     if (formation_ != nullptr)
-    {
-        // Update formation..
         formation_->Update(dt);
 
-        // Check Player / Formation Collision..
-        if (player_ != nullptr)
-        {
-            if (formation_->TryHit(player_->GetRect()))
-            {
-                if (onPlayerHit)
-                    onPlayerHit();
-            }
-        }
-
-        playerBullets_.ForEach([&](Bullet& bullet)
-        {
-            if (formation_->TryHit(bullet.GetRect()))
-            {
-                bullet.Damage(1);
-
-                if (onEnemyKilled)
-                    onEnemyKilled();
-            }
-        });
-    }
-
+    // --
     // Update Player..
     if (player_ != nullptr)
         player_->Update(dt);
 
+    // --
     // Update Player Bullets..
     playerBullets_.ForEach([&](Bullet& bullet)
     {
@@ -100,16 +97,97 @@ void World::Update(float dt)
          * Dev notes:
          * Create a SDL_FRect of the full Bullet path to combat Collision Tunneling
          */
-        SDL_FRect before = bullet.GetRect();
+        SDL_FRect before, after, sweep;
+        before = bullet.GetRect();
         bullet.Update(dt);
-        SDL_FRect after = bullet.GetRect();
-        SDL_FRect swept;
-        SDL_GetRectUnionFloat(&before, &after, &swept);
-        
-        // Check Bullet / Bunker Collision..
-        bunkers_.ForEach([&](Bunker& bunker)
+        after = bullet.GetRect();
+        SDL_GetRectUnionFloat(&before, &after, &sweep);
+        bullet.SetSweep(sweep);
+    });
+
+    // --
+    // Update Invader Bullets..
+    SDL_FRect ibBefore, ibAfter, ibSweep;
+    invaderBullets_.ForEach([&](Bullet& bullet)
+    {
+        /**
+         * Dev notes:
+         * Create a SDL_FRect of the full Bullet path to combat Collision Tunneling
+         */
+        SDL_FRect before, after, sweep;
+        before = bullet.GetRect();
+        bullet.Update(dt);
+        after = bullet.GetRect();
+        SDL_GetRectUnionFloat(&before, &after, &sweep);
+        bullet.SetSweep(sweep);
+    });
+
+
+    // ----
+    // Collision Detection
+    // ----
+
+    // Check Player / Formation..
+    if (player_ && formation_)
+    {
+        if (formation_->TryHit(player_->GetRect()))
         {
-            std::optional<SDL_FPoint> collisionPoint = bunker.FindImpact(swept);
+            if (onPlayerHit)
+                onPlayerHit();
+        }
+    }
+
+    // Check Player Bullet / Formation..
+    if (formation_)
+    {
+        playerBullets_.ForEach([&](Bullet& bullet)
+        {
+            if (formation_->TryHit(bullet.GetSweep()))
+            {
+                bullet.Damage(1);  // Warning: bullets may die
+
+                if (onEnemyKilled)
+                    onEnemyKilled();
+            }
+        });
+    }
+
+    // Check Invader Bullet / Player..
+    if (player_)
+    {
+        invaderBullets_.ForEach([&](Bullet& bullet)
+        {
+            SDL_FRect playerRect = player_->GetRect();
+            if (SDL_HasRectIntersectionFloat(&playerRect, &bullet.GetSweep()))
+            {
+                bullet.Damage(1); // Warning: bullets may die
+
+                if (onPlayerHit)
+                    onPlayerHit();
+            }
+        });
+    }
+
+    // Check Bullet / Bunker Collision..
+    bunkers_.ForEach([&](Bunker& bunker)
+    {
+        playerBullets_.ForEach([&](Bullet& bullet)
+        {
+            if (bullet.IsDead()) return;  // bullet may have died already..
+           
+            std::optional<SDL_FPoint> collisionPoint = bunker.FindImpact(bullet.GetSweep());
+            if (collisionPoint.has_value())
+            {
+                bullet.Damage(1);
+                bunker.Erode(collisionPoint.value());
+            }
+        });
+
+        invaderBullets_.ForEach([&](Bullet& bullet)
+        {
+            if (bullet.IsDead()) return;  // bullet may have died already..
+
+            std::optional<SDL_FPoint> collisionPoint = bunker.FindImpact(bullet.GetSweep(), false);
             if (collisionPoint.has_value())
             {
                 bullet.Damage(1);
@@ -125,6 +203,11 @@ void World::Draw(SDL_Renderer* renderer) const
         player_->Draw(renderer);
 
     playerBullets_.ForEach([&](const Bullet& b)
+    {
+        b.Draw(renderer);
+    });
+
+    invaderBullets_.ForEach([&](const Bullet& b)
     {
         b.Draw(renderer);
     });

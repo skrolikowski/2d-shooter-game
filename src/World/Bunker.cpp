@@ -1,6 +1,6 @@
 #include "Bunker.h"
 
-std::optional<SDL_FPoint> Bunker::FindImpact(const SDL_FRect& swept) const
+std::optional<SDL_FPoint> Bunker::FindImpact(const SDL_FRect& swept, bool fromBelow) const
 {
     SDL_FRect rect{
         .x = pos_.x,
@@ -16,10 +16,20 @@ std::optional<SDL_FPoint> Bunker::FindImpact(const SDL_FRect& swept) const
         int c0 = std::max(0,       int(std::floor(swept.x - pos_.x)));
         int c1 = std::min(NumCols, int(std::ceil (swept.x + swept.w - pos_.x)));
     
-        for (int row = r1 - 1; row >= r0; --row)  // search bottom → top
-            for (int col = c0; col < c1; ++col)
-                if (cells_[row][col])
-                    return SDL_FPoint{ pos_.x + col, pos_.y + row };
+        if (fromBelow)
+        {
+            for (int row = r1 - 1; row >= r0; --row)  // search bottom → top
+                for (int col = c0; col < c1; ++col)
+                    if (cells_[row][col])
+                        return SDL_FPoint{ pos_.x + col, pos_.y + row };
+        }
+        else
+        {
+            for (int row = r0; row < r1; ++row)  // search top → bottom
+                for (int col = c0; col < c1; ++col)
+                    if (cells_[row][col])
+                        return SDL_FPoint{ pos_.x + col, pos_.y + row };
+        }
     }
     
     return std::nullopt;
