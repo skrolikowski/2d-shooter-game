@@ -52,7 +52,7 @@ public:
     void Init(const WindowParams& params);
     void MainLoop();
 
-    const json& GetLevelData(int level = 0, int wave = 0) const;
+    const json& GetLevelData() const;
     int GetNumLevels() const;
     int GetNumWaves() const;
 

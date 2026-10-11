@@ -28,7 +28,7 @@ void PlayingState::startNewGame()
 void PlayingState::StartNewWave()
 {
     // --
-    const json& waveData = app_->GetLevelData(app_->level_, app_->levelWave_);    
+    const json& waveData = app_->GetLevelData();    
     app_->world_->GetFormation()->CreateWave(waveData, *app_->textureManager_);
 
     // --

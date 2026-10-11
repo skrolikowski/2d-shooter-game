@@ -270,9 +270,9 @@ int App::GetNumWaves() const
     return levelData_.at(level_).at("waves").size();
 }
 
-const json& App::GetLevelData(int level, int wave) const
+const json& App::GetLevelData() const
 {
-    return levelData_.at(level).at("waves").at(wave);
+    return levelData_.at(level_).at("waves").at(levelWave_);
 }
 
 void App::changeState(GameStateID stateID)
