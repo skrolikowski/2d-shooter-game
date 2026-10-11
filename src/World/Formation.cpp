@@ -53,7 +53,7 @@ void Formation::Clear()
 int Formation::GetNumInvaders() const
 {
     return std::accumulate(columns_.begin(), columns_.end(), 0,
-        [](int acc, FormationColumn& column){ return acc + column.Size(); });
+        [](int acc, const FormationColumn& column){ return acc + column.Size(); });
 }
 
 void Formation::Update(float dt)
