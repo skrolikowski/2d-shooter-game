@@ -9,10 +9,25 @@ void PlayingState::Enter()
         startNewGame();
 }
 
+void PlayingState::Update(float dt)
+{
+    waveTextTimer_ += dt;
+    if (waveTextTimer_ >= waveTextInterval_)
+    {
+        waveText_.release();
+    }
+}
+
 void PlayingState::HandleInput()
 {
     if (Input::IsPressed(SDL_SCANCODE_ESCAPE))
         app_->SetPendingState(GameStateID::Title);
+}
+
+void PlayingState::Draw(SDL_Renderer* renderer) const
+{
+    if (waveText_)
+        DrawText(waveText_.get(), SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f, TextAlign::Center);
 }
 
 
@@ -27,6 +42,12 @@ void PlayingState::startNewGame()
 
 void PlayingState::StartNewWave()
 {
+    // Wave notification..
+    waveTextTimer_ = 0.f;
+    waveText_.reset(TTF_CreateText(app_->fontEngine_.get(), app_->fontH1_.get(), std::format("Wave {:01}", app_->levelWave_).c_str(), 0));
+    TTF_SetTextColor(waveText_.get(), 255, 255, 255, 255);
+    
+
     // --
     const json& waveData = app_->GetLevelData();    
     app_->world_->GetFormation()->CreateWave(waveData, *app_->textureManager_);

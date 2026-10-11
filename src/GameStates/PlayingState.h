@@ -11,9 +11,15 @@ public:
 
     void StartNewWave();
     void Enter() override;
+    void Update(float dt) override;
     void HandleInput() override;
+    void Draw(SDL_Renderer* renderer) const override;
     
 private:
+    TTF_TextPtr waveText_;
+    float waveTextTimer_ = 0.f;
+    float waveTextInterval_ = 1.5f;
+
     void startNewGame();
     void resetPlayerPosition();
 
