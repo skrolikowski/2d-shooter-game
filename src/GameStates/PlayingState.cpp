@@ -55,7 +55,7 @@ void PlayingState::StartNewWave()
     
     // --
     const json& waveData = app_->GetLevelData();    
-    app_->world_->GetFormation()->CreateWave(waveData, *app_->textureManager_);
+    app_->world_->GetFormation()->CreateWave(waveData);
 
     // --
     // Add Bunkers..

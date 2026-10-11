@@ -11,7 +11,6 @@
 #include "Bullet.h"
 #include "Formation.h"
 #include "Util/Pool.h"
-#include "Util/TextureManager.h"
 #include "Util/Vector2.h"
 
 class Player; // forward declaration
@@ -19,7 +18,7 @@ class Player; // forward declaration
 class World
 {
 public:
-    explicit World(TextureManager* textures);
+    World();
     ~World();
 
     void Clear();

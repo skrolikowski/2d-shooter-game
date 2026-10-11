@@ -3,10 +3,10 @@
 
 #include <nlohmann/json.hpp>
 
-void Formation::CreateWave(const json& data, TextureManager& textures)
+void Formation::CreateWave(const json& data)
 {
-    bulletTimerRange_ = data.at("fire_range");
-    baseStepInterval_ = data.at("step").get<float>();
+    bulletTimerRange_ = data.at("fire_rate");
+    baseStepInterval_ = data.at("step_interval").get<float>();
     stepInterval_ = baseStepInterval_;
 
     const json& invaders = data.at("invaders");
@@ -24,7 +24,7 @@ void Formation::CreateWave(const json& data, TextureManager& textures)
     {
         const json& invaderData = invaders.at(c);
         float x = startX + c * (ENTITY_SIZE + INVADER_GAP);
-        FormationColumn column{ x, startY, textures, invaderData };
+        FormationColumn column{ x, startY, invaderData };
         columns_.push_back(std::move(column));
     }
 

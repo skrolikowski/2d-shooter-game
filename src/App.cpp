@@ -39,7 +39,7 @@ void App::Init(const WindowParams& params)
     }
 
     // TextureManager..
-    textureManager_ = std::make_unique<TextureManager>();
+    // textureManager_ = std::make_unique<TextureManager>();
     // Texture (set default renderer)..
     Texture::SetDefaultRenderer(renderer_.get());
 
@@ -77,7 +77,7 @@ void App::Init(const WindowParams& params)
     SDL_ResumeAudioStreamDevice(audioStream_.get());
 
     // Create world..
-    world_ = std::make_unique<World>(textureManager_.get());
+    world_ = std::make_unique<World>();
     // callbacks
     world_->onPlayerShoot = [this]{ handleBulletShoot(); };
     world_->onInvaderShoot = [this]{ handleBulletShoot(); };
@@ -239,11 +239,8 @@ void App::Quit()
     audioStream_.reset();
     wavBuffer_.reset();
 
-    if (textureManager_ != nullptr)
-    {
-        textureManager_->Destroy();
-        textureManager_.reset(); // release ownership;
-    }
+    // Unload loaded textures..
+    TextureManager::Destroy();
 
     // Destroy TTF
     playerScoreText_.reset();

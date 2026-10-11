@@ -1,7 +1,8 @@
 #include "World.h"
 #include "Player.h"
+#include "Util/TextureManager.h"
 
-World::World(TextureManager* textures)
+World::World()
 {
     // Create Player..
     player_ = std::make_unique<Player>();
@@ -9,7 +10,7 @@ World::World(TextureManager* textures)
     player_->SetWorld(this);
     player_->onShoot = [this]{ if (onPlayerShoot) onPlayerShoot(); };
     // ..
-    std::shared_ptr<Texture> playerTexture = textures->Get("res/player_red.png");
+    std::shared_ptr<Texture> playerTexture = TextureManager::Get("res/player_red.png");
     player_->SetTexture(playerTexture);
     
     // Create Invader Manager..

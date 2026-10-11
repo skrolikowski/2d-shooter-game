@@ -1,10 +1,11 @@
 #include "FormationColumn.h"
+#include "Util/TextureManager.h"
 
 #include <nlohmann/json.hpp>
 
-FormationColumn::FormationColumn(float x, float y, TextureManager& textures, const json& data)
+FormationColumn::FormationColumn(float x, float y, const json& data)
 {
-    std::shared_ptr<Texture> texture = textures.Get("res/invader_blue.png");
+    std::shared_ptr<Texture> texture = TextureManager::Get("res/invader_blue.png");
     int numRows = data.size();
 
     for (int r = 0; r < numRows; ++r)

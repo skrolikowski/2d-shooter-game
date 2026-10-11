@@ -15,7 +15,6 @@ using json = nlohmann::json;
 #include "Util/Input.h"
 #include "Util/Utility.h"
 #include "Util/Texture.h"
-#include "Util/TextureManager.h"
 #include "World/World.h"
 #include "World/Player.h"
 
@@ -95,7 +94,6 @@ private:
     TTF_FontPtr fontH3_;
     TTF_TextEnginePtr fontEngine_;
 
-    std::unique_ptr<TextureManager> textureManager_;
     std::unique_ptr<World> world_;
 
     void handlePlayerHit();

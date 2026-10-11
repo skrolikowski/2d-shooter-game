@@ -10,12 +10,11 @@ using json = nlohmann::json;
 
 #include "Defs.h"
 #include "Entity.h"
-#include "Util/TextureManager.h"
 
 class FormationColumn
 {
 public:
-    FormationColumn(float x, float y, TextureManager& textures, const json& data);
+    FormationColumn(float x, float y, const json& data);
     ~FormationColumn() { }
 
     const Entity* GetLowestInvader() const;

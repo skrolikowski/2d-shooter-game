@@ -18,7 +18,7 @@ class World; // forward declaration
 class Formation
 {
 public:
-    void CreateWave(const json& data, TextureManager& textures);
+    void CreateWave(const json& data);
     void SetWorld(World* world) { world_ = world; }
     int GetNumInvaders() const;
     bool TryHit(const SDL_FRect& rect);
