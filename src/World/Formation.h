@@ -23,6 +23,7 @@ public:
     int GetNumInvaders() const;
     bool TryHit(const SDL_FRect& rect);
     void StepFormation();
+    bool IsDead() const { return GetNumInvaders() == 0; }
     void Clear();
     void Update(float dt);
     void Draw(SDL_Renderer* renderer) const;

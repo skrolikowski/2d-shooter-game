@@ -53,6 +53,9 @@ public:
     void MainLoop();
 
     const json& GetLevelData(int level = 0, int wave = 0) const;
+    int GetNumLevels() const;
+    int GetNumWaves() const;
+
 
     void HandleInput();
     void Update(float dt);
@@ -98,6 +101,7 @@ private:
     void handlePlayerHit();
     void handleBulletShoot();
     void handleInvaderKill();
+    void handleFormationKill();
     void changeState(GameStateID stateID);
   
 };

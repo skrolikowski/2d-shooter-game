@@ -19,7 +19,14 @@ void PlayingState::HandleInput()
 void PlayingState::startNewGame()
 {
     app_->world_->Clear();
-    
+    StartNewWave();
+
+    // --
+    app_->isPlaying_ = true;
+}
+
+void PlayingState::StartNewWave()
+{
     // --
     const json& waveData = app_->GetLevelData(app_->level_, app_->levelWave_);    
     app_->world_->GetFormation()->CreateWave(waveData, *app_->textureManager_);
@@ -31,9 +38,6 @@ void PlayingState::startNewGame()
     app_->world_->SpawnBunker(Vector2{ SCREEN_WIDTH - 128.f - NumCols / 2.f, SCREEN_HEIGHT - 150.f });
 
     app_->ResetPlayerStats();
-
-    // --
-    app_->isPlaying_ = true;
 }
 
 void PlayingState::resetPlayerPosition()

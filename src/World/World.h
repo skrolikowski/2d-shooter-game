@@ -31,7 +31,8 @@ public:
     std::function<void()> onPlayerShoot;
     std::function<void()> onInvaderShoot;
     std::function<void()> onPlayerHit;
-    std::function<void()> onEnemyKilled;
+    std::function<void()> onInvaderKilled;
+    std::function<void()> onFormationKilled;
 
     Formation* GetFormation() { return formation_.get(); }
 

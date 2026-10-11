@@ -9,6 +9,7 @@ public:
     using GameState::GameState;
     ~PlayingState() {}
 
+    void StartNewWave();
     void Enter() override;
     void HandleInput() override;
     

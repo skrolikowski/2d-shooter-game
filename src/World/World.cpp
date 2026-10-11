@@ -149,8 +149,15 @@ void World::Update(float dt)
             {
                 bullet.Damage(1);  // Warning: bullets may die
 
-                if (onEnemyKilled)
-                    onEnemyKilled();
+                if (onInvaderKilled)
+                {
+                    onInvaderKilled();
+                    
+                    if (formation_->IsDead())
+                    {
+                        onFormationKilled();
+                    }
+                }
             }
         });
     }

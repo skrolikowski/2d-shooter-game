@@ -82,7 +82,8 @@ void App::Init(const WindowParams& params)
     world_->onPlayerShoot = [this]{ handleBulletShoot(); };
     world_->onInvaderShoot = [this]{ handleBulletShoot(); };
     world_->onPlayerHit   = [this]{ handlePlayerHit(); };
-    world_->onEnemyKilled = [this]{ handleInvaderKill(); };
+    world_->onInvaderKilled = [this]{ handleInvaderKill(); };
+    world_->onFormationKilled = [this]{ handleFormationKill(); };
 
     // --
     // Load level data..
@@ -258,6 +259,17 @@ void App::Quit()
     SDL_Quit();
 }
 
+
+int App::GetNumLevels() const
+{
+    return levelData_.size();
+}
+
+int App::GetNumWaves() const
+{
+    return levelData_.at(level_).at("waves").size();
+}
+
 const json& App::GetLevelData(int level, int wave) const
 {
     return levelData_.at(level).at("waves").at(wave);
@@ -324,4 +336,32 @@ void App::handleInvaderKill()
 void App::handleBulletShoot()
 {
     SDL_PutAudioStreamData(audioStream_.get(), wavBuffer_.get(), static_cast<int>(wavLength_));
+}
+
+void App::handleFormationKill()
+{
+    // Check for new Wave..
+    if (levelWave_ + 1 < GetNumWaves())
+    {
+        // Go to next wave..
+        ++levelWave_;
+        if (stateID_ == GameStateID::Playing)
+        {
+            PlayingState* state = dynamic_cast<PlayingState*>(state_.get());
+            if (state) state->StartNewWave();
+        }
+        else
+            changeState(GameStateID::Playing);
+    }
+
+    // Check for new Level..
+    else if (level_ + 1 < GetNumLevels())
+    {
+        ++level_;
+        levelWave_ = 0;
+    }
+    else
+    {
+        // changeState(GameStateID::Win);
+    }
 }
