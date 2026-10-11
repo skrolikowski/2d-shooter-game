@@ -11,7 +11,7 @@ public:
 
     void Enter() override;
     void HandleInput() override;
-
+    
 private:
     void startNewGame();
     void resetPlayerPosition();

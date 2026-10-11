@@ -19,13 +19,10 @@ class Player; // forward declaration
 class World
 {
 public:
-    World() = default;
+    explicit World(TextureManager* textures);
     ~World();
 
-    void AddPlayer(std::unique_ptr<Player> player);
-    void AddFormation(std::unique_ptr<Formation> formation);
     void Clear();
-
     bool SpawnBunker(Vector2<float> pos);
     bool SpawnInvaderBullet(Vector2<float> pos);
     bool SpawnPlayerBullet(Vector2<float> pos);
@@ -35,6 +32,8 @@ public:
     std::function<void()> onInvaderShoot;
     std::function<void()> onPlayerHit;
     std::function<void()> onEnemyKilled;
+
+    Formation* GetFormation() { return formation_.get(); }
 
     void HandleInput();
     void Update(float dt);

@@ -22,8 +22,7 @@ set(SDLIMAGE_AVIF OFF CACHE BOOL "" FORCE)
 set(SDLIMAGE_JXL  OFF CACHE BOOL "" FORCE)
 set(SDLIMAGE_TIF  OFF CACHE BOOL "" FORCE)
 set(SDLIMAGE_WEBP OFF CACHE BOOL "" FORCE)
-FetchContent_Declare(
-    SDL3_image
+FetchContent_Declare(SDL3_image
     GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
     GIT_TAG main
     GIT_SHALLOW TRUE)
@@ -36,7 +35,12 @@ FetchContent_Declare(SDL3_ttf
   GIT_TAG main
   GIT_SHALLOW TRUE)
 
-FetchContent_MakeAvailable(SDL3 SDL3_image SDL3_ttf)
+FetchContent_Declare(nlohmann_json
+  GIT_REPOSITORY https://github.com/nlohmann/json.git
+  GIT_TAG v3.12.0
+  GIT_SHALLOW TRUE)
+
+FetchContent_MakeAvailable(SDL3 SDL3_image SDL3_ttf nlohmann_json)
 ## -- END FETCH CONTENT --
 
 # Compile every .cpp under src/ into a static library.
@@ -64,12 +68,14 @@ add_library(src STATIC
   src/GameStates/PlayerDyingState.cpp)
 
 target_include_directories(src PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(src PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)
+target_link_libraries(src PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf nlohmann_json::nlohmann_json)
 
 # Scratch executable for trying things out: ./build/main
 add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE src)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE src)
+
 
 # Copy assets next to the binary
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD

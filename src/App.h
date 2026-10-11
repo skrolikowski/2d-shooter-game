@@ -6,6 +6,8 @@
 #include <SDL3/SDL_events.h>
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 #include "Defs.h"
 #include "GameStates/GameState.h"
@@ -17,12 +19,15 @@
 #include "World/World.h"
 #include "World/Player.h"
 
+#include <cassert>
+#include <fstream>
 #include <iostream>
 #include <format>
 #include <optional>
 #include <memory>
 #include <string>
 #include <cstdio>
+
 
 struct WindowParams
 {
@@ -47,6 +52,8 @@ public:
     void Init(const WindowParams& params);
     void MainLoop();
 
+    const json& GetLevelData(int level = 0, int wave = 0) const;
+
     void HandleInput();
     void Update(float dt);
     void Draw();
@@ -67,6 +74,10 @@ private:
     int playerScore_ = 0;
     int playerLives_ = 0;
     int playerInitLives_ = 3;
+
+    int level_ = 0;
+    int levelWave_ = 0;
+    json levelData_ = json::array();
 
     GameStateID stateID_ = GameStateID::Title;
     std::optional<GameStateID> pendingStateID_;

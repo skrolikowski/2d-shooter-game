@@ -1,27 +1,38 @@
 #include "Formation.h"
 #include "World.h"
 
-Formation::Formation(TextureManager& textures)
+#include <nlohmann/json.hpp>
+
+void Formation::CreateWave(const json& data, TextureManager& textures)
 {
-    numCols_ = 8;
-    numRows_ = 5;
-    columns_.reserve(numCols_);
+    bulletTimerRange_ = data.at("fire_range");
+    baseStepInterval_ = data.at("step").get<float>();
+    stepInterval_ = baseStepInterval_;
+
+    const json& invaders = data.at("invaders");
+    int numCols = invaders.size();
 
     // --
-    float formationWidth = numCols_ * ENTITY_SIZE + (numCols_ - 1) * INVADER_GAP;
+    Clear();
+    columns_.reserve(numCols);
+
+    float formationWidth = numCols * ENTITY_SIZE + (numCols - 1) * INVADER_GAP;
     float startX = (SCREEN_WIDTH - formationWidth) / 2.f;
     float startY = 64.f;
 
-    std::uniform_real_distribution<float> delay(1.f, 1.5f);
-    bulletTimer_ = delay(rng_);
-
-    for (int c = 0; c < numCols_; ++c)
+    for (int c = 0; c < numCols; ++c)
     {
+        const json& invaderData = invaders.at(c);
         float x = startX + c * (ENTITY_SIZE + INVADER_GAP);
-        // float y = startY + r * (ENTITY_SIZE + INVADER_GAP);
-        FormationColumn column{ numRows_, x, startY, textures };
+        FormationColumn column{ x, startY, textures, invaderData };
         columns_.push_back(std::move(column));
     }
+
+    numInvadersInit_ = GetNumInvaders();
+
+    // --
+    std::uniform_real_distribution<float> delay(bulletTimerRange_[0], bulletTimerRange_[1]);
+    bulletTimer_ = delay(rng_);
 }
 
 bool Formation::TryHit(const SDL_FRect& rect)
@@ -39,16 +50,24 @@ void Formation::Clear()
         col.Clear();
 }
 
+int Formation::GetNumInvaders() const
+{
+    return std::accumulate(columns_.begin(), columns_.end(), 0,
+        [](int acc, FormationColumn& column){ return acc + column.Size(); });
+}
+
 void Formation::Update(float dt)
 {
     stepTimer_ -= dt;
     if (stepTimer_ <= 0)
     {
         StepFormation();
-        int num_invaders = std::accumulate(columns_.begin(), columns_.end(), 0,
-            [](int acc, FormationColumn& column){ return acc + column.Size(); });
+        // --
+        const int numInvaders = GetNumInvaders();
+        constexpr float minInterval = 0.02f;
+        float ratio = numInvadersInit_ > 0 ? float(numInvaders) / numInvadersInit_ : 0.f;
         stepTimer_ = stepInterval_ - (stepTimer_ - 0);
-        stepInterval_ = 0.02f + 0.78f * num_invaders / 55.0f;
+        stepInterval_ = minInterval + (baseStepInterval_ - minInterval) * ratio;
     }
 
     bulletTimer_ -= dt;

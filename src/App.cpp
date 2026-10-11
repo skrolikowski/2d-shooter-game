@@ -77,12 +77,31 @@ void App::Init(const WindowParams& params)
     SDL_ResumeAudioStreamDevice(audioStream_.get());
 
     // Create world..
-    world_ = std::make_unique<World>();
+    world_ = std::make_unique<World>(textureManager_.get());
     // callbacks
     world_->onPlayerShoot = [this]{ handleBulletShoot(); };
     world_->onInvaderShoot = [this]{ handleBulletShoot(); };
     world_->onPlayerHit   = [this]{ handlePlayerHit(); };
     world_->onEnemyKilled = [this]{ handleInvaderKill(); };
+
+    // --
+    // Load level data..
+    std::ifstream f("res/levels.json");
+    if (!f)
+    {
+        SDL_Log("Could not open res/levels.json");
+        Quit();
+        return;
+    }
+
+    try
+    {
+        levelData_ = json::parse(f).at("levels");
+    }
+    catch (const json::exception& e)
+    {
+        SDL_Log("levels.json: %s", e.what());
+    }
 
     // --
     changeState(GameStateID::Title);
@@ -237,6 +256,11 @@ void App::Quit()
     renderer_.reset();
     window_.reset();
     SDL_Quit();
+}
+
+const json& App::GetLevelData(int level, int wave) const
+{
+    return levelData_.at(level).at("waves").at(wave);
 }
 
 void App::changeState(GameStateID stateID)

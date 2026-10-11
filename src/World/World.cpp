@@ -1,6 +1,23 @@
 #include "World.h"
 #include "Player.h"
 
+World::World(TextureManager* textures)
+{
+    // Create Player..
+    player_ = std::make_unique<Player>();
+    player_->SetPosition(Vector2<float>{ SCREEN_WIDTH / 2.f, SCREEN_HEIGHT - 80.f });
+    player_->SetWorld(this);
+    player_->onShoot = [this]{ if (onPlayerShoot) onPlayerShoot(); };
+    // ..
+    std::shared_ptr<Texture> playerTexture = textures->Get("res/player_red.png");
+    player_->SetTexture(playerTexture);
+    
+    // Create Invader Manager..
+    formation_ = std::make_unique<Formation>();
+    formation_->SetWorld(this);
+    formation_->onShoot = [this]{ if (onInvaderShoot) onInvaderShoot(); };
+}
+
 /**
  * Notes:
  * Now that player_ is a unique_ptr<Player>, destroying World means
@@ -11,20 +28,6 @@
  * called "pimpl-style" destruction.
  */
 World::~World() = default;
-
-void World::AddPlayer(std::unique_ptr<Player> player)
-{
-    player_ = std::move(player);
-    player_->SetWorld(this);
-    player_->onShoot = [this]{ if (onPlayerShoot) onPlayerShoot(); };
-}
-
-void World::AddFormation(std::unique_ptr<Formation> formation)
-{
-    formation->SetWorld(this);
-    formation_ = std::move(formation);
-    formation_->onShoot = [this]{ if (onInvaderShoot) onInvaderShoot(); };
-}
 
 bool World::SpawnBunker(Vector2<float> pos)
 {
@@ -62,7 +65,6 @@ void World::SetPlayerPosition(Vector2<float> pos)
 
 void World::Clear()
 {
-    player_ = nullptr;
     playerBullets_.Clear();
     invaderBullets_.Clear();
     bunkers_.Clear();

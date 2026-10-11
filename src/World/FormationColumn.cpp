@@ -1,15 +1,25 @@
 #include "FormationColumn.h"
 
-FormationColumn::FormationColumn(int numRows, float x, float startY, TextureManager& textures)
+#include <nlohmann/json.hpp>
+
+FormationColumn::FormationColumn(float x, float y, TextureManager& textures, const json& data)
 {
     std::shared_ptr<Texture> texture = textures.Get("res/invader_blue.png");
+    int numRows = data.size();
 
     for (int r = 0; r < numRows; ++r)
     {
-        float y = startY + r * (ENTITY_SIZE + INVADER_GAP);
+        float px = x;
+        float py = y + r * (ENTITY_SIZE + INVADER_GAP);
 
-        Entity e(Vector2<float>{ x, y });
+        Entity e(Vector2<float>{ px, py });
         e.SetTexture(texture);
+        
+        if (data.at(r).get<std::string>() != "x")
+        {
+            e.SetHealth(0);
+        }
+        
         invaders_.push_back(std::move(e));
     }
 }
@@ -46,6 +56,11 @@ bool FormationColumn::TryHit(const SDL_FRect& other)
 void FormationColumn::Clear()
 {
     invaders_.clear();
+}
+
+int FormationColumn::Size() const
+{
+    return std::ranges::count_if(invaders_, [](auto& e){ return !e.IsDead(); });
 }
 
 void FormationColumn::Draw(SDL_Renderer* renderer) const

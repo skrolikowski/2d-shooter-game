@@ -12,9 +12,10 @@ enum class GameStateID { Title, Playing, PlayerDying, GameOver };
 class GameState
 {
 public:
-    GameState(App* app) : app_(app) { }
+    GameState() = default;
+    GameState(App* app) : app_(app) {}
     virtual ~GameState() { }
-
+    
     virtual void HandleInput() {}
     virtual void Enter() {}
     virtual void Exit() {}

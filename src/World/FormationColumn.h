@@ -1,19 +1,21 @@
 #ifndef FORMATION_COLUMN_H
 #define FORMATION_COLUMN_H
 
-#include "Defs.h"
-#include "Entity.h"
-#include "Util/TextureManager.h"
-
 #include <algorithm>
 #include <memory>
 #include <ranges>
 #include <vector>
+#include <nlohmann/json_fwd.hpp>
+using json = nlohmann::json;
+
+#include "Defs.h"
+#include "Entity.h"
+#include "Util/TextureManager.h"
 
 class FormationColumn
 {
 public:
-    FormationColumn(int numRows, float x, float startY, TextureManager& textures);
+    FormationColumn(float x, float y, TextureManager& textures, const json& data);
     ~FormationColumn() { }
 
     const Entity* GetLowestInvader() const;
@@ -21,7 +23,7 @@ public:
     bool CheckForStepFormationHit(float dx) const;
     void StepFormation(float dx, float dy, bool hitDetected = false);
 
-    int Size() noexcept { return invaders_.size(); }
+    int Size() const;
     void Clear();
     void Draw(SDL_Renderer* renderer) const;
 
