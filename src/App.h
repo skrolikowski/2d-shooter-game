@@ -13,6 +13,7 @@ using json = nlohmann::json;
 #include "GameStates/GameState.h"
 #include "Util/SDLPtr.h"
 #include "Util/Input.h"
+#include "Util/EventQueue.h"
 #include "Util/Utility.h"
 #include "World/World.h"
 #include "World/Player.h"
@@ -94,10 +95,11 @@ private:
     TTF_TextEnginePtr fontEngine_;
 
     std::unique_ptr<World> world_;
+    std::unique_ptr<EventQueue> eventQueue_;
 
     void handlePlayerHit();
-    void handleBulletShoot();
-    void handleInvaderKill();
+    void handleBulletShoot(const Vector2<float> pos, bool isPlayerFire = false);
+    void handleInvaderKill(const Vector2<float> pos, InvaderType type);
     void handleFormationKill();
     void changeState(GameStateID stateID);
   

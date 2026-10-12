@@ -1,5 +1,6 @@
 #include "Formation.h"
 #include "World.h"
+#include "Util/EventQueue.h"
 
 #include <nlohmann/json.hpp>
 
@@ -35,13 +36,13 @@ void Formation::CreateWave(const json& data)
     bulletTimer_ = delay(rng_);
 }
 
-bool Formation::TryHit(const SDL_FRect& rect)
+Entity* Formation::TryHit(const SDL_FRect& rect)
 {
     for (auto& col : columns_)
-        if (col.TryHit(rect))
-            return true;
+        if (Entity* invader = col.TryHit(rect))
+            return invader;
 
-    return false;
+    return nullptr;
 }
 
 void Formation::Clear()
@@ -87,9 +88,10 @@ void Formation::Update(float dt)
             const Entity* lowestInvader = lowestInvaders[pick(rng_)];
             float bx = lowestInvader->GetX() + lowestInvader->GetWidth() * 0.5;
             float by = lowestInvader->GetY() + 32.f;
-            if (world_->SpawnInvaderBullet(Vector2{ bx, by }))
-                if (onShoot)
-                    onShoot();
+            Vector2 bPos = Vector2{ bx, by };
+            
+            if (world_->SpawnInvaderBullet(bPos))
+                EventQueue::GetInstance().Push(ShotFired{ bPos , false });
         }
         
         // Reset timer..

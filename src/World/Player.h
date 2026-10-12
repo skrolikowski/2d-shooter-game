@@ -17,8 +17,6 @@ public:
     void HandleInput() override;
     void Update(float dt) override;
 
-    std::function<void()> onShoot;
-
 private:
     bool isShooting = false;
     float shootTimer = 0.f;

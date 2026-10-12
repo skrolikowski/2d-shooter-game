@@ -27,12 +27,6 @@ public:
     bool SpawnPlayerBullet(Vector2<float> pos);
     void SetPlayerPosition(Vector2<float> pos);
 
-    std::function<void()> onPlayerShoot;
-    std::function<void()> onInvaderShoot;
-    std::function<void()> onPlayerHit;
-    std::function<void()> onInvaderKilled;
-    std::function<void()> onFormationKilled;
-
     Formation* GetFormation() { return formation_.get(); }
 
     void HandleInput();

@@ -77,14 +77,11 @@ void App::Init(const WindowParams& params)
     // SDL_PutAudioStreamData(audioStream_, buf, len);
     SDL_ResumeAudioStreamDevice(audioStream_.get());
 
-    // Create world..
+    // Create World..
     world_ = std::make_unique<World>();
-    // callbacks
-    world_->onPlayerShoot = [this]{ handleBulletShoot(); };
-    world_->onInvaderShoot = [this]{ handleBulletShoot(); };
-    world_->onPlayerHit   = [this]{ handlePlayerHit(); };
-    world_->onInvaderKilled = [this]{ handleInvaderKill(); };
-    world_->onFormationKilled = [this]{ handleFormationKill(); };
+
+    // Create EventQueue..
+    eventQueue_ = std::make_unique<EventQueue>();
 
     // --
     // Load level data..
@@ -184,6 +181,18 @@ void App::Update(float dt)
             break;
     }
 
+    // Handle queue event requests..
+    EventQueue::GetInstance().Dispatch([&](const Event& e)
+    {
+        std::visit(overloaded
+        {
+            [&](const InvaderKilled& k) { handleInvaderKill(k.pos, k.type); },
+            [&](const PlayerHit& h) { handlePlayerHit(); },
+            [&](const WaveCleared& w) { handleFormationKill(); },
+            [&](const ShotFired& f) { handleBulletShoot(f.pos, f.isPlayerFire); }
+        }, e);
+    });
+
     // Handle State update..
     if (state_ != nullptr)
         state_->Update(dt);
@@ -241,7 +250,6 @@ void App::Quit()
     wavBuffer_.reset();
 
     // Unload loaded textures..
-    // TextureManager::Destroy();
     Texture::UnloadFile();
 
     // Destroy TTF
@@ -326,13 +334,14 @@ void App::handlePlayerHit()
         SetPendingState(GameStateID::PlayerDying);
 }
 
-void App::handleInvaderKill()
+void App::handleInvaderKill(const Vector2<float> pos, InvaderType type)
 {
+    // audio_.play(Sfx::Explode);
     playerScore_ += 1;
     RefreshHud();
 }
 
-void App::handleBulletShoot()
+void App::handleBulletShoot(const Vector2<float> pos, bool isPlayerFire)
 {
     SDL_PutAudioStreamData(audioStream_.get(), wavBuffer_.get(), static_cast<int>(wavLength_));
 }

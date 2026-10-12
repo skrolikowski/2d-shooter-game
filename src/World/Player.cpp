@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "World.h"
+#include "Util/EventQueue.h"
 
 Player::Player()
 {
@@ -35,9 +36,10 @@ void Player::Update(float dt)
         {
             float bx = pos_.x + GetWidth() * 0.5;
             float by = pos_.y;
-            if (world_->SpawnPlayerBullet(Vector2{ bx, by }))
-                if (onShoot)
-                    onShoot();
+            Vector2 bPos = Vector2{ bx, by };
+            
+            if (world_->SpawnPlayerBullet(bPos))
+                EventQueue::GetInstance().Push(ShotFired{ bPos , true });
         }
 
         // --

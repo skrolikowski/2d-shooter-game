@@ -1,5 +1,6 @@
 #include "World.h"
 #include "Player.h"
+#include "Util/EventQueue.h"
 
 World::World()
 {
@@ -7,15 +8,10 @@ World::World()
     player_ = std::make_unique<Player>();
     player_->SetPosition(Vector2<float>{ SCREEN_WIDTH / 2.f, SCREEN_HEIGHT - 80.f });
     player_->SetWorld(this);
-    player_->onShoot = [this]{ if (onPlayerShoot) onPlayerShoot(); };
-    // ..
-    // std::shared_ptr<Texture> playerTexture = TextureManager::Get("res/player_red.png");
-    // player_->SetTexture(playerTexture);
-    
+
     // Create Invader Manager..
     formation_ = std::make_unique<Formation>();
     formation_->SetWorld(this);
-    formation_->onShoot = [this]{ if (onInvaderShoot) onInvaderShoot(); };
 }
 
 /**
@@ -132,10 +128,7 @@ void World::Update(float dt)
     if (player_ && formation_)
     {
         if (formation_->TryHit(player_->GetRect()))
-        {
-            if (onPlayerHit)
-                onPlayerHit();
-        }
+            EventQueue::GetInstance().Push(PlayerHit{});
     }
 
     // Check Player Bullet / Formation..
@@ -145,17 +138,18 @@ void World::Update(float dt)
         {
             if (bullet.IsDead()) return;  // bullet may have died already..
             
-            if (formation_->TryHit(bullet.GetSweep()))
+            if (Entity* invader = formation_->TryHit(bullet.GetSweep()))
             {
+                invader->Damage(1);
                 bullet.Damage(1);  // Warning: bullets may die
 
-                if (onInvaderKilled)
+                if (invader->IsDead())
                 {
-                    onInvaderKilled();
+                    EventQueue::GetInstance().Push(InvaderKilled{invader->GetPosition(), invader->GetType()});
                     
                     if (formation_->IsDead())
                     {
-                        onFormationKilled();
+                        EventQueue::GetInstance().Push(WaveCleared{});
                     }
                 }
             }
@@ -174,8 +168,7 @@ void World::Update(float dt)
             {
                 bullet.Damage(1); // Warning: bullets may die
 
-                if (onPlayerHit)
-                    onPlayerHit();
+                EventQueue::GetInstance().Push(PlayerHit{});
             }
         });
     }

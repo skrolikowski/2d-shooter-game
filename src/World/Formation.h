@@ -10,6 +10,7 @@
 using json = nlohmann::json;
 
 #include "Defs.h"
+#include "Entity.h"
 #include "FormationColumn.h"
 #include "Util/Texture.h"
 
@@ -21,14 +22,12 @@ public:
     void CreateWave(const json& data);
     void SetWorld(World* world) { world_ = world; }
     int GetNumInvaders() const;
-    bool TryHit(const SDL_FRect& rect);
+    Entity* TryHit(const SDL_FRect& rect);
     void StepFormation();
     bool IsDead() const { return GetNumInvaders() == 0; }
     void Clear();
     void Update(float dt);
     void Draw() const;
-
-    std::function<void()> onShoot;
 
 private:
     World* world_ = nullptr;

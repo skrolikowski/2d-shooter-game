@@ -9,6 +9,8 @@
 #include "Defs.h"
 #include "Util/Vector2.h"
 
+enum class InvaderType { A, B, C };
+
 class World;   // forward declaration, NOT #include "World.h"
 
 class Entity
@@ -18,11 +20,14 @@ public:
     Entity(const Vector2<float>& pos) : pos_(pos) { };
     virtual ~Entity() = default;
 
+    const Vector2<float>& GetPosition() const { return pos_; };
     void SetPosition(Vector2<float> pos) { pos_ = pos; }
     void SetHealth(int health) noexcept { health_ = health; }
     void SetWorld(World* world) noexcept { world_ = world; }
 
     void SetDir(Vector2<float> dir) { dir_ = dir; }
+    void SetType(InvaderType type) { type_ = type; }
+    InvaderType GetType() const { return type_; }
     void SetTexture(std::string texture) { textureName_ = texture; }
     
     void SetX(float x) noexcept { pos_.x = x; }
@@ -49,6 +54,7 @@ protected:
     float width_ = ENTITY_SIZE;
     float height_ = ENTITY_SIZE;
     
+    InvaderType type_;
     std::string textureName_;
 
     World* world_ = nullptr;

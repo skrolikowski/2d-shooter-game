@@ -18,7 +18,7 @@ public:
     ~FormationColumn() { }
 
     const Entity* GetLowestInvader() const;
-    bool TryHit(const SDL_FRect& other);
+    Entity* TryHit(const SDL_FRect& other);
     bool CheckForStepFormationHit(float dx) const;
     void StepFormation(float dx, float dy, bool hitDetected = false);
 

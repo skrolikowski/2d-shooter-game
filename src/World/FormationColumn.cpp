@@ -15,11 +15,20 @@ FormationColumn::FormationColumn(float x, float y, const json& data)
 
         std::string value = data.at(r).get<std::string>();
         if (value == "A")
+        {
+            e.SetType(InvaderType::A);
             e.SetTexture("enemyBlack1.png");
+        }
         else if (value == "B")
+        {
+            e.SetType(InvaderType::B);
             e.SetTexture("enemyBlack2.png");
+        }
         else if (value == "C")
+        {
+            e.SetType(InvaderType::C);
             e.SetTexture("enemyBlack3.png");
+        }
         else
             e.SetHealth(0);
         
@@ -39,7 +48,7 @@ const Entity* FormationColumn::GetLowestInvader() const
     return nullptr;
 }
 
-bool FormationColumn::TryHit(const SDL_FRect& other)
+Entity* FormationColumn::TryHit(const SDL_FRect& other)
 {
     for (auto& inv : std::views::reverse(invaders_))
     {
@@ -48,12 +57,11 @@ bool FormationColumn::TryHit(const SDL_FRect& other)
         SDL_FRect invRect = inv.GetRect();
         if (SDL_HasRectIntersectionFloat(&invRect, &other))
         {
-            inv.Damage(1);
-            return true;
+            return &inv;
         }
     }
 
-    return false;
+    return nullptr;
 }
 
 void FormationColumn::Clear()
