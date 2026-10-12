@@ -1,15 +1,10 @@
 #include "Bullet.h"
+#include "Util/Texture.h"
 
 Bullet::Bullet()
 {
+    textureName_ = "laserBlue04.png";
     speed_ = 300.f;
-    width_ = 4.f;
-    height_ = 4.f;
-}
-
-void Bullet::Draw(SDL_Renderer* renderer) const
-{
-    SDL_FRect rect{ pos_.x, pos_.y, width_, height_ };
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderFillRect(renderer, &rect);
+    width_ = 6.f;
+    height_ = 14.f;
 }

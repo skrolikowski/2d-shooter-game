@@ -1,11 +1,9 @@
 #include "FormationColumn.h"
-#include "Util/TextureManager.h"
 
 #include <nlohmann/json.hpp>
 
 FormationColumn::FormationColumn(float x, float y, const json& data)
 {
-    std::shared_ptr<Texture> texture = TextureManager::Get("res/invader_blue.png");
     int numRows = data.size();
 
     for (int r = 0; r < numRows; ++r)
@@ -14,12 +12,16 @@ FormationColumn::FormationColumn(float x, float y, const json& data)
         float py = y + r * (ENTITY_SIZE + INVADER_GAP);
 
         Entity e(Vector2<float>{ px, py });
-        e.SetTexture(texture);
-        
-        if (data.at(r).get<std::string>() != "x")
-        {
+
+        std::string value = data.at(r).get<std::string>();
+        if (value == "A")
+            e.SetTexture("enemyBlack1.png");
+        else if (value == "B")
+            e.SetTexture("enemyBlack2.png");
+        else if (value == "C")
+            e.SetTexture("enemyBlack3.png");
+        else
             e.SetHealth(0);
-        }
         
         invaders_.push_back(std::move(e));
     }
@@ -64,13 +66,12 @@ int FormationColumn::Size() const
     return std::ranges::count_if(invaders_, [](auto& e){ return !e.IsDead(); });
 }
 
-void FormationColumn::Draw(SDL_Renderer* renderer) const
+void FormationColumn::Draw() const
 {
     for (auto& inv : invaders_)
     {
         if (inv.IsDead()) continue;
-
-        inv.Draw(renderer);
+        inv.Draw();
     }
 }
 

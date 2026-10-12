@@ -1,4 +1,5 @@
 #include "Entity.h"
+#include "Util/Texture.h"
 
 void Entity::Damage(int amount)
 {
@@ -20,12 +21,16 @@ void Entity::Update(float dt)
         health_ = 0; // dead; out of bounds
 }
 
-void Entity::Draw(SDL_Renderer* renderer) const
+void Entity::Draw() const
 {
-    if (texture_)
+    if (!textureName_.empty())
     {
-        float sx = width_ / texture_->GetWidth();
-        float sy = height_ / texture_->GetHeight();
-        texture_->Draw(renderer, pos_.x, pos_.y, sx, sy);
+        const Frame* frame = Texture::GetFrame(textureName_);
+        if (frame)
+        {
+            float sx = width_ / frame->rect.w;
+            float sy = height_ / frame->rect.h;
+            Texture::Draw(frame, pos_.x, pos_.y, sx, sy);
+        }
     }
 }

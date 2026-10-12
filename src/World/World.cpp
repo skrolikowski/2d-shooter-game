@@ -1,6 +1,5 @@
 #include "World.h"
 #include "Player.h"
-#include "Util/TextureManager.h"
 
 World::World()
 {
@@ -10,8 +9,8 @@ World::World()
     player_->SetWorld(this);
     player_->onShoot = [this]{ if (onPlayerShoot) onPlayerShoot(); };
     // ..
-    std::shared_ptr<Texture> playerTexture = TextureManager::Get("res/player_red.png");
-    player_->SetTexture(playerTexture);
+    // std::shared_ptr<Texture> playerTexture = TextureManager::Get("res/player_red.png");
+    // player_->SetTexture(playerTexture);
     
     // Create Invader Manager..
     formation_ = std::make_unique<Formation>();
@@ -213,23 +212,23 @@ void World::Update(float dt)
 void World::Draw(SDL_Renderer* renderer) const
 {
     if (player_ != nullptr)
-        player_->Draw(renderer);
+        player_->Draw();
 
     playerBullets_.ForEach([&](const Bullet& b)
     {
-        b.Draw(renderer);
+        b.Draw();
     });
 
     invaderBullets_.ForEach([&](const Bullet& b)
     {
-        b.Draw(renderer);
+        b.Draw();
     });
 
     bunkers_.ForEach([&](const Bunker& b)
     {
-        b.Draw(renderer);
+        b.Draw();
     });
 
     if (formation_ != nullptr)
-        formation_->Draw(renderer);
+        formation_->Draw();
 }

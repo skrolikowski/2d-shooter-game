@@ -14,7 +14,6 @@ using json = nlohmann::json;
 #include "Util/SDLPtr.h"
 #include "Util/Input.h"
 #include "Util/Utility.h"
-#include "Util/Texture.h"
 #include "World/World.h"
 #include "World/Player.h"
 

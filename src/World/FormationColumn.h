@@ -24,7 +24,7 @@ public:
 
     int Size() const;
     void Clear();
-    void Draw(SDL_Renderer* renderer) const;
+    void Draw() const;
 
 private:
     std::vector<Entity> invaders_;

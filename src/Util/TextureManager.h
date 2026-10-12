@@ -17,7 +17,6 @@ public:
     static std::shared_ptr<Texture> Get(const std::string& path);
     static void Destroy();
 
-
 };
 
 #endif // TEXTUREMANAGER_H

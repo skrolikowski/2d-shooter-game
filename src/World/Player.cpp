@@ -3,6 +3,7 @@
 
 Player::Player()
 {
+    textureName_ = "playerShip2_red.png";
     speed_ = 250.f;
 }
 
@@ -10,10 +11,6 @@ void Player::HandleInput()
 {
     // Direction controls..
     dir_.Reset();
-    // if (Input::IsDown(SDL_SCANCODE_W))
-    //     dir_.y -= 1;
-    // if (Input::IsDown(SDL_SCANCODE_S))
-    //     dir_.y += 1;
     if (Input::IsDown(SDL_SCANCODE_A) || Input::IsDown(SDL_SCANCODE_LEFT))
         dir_.x -= 1;
     if (Input::IsDown(SDL_SCANCODE_D) || Input::IsDown(SDL_SCANCODE_RIGHT))

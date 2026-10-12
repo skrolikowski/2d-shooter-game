@@ -4,9 +4,9 @@
 #include <SDL3/SDL.h>
 
 #include <memory>
+#include <string>
 
 #include "Defs.h"
-#include "Util/Texture.h"
 #include "Util/Vector2.h"
 
 class World;   // forward declaration, NOT #include "World.h"
@@ -19,11 +19,11 @@ public:
     virtual ~Entity() = default;
 
     void SetPosition(Vector2<float> pos) { pos_ = pos; }
-    void SetTexture(std::shared_ptr<Texture> texture) { texture_ = texture; }
     void SetHealth(int health) noexcept { health_ = health; }
     void SetWorld(World* world) noexcept { world_ = world; }
 
     void SetDir(Vector2<float> dir) { dir_ = dir; }
+    void SetTexture(std::string texture) { textureName_ = texture; }
     
     void SetX(float x) noexcept { pos_.x = x; }
     void SetY(float y) noexcept { pos_.y = y; }
@@ -38,7 +38,7 @@ public:
 
     virtual void HandleInput() {}  // Player Only!!
     virtual void Update(float dt);
-    virtual void Draw(SDL_Renderer* renderer) const;
+    virtual void Draw() const;
 
 protected:
     int health_ = 1;
@@ -48,9 +48,10 @@ protected:
     Vector2<float> vel_;
     float width_ = ENTITY_SIZE;
     float height_ = ENTITY_SIZE;
+    
+    std::string textureName_;
 
     World* world_ = nullptr;
-    std::shared_ptr<Texture> texture_;
 
 };
 

@@ -54,7 +54,6 @@ add_library(src STATIC
   src/App.cpp
   src/Util/Input.cpp
   src/Util/Texture.cpp
-  src/Util/TextureManager.cpp
   src/World/World.cpp
   src/World/Bunker.cpp
   src/World/FormationColumn.cpp

@@ -114,35 +114,10 @@ void Formation::StepFormation()
 
     for (auto& col : columns_)
         col.StepFormation(dx, dy, hitEdge);
-
-
-    // for (const auto& e : invaders_)
-    // {
-    //     if (!e.IsDead())
-    //     {
-    //         float nextX = e.GetX() + dir_ * dx;
-    //         if (nextX < dx || nextX + e.GetWidth() > SCREEN_WIDTH - dx)
-    //         {
-    //             hitEdge = true;
-    //             dir_ = -dir_;
-    //             frame_ ^= 1;
-    //             break;
-    //         }
-    //     }
-    // }
-
-    // move invaders
-    // for (auto& e : invaders_)
-    // {
-    //     if (hitEdge)
-    //         e.SetY(e.GetY() + dy);
-    //     else
-    //         e.SetX(e.GetX() + dir_ * dx);
-    // }
 }
 
-void Formation::Draw(SDL_Renderer* renderer) const
+void Formation::Draw() const
 {
     for (auto& col : columns_)
-        col.Draw(renderer);
+        col.Draw();
 }

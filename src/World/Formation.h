@@ -11,7 +11,7 @@ using json = nlohmann::json;
 
 #include "Defs.h"
 #include "FormationColumn.h"
-#include "Util/TextureManager.h"
+#include "Util/Texture.h"
 
 class World; // forward declaration
 
@@ -26,7 +26,7 @@ public:
     bool IsDead() const { return GetNumInvaders() == 0; }
     void Clear();
     void Update(float dt);
-    void Draw(SDL_Renderer* renderer) const;
+    void Draw() const;
 
     std::function<void()> onShoot;
 

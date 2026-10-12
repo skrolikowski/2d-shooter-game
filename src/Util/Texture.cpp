@@ -1,39 +1,87 @@
 #include "Texture.h"
 
-SDL_Renderer* Texture::Renderer = nullptr;
+#include <format>
+#include <fstream>
+#include <nlohmann/json.hpp>
 
-Texture::Texture(const std::string& path)
+bool Texture::LoadSpritesheet(const std::string& path)
 {
-    LoadFromFile(path);
-}
-
-void Texture::LoadFromFile(const std::string& path)
-{
-    path_ = path;
-    texture_.reset(IMG_LoadTexture(Texture::Renderer, path.c_str()));
-    if (!texture_)
+    std::ifstream file(path);
+    if (!file)
     {
-        SDL_Log("Failed to load texture: %s", SDL_GetError());
-        return;
+        SDL_Log("Could not open: %s", path.c_str());
+        return false;
     }
 
-    SDL_GetTextureSize(texture_.get(), &width_, &height_);
+    std::filesystem::path imagePath;
+    // float imageWidth, imageHeight;
+    try
+    {
+        // --
+        json data = json::parse(file); 
+        const json& frameData = data.at("frames");
+        for (const auto& data : frameData)
+        {
+            const std::string& name = data.at("filename").get<std::string>();
+            Frame frame{
+                .name = name,
+                .rect = SDL_FRect{
+                    .x = data.at("frame").at("x").get<float>(),
+                    .y = data.at("frame").at("y").get<float>(),
+                    .w = data.at("frame").at("w").get<float>(),
+                    .h = data.at("frame").at("h").get<float>(),
+                }
+            };
+            Frames.emplace(name, frame);
+        }
+
+        // --
+        const std::string& imageFilename = data.at("meta").at("image").get<std::string>();
+        imagePath = std::filesystem::path(path).parent_path() / imageFilename;
+    }
+    catch (const json::exception& e)
+    {
+        SDL_Log("Error parsing spritesheet: %s", e.what());
+        return false;
+    }
+
+    // --
+    texture.reset(IMG_LoadTexture(Renderer, imagePath.c_str()));
+    if (!texture)
+    {
+        SDL_Log("Failed to load texture: %s", SDL_GetError());
+        return false;
+    }
+
+    return true;
 }
 
 void Texture::UnloadFile()
 {
-    texture_.reset();
+    Frames.clear();
+    texture.reset();
 }
 
-void Texture::Draw(SDL_Renderer* renderer, float x, float y, float scaleX, float scaleY)
+bool Texture::HasFrame(std::string filename)
 {
-    const SDL_FRect dstRect
-    {
-        .x = x,
-        .y = y,
-        .w = width_ * scaleX,
-        .h = height_ * scaleY,
-    };
+    const auto& it = Frames.find(filename);
+    return (it != Frames.end());
+}
 
-    SDL_RenderTexture(renderer, texture_.get(), nullptr, &dstRect);
+const Frame* Texture::GetFrame(std::string filename)
+{
+    const auto& it = Frames.find(filename);
+    if (it == Frames.end())
+    {
+        SDL_Log("Cannot find frame: %s", filename.c_str());
+        return nullptr;
+    }
+    return &it->second;
+}
+
+void Texture::Draw(const Frame* frame, float x, float y, float scaleX, float scaleY)
+{
+    const SDL_FRect& srcRect = frame->rect;
+    SDL_FRect dstRect{ x, y, srcRect.w * scaleX, srcRect.h * scaleY };
+    SDL_RenderTexture(Renderer, texture.get(), &srcRect, &dstRect);
 }

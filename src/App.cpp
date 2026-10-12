@@ -3,6 +3,7 @@
 #include "GameStates/PlayingState.h"
 #include "GameStates/PlayerDyingState.h"
 #include "GameStates/GameOverState.h"
+#include "Util/Texture.h"
 
 void App::Init(const WindowParams& params)
 {
@@ -39,9 +40,9 @@ void App::Init(const WindowParams& params)
     }
 
     // TextureManager..
-    // textureManager_ = std::make_unique<TextureManager>();
     // Texture (set default renderer)..
     Texture::SetDefaultRenderer(renderer_.get());
+    Texture::LoadSpritesheet("res/sprites/entities.json");
 
     // Set Font..
     TTF_Init();
@@ -240,7 +241,8 @@ void App::Quit()
     wavBuffer_.reset();
 
     // Unload loaded textures..
-    TextureManager::Destroy();
+    // TextureManager::Destroy();
+    Texture::UnloadFile();
 
     // Destroy TTF
     playerScoreText_.reset();

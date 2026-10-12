@@ -1,4 +1,5 @@
 #include "Bunker.h"
+#include "Util/Texture.h"
 
 std::optional<SDL_FPoint> Bunker::FindImpact(const SDL_FRect& swept, bool fromBelow) const
 {
@@ -58,9 +59,9 @@ void Bunker::Erode(const SDL_FPoint& point)
     }
 }
 
-void Bunker::Draw(SDL_Renderer* renderer) const
+void Bunker::Draw() const
 {
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(Texture::Renderer, 255, 255, 255, 255);
 
     for (int r = 0; r < NumRows; ++r)
     {
@@ -69,7 +70,7 @@ void Bunker::Draw(SDL_Renderer* renderer) const
             if (cells_[r][c])
             {
                 SDL_FRect rect{ pos_.x + c, pos_.y + r, 1, 1 };
-                SDL_RenderFillRect(renderer, &rect);
+                SDL_RenderFillRect(Texture::Renderer, &rect);
             }
         }
     }
