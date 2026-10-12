@@ -1,3 +1,5 @@
+#pragma once
+
 #include <SDL3/SDL.h>
 
 #include <vector>
@@ -6,10 +8,10 @@
 #include "World/Entity.h"
 #include "Util/Vector2.tpp"
 
-struct InvaderKilled { const Vector2<float>& pos; InvaderType type; };
+struct InvaderKilled { Vector2<float> pos; InvaderType type; };
 struct PlayerHit {};
 struct WaveCleared {};
-struct ShotFired { const Vector2<float>& pos; bool isPlayerFire = false; };
+struct ShotFired { Vector2<float> pos; bool isPlayerFire = false; };
 // --
 using Event = std::variant<InvaderKilled, PlayerHit, WaveCleared, ShotFired>;
 

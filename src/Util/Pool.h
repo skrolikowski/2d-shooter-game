@@ -1,6 +1,14 @@
 #ifndef POOL_H
 #define POOL_H
 
+/**
+ * One thing to watch: (Regarding EventListener / EventBus)
+ * ----
+ * If you ever subscribe from pooled objects (bullets, invaders in your Pool),
+ * they're reused rather than destroyed, so their Subscriptions never fire.
+ * You'd need to clear the subscriptions when an object goes back to the pool.
+ */
+
 #include <array>
 #include <cstddef>
 

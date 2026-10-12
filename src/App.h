@@ -13,7 +13,8 @@ using json = nlohmann::json;
 #include "GameStates/GameState.h"
 #include "Util/SDLPtr.h"
 #include "Util/Input.h"
-#include "Util/EventQueue.h"
+#include "Util/EventBus.h"
+#include "Util/EventListener.h"
 #include "Util/Utility.h"
 #include "World/World.h"
 #include "World/Player.h"
@@ -37,7 +38,7 @@ struct WindowParams
     bool isFullscreen = false;
 };
 
-class App
+class App : public EventListener
 {
     friend class TitleState;
     friend class PlayingState;
@@ -95,7 +96,6 @@ private:
     TTF_TextEnginePtr fontEngine_;
 
     std::unique_ptr<World> world_;
-    std::unique_ptr<EventQueue> eventQueue_;
 
     void handlePlayerHit();
     void handleBulletShoot(const Vector2<float> pos, bool isPlayerFire = false);

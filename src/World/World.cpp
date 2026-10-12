@@ -1,6 +1,6 @@
 #include "World.h"
 #include "Player.h"
-#include "Util/EventQueue.h"
+#include "Util/EventBus.h"
 
 World::World()
 {
@@ -128,7 +128,7 @@ void World::Update(float dt)
     if (player_ && formation_)
     {
         if (formation_->TryHit(player_->GetRect()))
-            EventQueue::GetInstance().Push(PlayerHit{});
+            EventBus::GetInstance().Push(PlayerHit{});
     }
 
     // Check Player Bullet / Formation..
@@ -145,11 +145,11 @@ void World::Update(float dt)
 
                 if (invader->IsDead())
                 {
-                    EventQueue::GetInstance().Push(InvaderKilled{invader->GetPosition(), invader->GetType()});
+                    EventBus::GetInstance().Push(InvaderKilled{invader->GetPosition(), invader->GetType()});
                     
                     if (formation_->IsDead())
                     {
-                        EventQueue::GetInstance().Push(WaveCleared{});
+                        EventBus::GetInstance().Push(WaveCleared{});
                     }
                 }
             }
@@ -168,7 +168,7 @@ void World::Update(float dt)
             {
                 bullet.Damage(1); // Warning: bullets may die
 
-                EventQueue::GetInstance().Push(PlayerHit{});
+                EventBus::GetInstance().Push(PlayerHit{});
             }
         });
     }

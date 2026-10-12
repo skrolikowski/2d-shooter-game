@@ -80,8 +80,11 @@ void App::Init(const WindowParams& params)
     // Create World..
     world_ = std::make_unique<World>();
 
-    // Create EventQueue..
-    eventQueue_ = std::make_unique<EventQueue>();
+    // Subscribe to Event Bus..
+    Listen<InvaderKilled>([this](const InvaderKilled& e){ handleInvaderKill(e.pos, e.type); });
+    Listen<PlayerHit>([this](const PlayerHit& e){ handlePlayerHit(); });
+    Listen<WaveCleared>([this](const WaveCleared& e){ handleFormationKill(); });
+    Listen<ShotFired>([this](const ShotFired& e){ handleBulletShoot(e.pos, e.isPlayerFire); });
 
     // --
     // Load level data..
@@ -181,17 +184,8 @@ void App::Update(float dt)
             break;
     }
 
-    // Handle queue event requests..
-    EventQueue::GetInstance().Dispatch([&](const Event& e)
-    {
-        std::visit(overloaded
-        {
-            [&](const InvaderKilled& k) { handleInvaderKill(k.pos, k.type); },
-            [&](const PlayerHit& h) { handlePlayerHit(); },
-            [&](const WaveCleared& w) { handleFormationKill(); },
-            [&](const ShotFired& f) { handleBulletShoot(f.pos, f.isPlayerFire); }
-        }, e);
-    });
+    // Handle Event Bus..
+    EventBus::GetInstance().Dispatch();
 
     // Handle State update..
     if (state_ != nullptr)
@@ -237,7 +231,10 @@ void App::Draw()
 void App::Quit()
 {
     if (world_ != nullptr)
+    {
         world_->Clear();
+        world_.reset();
+    }
 
     if (state_ != nullptr)
     {

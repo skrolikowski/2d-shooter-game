@@ -1,6 +1,6 @@
 #include "Formation.h"
 #include "World.h"
-#include "Util/EventQueue.h"
+#include "Util/EventBus.h"
 
 #include <nlohmann/json.hpp>
 
@@ -91,7 +91,7 @@ void Formation::Update(float dt)
             Vector2 bPos = Vector2{ bx, by };
             
             if (world_->SpawnInvaderBullet(bPos))
-                EventQueue::GetInstance().Push(ShotFired{ bPos , false });
+                EventBus::GetInstance().Push(ShotFired{ bPos , false });
         }
         
         // Reset timer..
