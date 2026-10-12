@@ -85,7 +85,13 @@ private:
 template <typename T, typename F>
 Subscription EventBus::Subscribe(F&& fn)
 {
-    // checks whether a type T can be constructed with a given set of argument types
+    /**
+     * Dev Notes:
+     * 
+     * std::is_constructible_v<Event, T> asks: "can I make an Event from a T?"
+     * Event is your std::variant<InvaderKilled, PlayerHit, WaveCleared, ShotFired>,
+     * so in practice it asks whether T is one of those four types.
+     */
     static_assert(std::is_constructible_v<Event, T>, "T is not an Event type");
 
     Token id = nextId_++;
