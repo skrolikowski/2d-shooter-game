@@ -10,12 +10,12 @@
 using json = nlohmann::json;
 
 #include "Defs.h"
+#include "Input/Input.h"
 #include "GameStates/GameState.h"
-#include "Util/SDLPtr.h"
-#include "Util/Input.h"
 #include "Event/EventBus.h"
 #include "Event/EventListener.h"
 #include "Util/Utility.h"
+#include "Util/SDLPtr.h"
 #include "World/World.h"
 #include "World/Player.h"
 

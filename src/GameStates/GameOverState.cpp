@@ -15,9 +15,9 @@ void GameOverState::Enter()
 
 void GameOverState::HandleInput()
 {
-    if (Input::IsPressed(SDL_SCANCODE_ESCAPE))
+    if (Input::IsPressed(Action::Back))
         app_->isRunning_ = false;   
-    else if (Input::IsPressed(SDL_SCANCODE_RETURN))
+    else if (Input::IsPressed(Action::Confirm))
         app_->SetPendingState(GameStateID::Title);
 }
 

@@ -7,7 +7,7 @@
 
 void App::Init(const WindowParams& params)
 {
-    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
+    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMEPAD))
     {
         SDL_Log("SDL_Init failed: %s", SDL_GetError());
         return;
@@ -112,15 +112,12 @@ void App::Init(const WindowParams& params)
 
 void App::MainLoop()
 {
-    Input::Init();
-
     Uint64 prevTick = SDL_GetTicksNS();
     double accumulator = 0.0;
     isRunning_ = true;
 
     while (isRunning_)
     {
-        Input::Update();
         HandleInput();
 
         // dt
@@ -148,6 +145,13 @@ void App::HandleInput()
     {
         switch(e.type)
         {
+            case SDL_EVENT_GAMEPAD_ADDED:
+                // Called on SDL_Init() or when Gamepad added..
+                Input::OnGamepadAdded(e.gdevice.which);
+                break;
+            case SDL_EVENT_GAMEPAD_REMOVED:
+                Input::OnGamepadRemoved(e.gdevice.which);
+                break;
             case SDL_EVENT_QUIT:
                 isRunning_ = false;
                 break;
@@ -156,6 +160,9 @@ void App::HandleInput()
                 break;
         }
     }
+
+    // Poll input..
+    Input::Update();
 
     // Handle World input..
     switch (stateID_)

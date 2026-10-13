@@ -10,5 +10,7 @@
 #define BUNKER_WIDTH    64
 #define BUNKER_HEIGHT   16
 #define BUNKER_BLAST_RADIUS 16
+#define MOTION_EVENT_COOLDOWN 40
+#define AXIS_DEADZONE   8000    // axis range is -32768..32767
 
 #endif // DEFS_H

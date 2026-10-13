@@ -1,6 +1,8 @@
 #include "Player.h"
 #include "World.h"
-#include "Event/EventBus.h"
+#include "Event/Event.h"        // ShotFired
+#include "Event/EventBus.h"     // EventBus::GetInstance().Push
+#include "Input/Input.h"        // Action::Left, etc..
 
 Player::Player()
 {
@@ -12,13 +14,13 @@ void Player::HandleInput()
 {
     // Direction controls..
     dir_.Reset();
-    if (Input::IsDown(SDL_SCANCODE_A) || Input::IsDown(SDL_SCANCODE_LEFT))
+    if (Input::IsDown(Action::Left))
         dir_.x -= 1;
-    if (Input::IsDown(SDL_SCANCODE_D) || Input::IsDown(SDL_SCANCODE_RIGHT))
+    if (Input::IsDown(Action::Right))
         dir_.x += 1;
 
     // Shooting..
-    if (Input::IsDown(SDL_SCANCODE_SPACE) && !isShooting)
+    if (Input::IsDown(Action::Fire) && !isShooting)
     {
         isShooting = true;
         shootTimer = 0.f;

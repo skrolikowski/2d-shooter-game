@@ -17,5 +17,6 @@ using TTF_TextEnginePtr = std::unique_ptr<TTF_TextEngine, Deleter<TTF_DestroyRen
 using SDL_AudioStreamPtr = std::unique_ptr<SDL_AudioStream, Deleter<SDL_DestroyAudioStream>>;
 using SDL_TexturePtr = std::unique_ptr<SDL_Texture, Deleter<SDL_DestroyTexture>>;
 using SDL_WaveBufferPtr = std::unique_ptr<Uint8, Deleter<SDL_free>>;
+using SDL_GamepadPtr = std::unique_ptr<SDL_Gamepad, Deleter<SDL_CloseGamepad>>;
 
 #endif // SDLPTR_H

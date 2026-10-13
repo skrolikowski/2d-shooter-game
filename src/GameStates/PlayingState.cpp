@@ -21,7 +21,7 @@ void PlayingState::Update(float dt)
 
 void PlayingState::HandleInput()
 {
-    if (Input::IsPressed(SDL_SCANCODE_ESCAPE))
+    if (Input::IsPressed(Action::Back))
         app_->SetPendingState(GameStateID::Title);
 }
 

@@ -54,7 +54,7 @@ add_library(src STATIC
   src/App.cpp
   src/Event/EventBus.cpp
   src/Event/Subscription.cpp
-  src/Util/Input.cpp
+  src/Input/Input.cpp
   src/Util/Texture.cpp
   src/World/World.cpp
   src/World/Bunker.cpp
