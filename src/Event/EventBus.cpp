@@ -1,6 +1,6 @@
 #include "EventBus.h"
 
-void EventBus::Unsubscribe(Token id)
+void EventBus::Unsubscribe(Subscription::Token id)
 {
     for (auto& [type, list] : subs_)
         for (auto& s : list)
@@ -36,7 +36,7 @@ void EventBus::Dispatch()
     processing_.clear();
     
     // Remove unsubscribed..
-    for (Token id : removed_)
+    for (Subscription::Token id : removed_)
         for (auto& [type, list] : subs_)
             std::erase_if(list, [id](const Sub& s) { return s.id == id; });
     removed_.clear();

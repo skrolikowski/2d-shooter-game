@@ -52,9 +52,10 @@ FetchContent_MakeAvailable(SDL3 SDL3_image SDL3_ttf nlohmann_json)
 # manually..
 add_library(src STATIC
   src/App.cpp
+  src/Event/EventBus.cpp
+  src/Event/Subscription.cpp
   src/Util/Input.cpp
   src/Util/Texture.cpp
-  src/Util/EventBus.cpp
   src/World/World.cpp
   src/World/Bunker.cpp
   src/World/FormationColumn.cpp

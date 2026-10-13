@@ -1,6 +1,6 @@
 #include "World.h"
 #include "Player.h"
-#include "Util/EventBus.h"
+#include "Event/EventBus.h"
 
 World::World()
 {

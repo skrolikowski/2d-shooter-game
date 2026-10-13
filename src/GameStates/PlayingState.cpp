@@ -14,8 +14,8 @@ void PlayingState::Update(float dt)
     waveTextTimer_ += dt;
     if (waveTextTimer_ >= waveTextInterval_)
     {
-        levelText_.release();
-        waveText_.release();
+        levelText_.reset();
+        waveText_.reset();
     }
 }
 

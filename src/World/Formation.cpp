@@ -1,6 +1,6 @@
 #include "Formation.h"
 #include "World.h"
-#include "Util/EventBus.h"
+#include "Event/EventBus.h"
 
 #include <nlohmann/json.hpp>
 
@@ -95,7 +95,7 @@ void Formation::Update(float dt)
         }
         
         // Reset timer..
-        std::uniform_real_distribution<float> delay(1.f, 1.5f);
+        std::uniform_real_distribution<float> delay(bulletTimerRange_[0], bulletTimerRange_[1]);
         bulletTimer_ = delay(rng_);
     }
 
