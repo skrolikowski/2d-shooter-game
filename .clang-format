@@ -8,3 +8,4 @@ AllowShortFunctionsOnASingleLine: Inline
 # AllowShortIfStatementsOnASingleLine: Never
 AllowShortLoopsOnASingleLine: false
 Cpp11BracedListStyle: false
+AlignAfterOpenBracket: DontAlign

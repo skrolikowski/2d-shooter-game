@@ -1,5 +1,6 @@
 #include "FormationColumn.h"
 
+#include <algorithm>
 #include <nlohmann/json.hpp>
 
 FormationColumn::FormationColumn(Vector2<float> pos, const json &data)
@@ -38,12 +39,12 @@ FormationColumn::FormationColumn(Vector2<float> pos, const json &data)
 
 const Entity *FormationColumn::GetLowestInvader() const
 {
-    auto it = std::ranges::find_if(invaders_.rbegin(), invaders_.rend(),
-                                   [](const Entity &inv) { return !inv.IsDead(); });
+    auto it = std::ranges::find_if(
+        invaders_.rbegin(), invaders_.rend(), [](const Entity &inv) { return !inv.IsDead(); });
     if (it != invaders_.rend())
     {
-        auto index = std::distance(it, invaders_.rend()) - 1;
-        return &invaders_[index];
+        const auto index = std::distance(it, invaders_.rend()) - 1;
+        return &invaders_[static_cast<unsigned long>(index)];
     }
 
     return nullptr;
@@ -73,12 +74,12 @@ void FormationColumn::Clear()
 
 int FormationColumn::Size() const
 {
-    return std::ranges::count_if(invaders_, [](auto &e) { return !e.IsDead(); });
+    return static_cast<int>(std::ranges::count_if(invaders_, [](auto &e) { return !e.IsDead(); }));
 }
 
 void FormationColumn::Draw() const
 {
-    for (auto &inv : invaders_)
+    for (const auto &inv : invaders_)
     {
         if (inv.IsDead())
             continue;
@@ -88,19 +89,15 @@ void FormationColumn::Draw() const
 
 bool FormationColumn::CheckForStepFormationHit(float dx) const
 {
-    for (const auto &inv : invaders_)
-    {
-        if (inv.IsDead())
-            continue;
-
-        float nextX = inv.GetX() + dir_ * dx;
-        if (nextX < dx || nextX + inv.GetWidth() > SCREEN_WIDTH - dx)
+    return std::ranges::any_of(invaders_,
+        [&](const auto &inv)
         {
-            return true;
-        }
-    }
-
-    return false;
+            if (inv.IsDead())
+                return false;
+            // --
+            float nextX = inv.GetX() + (static_cast<float>(dir_) * dx);
+            return (nextX < dx || nextX + inv.GetWidth() > SCREEN_WIDTH - dx);
+        });
 }
 
 void FormationColumn::StepFormation(float dx, float dy, bool hitDetected)
@@ -116,6 +113,6 @@ void FormationColumn::StepFormation(float dx, float dy, bool hitDetected)
         if (hitDetected)
             inv.SetY(inv.GetY() + dy);
         else
-            inv.SetX(inv.GetX() + dir_ * dx);
+            inv.SetX(inv.GetX() + (static_cast<float>(dir_) * dx));
     }
 }
