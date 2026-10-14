@@ -9,7 +9,7 @@ Camera::Camera()
 
 void Camera::Update(float dt)
 {
-    if (trauma_ <= 0.f)
+    if (trauma_ <= 0.F)
         return;
 
     trauma_ = std::max(0.F, trauma_ - (dt * 1.5F));

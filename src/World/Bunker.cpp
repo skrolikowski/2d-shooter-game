@@ -27,15 +27,21 @@ std::optional<SDL_FPoint> Bunker::FindImpact(const SDL_FRect &swept, bool fromBe
     {
         for (int row = r1 - 1; row >= r0; --row) // search bottom → top
             for (int col = c0; col < c1; ++col)
-                if (cells_[row][col])
-                    return SDL_FPoint{ pos_.x + col, pos_.y + row };
+                if (cells_[static_cast<unsigned long>(row)][static_cast<unsigned long>(col)])
+                    return SDL_FPoint{
+                        pos_.x + static_cast<float>(col),
+                        pos_.y + static_cast<float>(row),
+                    };
     }
     else
     {
         for (int row = r0; row < r1; ++row) // search top → bottom
             for (int col = c0; col < c1; ++col)
-                if (cells_[row][col])
-                    return SDL_FPoint{ pos_.x + col, pos_.y + row };
+                if (cells_[static_cast<unsigned long>(row)][static_cast<unsigned long>(col)])
+                    return SDL_FPoint{
+                        pos_.x + static_cast<float>(col),
+                        pos_.y + static_cast<float>(row),
+                    };
     }
 
     return std::nullopt;
@@ -58,7 +64,7 @@ void Bunker::Erode(const SDL_FPoint &point)
             int dr = row - static_cast<int>(cy);
             int dc = col - static_cast<int>(cx);
             if ((dr * dr) + (dc * dc) <= radius * radius)
-                cells_[row][col] = false;
+                cells_[static_cast<unsigned long>(row)][static_cast<unsigned long>(col)] = false;
         }
     }
 }

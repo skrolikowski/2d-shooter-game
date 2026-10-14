@@ -368,14 +368,14 @@ void App::handlePlayerHit()
         SetPendingState(GameStateID::PlayerDying);
 }
 
-void App::handleInvaderKill(Vector2<float> pos, InvaderType type)
+void App::handleInvaderKill(Vector2<float> /*pos*/, InvaderType /*type*/)
 {
     // audio_.play(Sfx::Explode);
     playerScore_ += 1;
     RefreshHud();
 }
 
-void App::handleBulletShoot(Vector2<float> pos, bool isPlayerFire)
+void App::handleBulletShoot(Vector2<float> /*pos*/, bool /*isPlayerFire*/)
 {
     SDL_PutAudioStreamData(audioStream_.get(), wavBuffer_.get(), static_cast<int>(wavLength_));
 }
