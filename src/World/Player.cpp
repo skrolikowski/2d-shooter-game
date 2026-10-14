@@ -1,13 +1,13 @@
 #include "Player.h"
+#include "Event/Event.h"    // ShotFired
+#include "Event/EventBus.h" // EventBus::GetInstance().Push
+#include "Input/Input.h"    // Action::Left, etc..
 #include "World.h"
-#include "Event/Event.h"        // ShotFired
-#include "Event/EventBus.h"     // EventBus::GetInstance().Push
-#include "Input/Input.h"        // Action::Left, etc..
 
 Player::Player()
 {
     textureName_ = "playerShip2_red.png";
-    speed_ = 250.f;
+    speed_ = 250.F;
 }
 
 void Player::HandleInput()
@@ -23,7 +23,7 @@ void Player::HandleInput()
     if (Input::IsDown(Action::Fire) && !isShooting)
     {
         isShooting = true;
-        shootTimer = 0.f;
+        shootTimer = 0.F;
     }
 }
 
@@ -34,14 +34,19 @@ void Player::Update(float dt)
     // shoot timer / bullets..
     if (isShooting)
     {
-        if (shootTimer == 0.f)
+        if (shootTimer == 0.F)
         {
-            float bx = pos_.x + GetWidth() * 0.5;
+            float bx = pos_.x + (GetWidth() * 0.5F);
             float by = pos_.y;
             Vector2 bPos = Vector2{ bx, by };
-            
+
             if (world_->SpawnPlayerBullet(bPos))
-                EventBus::GetInstance().Push(ShotFired{ bPos , true });
+            {
+                ShotFired ev;
+                ev.pos = bPos;
+                ev.isPlayerFire = true;
+                EventBus::GetInstance().Push(ev);
+            }
         }
 
         // --
@@ -51,6 +56,5 @@ void Player::Update(float dt)
     }
 
     // clamp to screen
-    pos_.x = std::clamp(pos_.x, 0.f, SCREEN_WIDTH - GetWidth());
+    pos_.x = std::clamp(pos_.x, 0.F, SCREEN_WIDTH - GetWidth());
 }
-

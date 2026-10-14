@@ -12,9 +12,9 @@ void Entity::Update(float dt)
     vel_ = dir_ * speed_ * dt;
     pos_ += vel_;
 
-    //TODO: check collision
-    
-    //TODO: check if out of bounds
+    // TODO: check collision
+
+    // TODO: check if out of bounds
     float w = GetWidth();
     float h = GetHeight();
     if (pos_.x + w < 0 || pos_.x > SCREEN_WIDTH || pos_.y + h < 0 || pos_.y > SCREEN_HEIGHT)
@@ -25,8 +25,8 @@ void Entity::Draw() const
 {
     if (!textureName_.empty())
     {
-        const Frame* frame = Texture::GetFrame(textureName_);
-        if (frame)
+        const Frame *frame = Texture::GetFrame(textureName_);
+        if (frame != nullptr)
         {
             float sx = width_ / frame->rect.w;
             float sy = height_ / frame->rect.h;

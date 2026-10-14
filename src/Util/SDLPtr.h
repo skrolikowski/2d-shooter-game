@@ -6,10 +6,12 @@
 
 #include <memory>
 
-template <auto Fn>
-struct Deleter { template <typename T> void operator()(T* p) const { Fn(p); } };
+template <auto Fn> struct Deleter
+{
+    template <typename T> void operator()(T *p) const { Fn(p); }
+};
 
-using WindowPtr = std::unique_ptr<SDL_Window,   Deleter<SDL_DestroyWindow>>;
+using WindowPtr = std::unique_ptr<SDL_Window, Deleter<SDL_DestroyWindow>>;
 using RendererPtr = std::unique_ptr<SDL_Renderer, Deleter<SDL_DestroyRenderer>>;
 using TTF_TextPtr = std::unique_ptr<TTF_Text, Deleter<TTF_DestroyText>>;
 using TTF_FontPtr = std::unique_ptr<TTF_Font, Deleter<TTF_CloseFont>>;

@@ -6,8 +6,6 @@
 #include <nlohmann/json_fwd.hpp>
 using json = nlohmann::json;
 
-#include <optional>
-#include <memory>
 #include <string>
 #include <unordered_map>
 
@@ -21,18 +19,21 @@ struct Frame
 
 class Texture
 {
-public:
-    static void Draw(const Frame* frame,  float x, float y, float scaleX = 1.f, float scaleY = 1.f);
-    static const Frame* GetFrame(std::string filename);
-    static bool LoadSpritesheet(const std::string& path);
-    static void SetDefaultRenderer(SDL_Renderer* defaultRenderer)
-        { Renderer = defaultRenderer; }
+  public:
+    static void Draw(const Frame *frame, float x, float y, float scaleX = 1.F,
+                     float scaleY = 1.F);
+    static const Frame *GetFrame(const std::string &filename);
+    static bool LoadSpritesheet(const std::string &path);
+    static void SetDefaultRenderer(SDL_Renderer *defaultRenderer)
+    {
+        Renderer = defaultRenderer;
+    }
     static void UnloadFile();
-    static bool HasFrame(std::string filename);
+    static bool HasFrame(const std::string &filename);
 
-    inline static SDL_Renderer* Renderer = nullptr;
+    inline static SDL_Renderer *Renderer = nullptr;
 
-private:
+  private:
     inline static std::unordered_map<std::string, Frame> Frames;
     inline static SDL_TexturePtr texture;
 };

@@ -2,18 +2,19 @@
 #define GAMEOVERSTATE_H
 
 #include "GameState.h"
+#include "Util/SDLPtr.h"
 
 class GameOverState : public GameState
 {
-public:
+  public:
     using GameState::GameState;
     ~GameOverState() {}
 
     void Enter() override;
     void HandleInput() override;
-    void Draw(SDL_Renderer* renderer) const override;
+    void Draw(SDL_Renderer *renderer) const override;
 
-private:
+  private:
     TTF_TextPtr titleText_;
     TTF_TextPtr subtitleText_;
 };

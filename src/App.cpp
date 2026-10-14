@@ -1,11 +1,15 @@
-#include "App.h"
-#include "GameStates/TitleState.h"
-#include "GameStates/PlayingState.h"
-#include "GameStates/PlayerDyingState.h"
-#include "GameStates/GameOverState.h"
-#include "Util/Texture.h"
+#include <fstream>
 
-void App::Init(const WindowParams& params)
+#include "App.h"
+#include "GameStates/GameOverState.h"
+#include "GameStates/PlayerDyingState.h"
+#include "GameStates/PlayingState.h"
+#include "GameStates/TitleState.h"
+#include "Input/Input.h"
+#include "Util/Texture.h"
+#include "Util/Utility.h"
+
+void App::Init(const WindowParams &params)
 {
     if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMEPAD))
     {
@@ -19,7 +23,8 @@ void App::Init(const WindowParams& params)
     SDL_SetNumberProperty(winProps, SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, params.width);
     SDL_SetNumberProperty(winProps, SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, params.height);
     SDL_SetBooleanProperty(winProps, SDL_PROP_WINDOW_CREATE_RESIZABLE_BOOLEAN, params.isResizeable);
-    SDL_SetBooleanProperty(winProps, SDL_PROP_WINDOW_CREATE_FULLSCREEN_BOOLEAN, params.isFullscreen);
+    SDL_SetBooleanProperty(winProps, SDL_PROP_WINDOW_CREATE_FULLSCREEN_BOOLEAN,
+                           params.isFullscreen);
     window_.reset(SDL_CreateWindowWithProperties(winProps));
     SDL_DestroyProperties(winProps);
     if (!window_)
@@ -46,11 +51,11 @@ void App::Init(const WindowParams& params)
 
     // Set Font..
     TTF_Init();
-    fontH1_.reset(TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 24.0f));
-    fontH2_.reset(TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 16.0f));
-    fontH3_.reset(TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 8.0f));
+    fontH1_.reset(TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 24.0F));
+    fontH2_.reset(TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 16.0F));
+    fontH3_.reset(TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 8.0F));
     fontEngine_.reset(TTF_CreateRendererTextEngine(renderer_.get()));
-    
+
     // --
     playerScoreText_.reset(TTF_CreateText(fontEngine_.get(), fontH3_.get(), "SCORE 0000", 0));
     TTF_SetTextColor(playerScoreText_.get(), 255, 255, 255, 255);
@@ -59,7 +64,7 @@ void App::Init(const WindowParams& params)
 
     // Audio..
     SDL_AudioSpec spec;
-    Uint8* buf = nullptr;
+    Uint8 *buf = nullptr;
     if (!SDL_LoadWAV("res/audio/laserShoot.wav", &spec, &buf, &wavLength_))
     {
         SDL_Log("SDL_LoadWAV failed: %s", SDL_GetError());
@@ -67,7 +72,8 @@ void App::Init(const WindowParams& params)
     }
     wavBuffer_.reset(buf);
 
-    audioStream_.reset(SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec, NULL, NULL));
+    audioStream_.reset(
+        SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec, NULL, NULL));
     if (!audioStream_)
     {
         SDL_Log("SDL_OpenAudioDeviceStream failed: %s", SDL_GetError());
@@ -80,16 +86,19 @@ void App::Init(const WindowParams& params)
     // Create World..
     world_ = std::make_unique<World>();
 
+    // Create Camera..
+    camera_ = std::make_unique<Camera>();
+
     // Subscribe to Event Bus..
-    Listen<InvaderKilled>([this](const InvaderKilled& e){ handleInvaderKill(e.pos, e.type); });
-    Listen<PlayerHit>([this](const PlayerHit& e){ handlePlayerHit(); });
-    Listen<WaveCleared>([this](const WaveCleared& e){ handleFormationKill(); });
-    Listen<ShotFired>([this](const ShotFired& e){ handleBulletShoot(e.pos, e.isPlayerFire); });
+    Listen<InvaderKilled>([this](const InvaderKilled &e) { handleInvaderKill(e.pos, e.type); });
+    Listen<PlayerHit>([this](const PlayerHit &) { handlePlayerHit(); });
+    Listen<WaveCleared>([this](const WaveCleared &) { handleFormationKill(); });
+    Listen<ShotFired>([this](const ShotFired &e) { handleBulletShoot(e.pos, e.isPlayerFire); });
 
     // --
     // Load level data..
-    std::ifstream f("res/levels.json");
-    if (!f)
+    std::ifstream file("res/levels.json");
+    if (!file)
     {
         SDL_Log("Could not open res/levels.json");
         Quit();
@@ -98,9 +107,9 @@ void App::Init(const WindowParams& params)
 
     try
     {
-        levelData_ = json::parse(f).at("levels");
+        levelData_ = json::parse(file).at("levels");
     }
-    catch (const json::exception& e)
+    catch (const json::exception &e)
     {
         SDL_Log("levels.json: %s", e.what());
     }
@@ -122,9 +131,9 @@ void App::MainLoop()
 
         // dt
         Uint64 nextTick = SDL_GetTicksNS();
-        double frame = (nextTick - prevTick) / 1e9;
+        double frame = static_cast<double>(nextTick - prevTick) / 1e9;
         prevTick = nextTick;
-        frame = std::min(frame, 0.25);  // avoid "spiral of death"
+        frame = std::min(frame, 0.25); // avoid "spiral of death"
         accumulator += frame;
 
         while (accumulator >= FRAME_STEP)
@@ -142,7 +151,7 @@ void App::HandleInput()
     SDL_Event e;
     while (SDL_PollEvent(&e))
     {
-        switch(e.type)
+        switch (e.type)
         {
             case SDL_EVENT_GAMEPAD_ADDED:
                 // Called on SDL_Init() or when Gamepad added..
@@ -154,8 +163,10 @@ void App::HandleInput()
             case SDL_EVENT_QUIT:
                 isRunning_ = false;
                 break;
-            case SDL_EVENT_WINDOW_RESIZED:
-                // SDL_GetWindowSize(window, &camera.mWidth, &camera.mHeight);
+            // case SDL_EVENT_WINDOW_RESIZED:
+            //     SDL_GetWindowSize(window, &camera.mWidth, &camera.mHeight);
+            //     break;
+            default:
                 break;
         }
     }
@@ -180,6 +191,9 @@ void App::HandleInput()
 
 void App::Update(float dt)
 {
+
+    camera_->Update(dt);
+
     // Handle World update..
     switch (stateID_)
     {
@@ -212,15 +226,24 @@ void App::Draw()
     // --
 
     // Draw Score or High Score..
-    DrawText(playerScoreText_.get(), 16.f, 16.f, TextAlign::Left);
-    DrawText(playerLivesText_.get(), SCREEN_WIDTH - 16.f, 16.f, TextAlign::Right);
+    DrawText(playerScoreText_.get(), 16.F, 16.F, TextAlign::Left);
+    DrawText(playerLivesText_.get(), SCREEN_WIDTH - 16.F, 16.F, TextAlign::Right);
+
+    // Set Render Viewport (Camera Shake)
+    SDL_FRect rect{
+        Camera::Offset.x,
+        Camera::Offset.y,
+        SCREEN_WIDTH,
+        SCREEN_HEIGHT,
+    };
+    SDL_SetRenderViewportFloat(renderer_.get(), &rect);
 
     // Handle World draw..
     switch (stateID_)
     {
         case GameStateID::Playing:
         case GameStateID::PlayerDying:
-            world_->Draw(renderer_.get());
+            world_->Draw();
             break;
         default:
             break;
@@ -229,6 +252,15 @@ void App::Draw()
     // Handle State draw..
     if (state_ != nullptr)
         state_->Draw(renderer_.get());
+
+    // Reset Render Viewport
+    // SDL_FRect origRect{
+    //     0.F,
+    //     0.F,
+    //     SCREEN_WIDTH,
+    //     SCREEN_HEIGHT,
+    // };
+    // SDL_SetRenderViewportFloat(renderer_.get(), &origRect);
 
     // --
     SDL_RenderPresent(renderer_.get());
@@ -269,18 +301,17 @@ void App::Quit()
     SDL_Quit();
 }
 
-
-int App::GetNumLevels() const
+unsigned long App::GetNumLevels() const
 {
     return levelData_.size();
 }
 
-int App::GetNumWaves() const
+unsigned long App::GetNumWaves() const
 {
     return levelData_.at(level_).at("waves").size();
 }
 
-const json& App::GetLevelData() const
+const json &App::GetLevelData() const
 {
     return levelData_.at(level_).at("waves").at(levelWave_);
 }
@@ -293,7 +324,7 @@ void App::changeState(GameStateID stateID)
         state_ = nullptr;
     }
 
-    switch(stateID)
+    switch (stateID)
     {
         case GameStateID::Title:
             state_ = std::make_unique<TitleState>(this);
@@ -330,21 +361,21 @@ void App::handlePlayerHit()
 {
     playerLives_ -= 1;
     RefreshHud();
-    
+
     if (playerLives_ == 0)
         SetPendingState(GameStateID::GameOver);
     else
         SetPendingState(GameStateID::PlayerDying);
 }
 
-void App::handleInvaderKill(const Vector2<float> pos, InvaderType type)
+void App::handleInvaderKill(Vector2<float> pos, InvaderType type)
 {
     // audio_.play(Sfx::Explode);
     playerScore_ += 1;
     RefreshHud();
 }
 
-void App::handleBulletShoot(const Vector2<float> pos, bool isPlayerFire)
+void App::handleBulletShoot(Vector2<float> pos, bool isPlayerFire)
 {
     SDL_PutAudioStreamData(audioStream_.get(), wavBuffer_.get(), static_cast<int>(wavLength_));
 }
@@ -358,8 +389,9 @@ void App::handleFormationKill()
         ++levelWave_;
         if (stateID_ == GameStateID::Playing)
         {
-            PlayingState* state = dynamic_cast<PlayingState*>(state_.get());
-            if (state) state->StartNewWave();
+            auto *state = dynamic_cast<PlayingState *>(state_.get());
+            if (state != nullptr)
+                state->StartNewWave();
         }
         else
             changeState(GameStateID::Playing);

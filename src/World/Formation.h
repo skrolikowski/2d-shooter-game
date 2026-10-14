@@ -1,15 +1,13 @@
 #ifndef FORMATION_H
 #define FORMATION_H
 
-#include <cassert>
 #include <array>
+#include <cassert>
+#include <nlohmann/json_fwd.hpp>
 #include <random>
 #include <vector>
-#include <numeric>
-#include <nlohmann/json_fwd.hpp>
 using json = nlohmann::json;
 
-#include "Defs.h"
 #include "Entity.h"
 #include "FormationColumn.h"
 #include "Util/Texture.h"
@@ -18,30 +16,29 @@ class World; // forward declaration
 
 class Formation
 {
-public:
-    void CreateWave(const json& data);
-    void SetWorld(World* world) { world_ = world; }
+  public:
+    void CreateWave(const json &data);
+    void SetWorld(World *world) { world_ = world; }
     int GetNumInvaders() const;
-    Entity* TryHit(const SDL_FRect& rect);
+    Entity *TryHit(const SDL_FRect &rect);
     void StepFormation();
     bool IsDead() const { return GetNumInvaders() == 0; }
     void Clear();
     void Update(float dt);
     void Draw() const;
 
-private:
-    World* world_ = nullptr;
+  private:
+    World *world_ = nullptr;
     std::vector<FormationColumn> columns_;
 
-    std::mt19937 rng_{ std::random_device{}() }; 
+    std::mt19937 rng_{ std::random_device{}() };
     int numInvadersInit_ = 0;
-    float stepTimer_ = 0.f;
-    float stepInterval_ = 0.f;
-    float baseStepInterval_ = 0.f;
+    float stepTimer_ = 0.F;
+    float stepInterval_ = 0.F;
+    float baseStepInterval_ = 0.F;
 
-    float bulletTimer_ = 0.f;
-    std::array<float, 2> bulletTimerRange_ = { 1.f, 1.5f };
-
+    float bulletTimer_ = 0.F;
+    std::array<float, 2> bulletTimerRange_ = { 1.F, 1.5F };
 };
 
 #endif // FORMATION_H

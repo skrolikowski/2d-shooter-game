@@ -3,6 +3,6 @@
 
 Subscription::~Subscription()
 {
-    if (id_)
+    if (id_ > 0)
         EventBus::GetInstance().Unsubscribe(id_);
 }

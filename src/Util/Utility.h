@@ -3,14 +3,22 @@
 
 #include <SDL3_ttf/SDL_ttf.h>
 
-enum class TextAlign { Left, Center, Right };
-
-inline void DrawText(TTF_Text* text, float x, float y, TextAlign align = TextAlign::Left)
+enum class TextAlign : uint8_t
 {
-    int w = 0, h = 0;
+    Left,
+    Center,
+    Right
+};
+
+inline void DrawText(TTF_Text *text, float x, float y, TextAlign align = TextAlign::Left)
+{
+    int w = 0;
+    int h = 0;
     TTF_GetTextSize(text, &w, &h);
-    if (align == TextAlign::Center) x -= w / 2.f;
-    else if (align == TextAlign::Right) x -= w;
+    if (align == TextAlign::Center)
+        x -= static_cast<float>(w) / 2.F;
+    else if (align == TextAlign::Right)
+        x -= static_cast<float>(w);
     TTF_DrawRendererText(text, x, y);
 }
 

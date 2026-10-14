@@ -1,5 +1,7 @@
-#include "App.h"
 #include "PlayingState.h"
+#include "App.h"
+#include "Input/Input.h"
+#include "Util/Utility.h"
 
 void PlayingState::Enter()
 {
@@ -25,15 +27,15 @@ void PlayingState::HandleInput()
         app_->SetPendingState(GameStateID::Title);
 }
 
-void PlayingState::Draw(SDL_Renderer* renderer) const
+void PlayingState::Draw(SDL_Renderer * /*renderer*/) const
 {
     if (levelText_)
-        DrawText(levelText_.get(), SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f, TextAlign::Center);
+        DrawText(levelText_.get(), SCREEN_WIDTH / 2.F, SCREEN_HEIGHT / 2.F, TextAlign::Center);
 
     if (waveText_)
-        DrawText(waveText_.get(), SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f + 32.f, TextAlign::Center);
+        DrawText(waveText_.get(), SCREEN_WIDTH / 2.F, (SCREEN_HEIGHT / 2.F) + 32.F,
+                 TextAlign::Center);
 }
-
 
 void PlayingState::startNewGame()
 {
@@ -47,26 +49,30 @@ void PlayingState::startNewGame()
 void PlayingState::StartNewWave()
 {
     // Wave notification..
-    levelText_.reset(TTF_CreateText(app_->fontEngine_.get(), app_->fontH1_.get(), std::format("Level {:01}", (app_->level_ + 1)).c_str(), 0));
-    waveText_.reset(TTF_CreateText(app_->fontEngine_.get(), app_->fontH2_.get(), std::format("Wave {:01}", (app_->levelWave_ + 1)).c_str(), 0));
+    levelText_.reset(TTF_CreateText(app_->fontEngine_.get(), app_->fontH1_.get(),
+                                    std::format("Level {:01}", (app_->level_ + 1)).c_str(), 0));
+    waveText_.reset(TTF_CreateText(app_->fontEngine_.get(), app_->fontH2_.get(),
+                                   std::format("Wave {:01}", (app_->levelWave_ + 1)).c_str(), 0));
     TTF_SetTextColor(levelText_.get(), 255, 255, 255, 255);
     TTF_SetTextColor(waveText_.get(), 255, 255, 255, 255);
     waveTextTimer_ = 0.f;
-    
+
     // --
-    const json& waveData = app_->GetLevelData();    
+    const json &waveData = app_->GetLevelData();
     app_->world_->GetFormation()->CreateWave(waveData);
 
     // --
     // Add Bunkers..
-    app_->world_->SpawnBunker(Vector2{ 128.f - NumCols / 2.f, SCREEN_HEIGHT - 150.f });
-    app_->world_->SpawnBunker(Vector2{ SCREEN_WIDTH / 2.f - NumCols / 2.f, SCREEN_HEIGHT - 150.f });
-    app_->world_->SpawnBunker(Vector2{ SCREEN_WIDTH - 128.f - NumCols / 2.f, SCREEN_HEIGHT - 150.f });
+    app_->world_->SpawnBunker(Vector2{ 128.F - (NumCols / 2.F), SCREEN_HEIGHT - 150.F });
+    app_->world_->SpawnBunker(
+        Vector2{ (SCREEN_WIDTH / 2.F) - (NumCols / 2.F), SCREEN_HEIGHT - 150.F });
+    app_->world_->SpawnBunker(
+        Vector2{ SCREEN_WIDTH - 128.F - (NumCols / 2.F), SCREEN_HEIGHT - 150.F });
 
     app_->ResetPlayerStats();
 }
 
 void PlayingState::resetPlayerPosition()
 {
-    app_->world_->SetPlayerPosition(Vector2<float>{ SCREEN_WIDTH / 2.f, SCREEN_HEIGHT - 80.f });
+    app_->world_->SetPlayerPosition(Vector2<float>{ SCREEN_WIDTH / 2.F, SCREEN_HEIGHT - 80.F });
 }

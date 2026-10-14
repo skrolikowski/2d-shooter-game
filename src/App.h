@@ -9,25 +9,16 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
-#include "Defs.h"
-#include "Input/Input.h"
-#include "GameStates/GameState.h"
-#include "Event/EventBus.h"
 #include "Event/EventListener.h"
-#include "Util/Utility.h"
+#include "GameStates/GameState.h"
+#include "Util/Camera.h"
 #include "Util/SDLPtr.h"
 #include "World/World.h"
-#include "World/Player.h"
 
 #include <cassert>
-#include <fstream>
-#include <iostream>
-#include <format>
-#include <optional>
 #include <memory>
+#include <optional>
 #include <string>
-#include <cstdio>
-
 
 struct WindowParams
 {
@@ -45,17 +36,16 @@ class App : public EventListener
     friend class PlayerDyingState;
     friend class GameOverState;
 
-public:
+  public:
     App() = default;
     ~App() { Quit(); }
 
-    void Init(const WindowParams& params);
+    void Init(const WindowParams &params);
     void MainLoop();
 
-    const json& GetLevelData() const;
-    int GetNumLevels() const;
-    int GetNumWaves() const;
-
+    [[nodiscard]] const json &GetLevelData() const;
+    [[nodiscard]] unsigned long GetNumLevels() const;
+    [[nodiscard]] unsigned long GetNumWaves() const;
 
     void HandleInput();
     void Update(float dt);
@@ -66,7 +56,7 @@ public:
     void ResetPlayerStats();
     void SetPendingState(GameStateID stateID) { pendingStateID_ = stateID; }
 
-private:
+  private:
     WindowPtr window_;
     RendererPtr renderer_;
     bool isRunning_ = false;
@@ -78,14 +68,14 @@ private:
     int playerLives_ = 0;
     int playerInitLives_ = 3;
 
-    int level_ = 0;
-    int levelWave_ = 0;
+    unsigned long level_ = 0;
+    unsigned long levelWave_ = 0;
     json levelData_ = json::array();
 
     GameStateID stateID_ = GameStateID::Title;
     std::optional<GameStateID> pendingStateID_;
     std::unique_ptr<GameState> state_;
-    
+
     SDL_AudioStreamPtr audioStream_;
     SDL_WaveBufferPtr wavBuffer_;
     Uint32 wavLength_ = 0;
@@ -95,14 +85,14 @@ private:
     TTF_FontPtr fontH3_;
     TTF_TextEnginePtr fontEngine_;
 
+    std::unique_ptr<Camera> camera_;
     std::unique_ptr<World> world_;
 
     void handlePlayerHit();
-    void handleBulletShoot(const Vector2<float> pos, bool isPlayerFire = false);
-    void handleInvaderKill(const Vector2<float> pos, InvaderType type);
+    void handleBulletShoot(Vector2<float> pos, bool isPlayerFire = false);
+    void handleInvaderKill(Vector2<float> pos, InvaderType type);
     void handleFormationKill();
     void changeState(GameStateID stateID);
-  
 };
 
 #endif // APP_H
