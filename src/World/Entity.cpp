@@ -1,6 +1,11 @@
 #include "Entity.h"
 #include "Util/Texture.h"
 
+Vector2<float> Entity::GetCenter() const
+{
+    return { pos_.x + (width_ / 2.F), pos_.y + (height_ / 2.F) };
+}
+
 void Entity::Damage(int amount)
 {
     health_ -= amount;

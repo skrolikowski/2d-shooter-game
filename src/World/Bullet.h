@@ -8,7 +8,7 @@ class Bullet : public Entity
   public:
     Bullet();
 
-    const SDL_FRect &GetSweep() const { return sweep_; }
+    [[nodiscard]] const SDL_FRect &GetSweep() const { return sweep_; }
     void SetSweep(const SDL_FRect &s) { sweep_ = s; }
 
   private:

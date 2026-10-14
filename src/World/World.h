@@ -3,9 +3,7 @@
 
 #include <SDL3/SDL.h>
 
-#include <functional>
 #include <memory>
-#include <vector>
 
 #include "Bullet.h"
 #include "Bunker.h"
@@ -25,6 +23,8 @@ class World
     bool SpawnBunker(Vector2<float> pos);
     bool SpawnInvaderBullet(Vector2<float> pos);
     bool SpawnPlayerBullet(Vector2<float> pos);
+    void DamagePlayer(int amount);
+    void SpawnExplosion(Vector2<float> pos);
     void SetPlayerPosition(Vector2<float> pos);
 
     Formation *GetFormation() { return formation_.get(); }
@@ -39,6 +39,7 @@ class World
     Pool<Bullet, 3> playerBullets_;
     Pool<Bullet, 2> invaderBullets_;
     Pool<Bunker, 3> bunkers_;
+    Pool<Particle, EXPLOSION_PARTICLES> particles_;
 };
 
 #endif // WORLD_H

@@ -90,7 +90,7 @@ class App : public EventListener
 
     void handlePlayerHit();
     void handleBulletShoot(Vector2<float> pos, bool isPlayerFire = false);
-    void handleInvaderKill(Vector2<float> pos, InvaderType type);
+    void handleInvaderKilled(Vector2<float> pos, InvaderType type);
     void handleFormationKill();
     void changeState(GameStateID stateID);
 };

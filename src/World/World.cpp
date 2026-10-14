@@ -1,6 +1,10 @@
-#include "World.h"
+#include <cmath>
+#include <numbers>
+
 #include "Event/EventBus.h"
 #include "Player.h"
+#include "Util/Utility.h"
+#include "World.h"
 
 World::World()
 {
@@ -53,6 +57,48 @@ bool World::SpawnPlayerBullet(Vector2<float> pos)
     return false;
 }
 
+void World::DamagePlayer(int amount)
+{
+    player_->Damage(amount);
+
+    if (player_->IsDead())
+        SpawnExplosion(player_->GetCenter());
+}
+
+void World::SpawnExplosion(Vector2<float> pos)
+{
+    std::mt19937 rng_{ std::random_device{}() };
+    std::uniform_real_distribution<float> angle(0.F, 2.F * static_cast<float>(std::numbers::pi));
+    std::uniform_real_distribution<float> health(1.F, 2.5F);
+    std::uniform_real_distribution<float> speed(50.F, 150.F);
+    std::uniform_int_distribution<int> size(2, 8);
+    std::uniform_real_distribution<float> tint(0.F, 1.F);
+
+    for (std::size_t i = 0; i < EXPLOSION_PARTICLES_PER; ++i)
+    {
+        const float randParticleAngle = angle(rng_);
+        const float randParticleHealth = health(rng_);
+        const float randParticleSpeed = speed(rng_);
+        const int randParticleSize = size(rng_);
+        const float randParticleTint = tint(rng_);
+
+        Particle *p = particles_.Spawn(pos);
+        if (p != nullptr)
+        {
+            p->vel = Vector2<float>{
+                std::sin(randParticleAngle) * randParticleSpeed,
+                std::cos(randParticleAngle) * randParticleSpeed,
+            };
+            // Random color between range..
+            p->color =
+                Lerp(SDL_FColor{ 1, 0.9F, 0.2F, 1 }, SDL_FColor{ 1, 0.3F, 0, 1 }, randParticleTint);
+            p->size.x = randParticleSize;
+            p->size.y = randParticleSize;
+            p->SetHealth(static_cast<int>(randParticleHealth));
+        }
+    }
+}
+
 void World::SetPlayerPosition(Vector2<float> pos)
 {
     if (player_ != nullptr)
@@ -64,6 +110,7 @@ void World::Clear()
     playerBullets_.Clear();
     invaderBullets_.Clear();
     bunkers_.Clear();
+    particles_.Clear();
 
     if (formation_ != nullptr)
         formation_->Clear();
@@ -153,7 +200,7 @@ void World::Update(float dt)
                     if (invader->IsDead())
                     {
                         EventBus::GetInstance().Push(
-                            InvaderKilled{ invader->GetPosition(), invader->GetType() });
+                            InvaderKilled{ invader->GetCenter(), invader->GetType() });
 
                         if (formation_->IsDead())
                         {
@@ -216,18 +263,19 @@ void World::Update(float dt)
                     }
                 });
         });
+
+    particles_.ForEach([&](Particle &p) { p.Update(dt); });
 }
 
 void World::Draw() const
 {
-    if (player_ != nullptr)
+    if (player_ != nullptr && !player_->IsDead())
         player_->Draw();
 
     playerBullets_.ForEach([&](const Bullet &b) { b.Draw(); });
-
     invaderBullets_.ForEach([&](const Bullet &b) { b.Draw(); });
-
     bunkers_.ForEach([&](const Bunker &b) { b.Draw(); });
+    particles_.ForEach([](const Particle &p) { p.Draw(); });
 
     if (formation_ != nullptr)
         formation_->Draw();

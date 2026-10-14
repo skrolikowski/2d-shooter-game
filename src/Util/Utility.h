@@ -22,4 +22,14 @@ inline void DrawText(TTF_Text *text, float x, float y, TextAlign align = TextAli
     TTF_DrawRendererText(text, x, y);
 }
 
+inline SDL_FColor Lerp(SDL_FColor a, SDL_FColor b, float t)
+{
+    return {
+        a.r + ((b.r - a.r) * t),
+        a.g + ((b.g - a.g) * t),
+        a.b + ((b.b - a.b) * t),
+        a.a + ((b.a - a.a) * t),
+    };
+}
+
 #endif // UTILITY_H

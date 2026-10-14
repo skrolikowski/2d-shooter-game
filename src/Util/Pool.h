@@ -9,15 +9,59 @@
  * You'd need to clear the subscriptions when an object goes back to the pool.
  */
 
+#include <SDL3/SDL.h>
+
 #include <array>
 #include <cstddef>
 
+#include "Poolable.h"
+#include "Texture.h"
+#include "Utility.h"
 #include "Vector2.h"
 
-template <typename T, std::size_t N> class Pool
+struct Particle
+{
+    Vector2<float> pos;
+    Vector2<float> vel;
+    Vector2<int> size;
+    float life;
+    float maxLife;
+    SDL_FColor color;
+    void SetHealth(int h)
+    {
+        life = static_cast<float>(h);
+        maxLife = static_cast<float>(h);
+    }
+    [[nodiscard]] bool IsDead() const { return life <= 0; }
+    void SetPosition(Vector2<float> p) { pos = p; }
+
+    void Update(float dt)
+    {
+        life -= dt * 1.5F;
+        pos += vel * dt;
+    }
+
+    void Draw() const
+    {
+        float a = life / maxLife;
+        SDL_SetRenderDrawBlendMode(Texture::Renderer, SDL_BLENDMODE_ADD);
+        SDL_SetRenderDrawColorFloat(Texture::Renderer, color.r, color.g, color.b, a);
+        const SDL_FRect fillRect = {
+            pos.x,
+            pos.y,
+            static_cast<float>(size.x),
+            static_cast<float>(size.y),
+        };
+        SDL_RenderFillRect(Texture::Renderer, &fillRect);
+    }
+};
+
+template <Poolable T, std::size_t N> class Pool
 {
   public:
     Pool() { Clear(); }
+
+    [[nodiscard]] std::size_t Size() const { return N; }
 
     void Clear()
     {

@@ -23,8 +23,8 @@ void App::Init(const WindowParams &params)
     SDL_SetNumberProperty(winProps, SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, params.width);
     SDL_SetNumberProperty(winProps, SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, params.height);
     SDL_SetBooleanProperty(winProps, SDL_PROP_WINDOW_CREATE_RESIZABLE_BOOLEAN, params.isResizeable);
-    SDL_SetBooleanProperty(winProps, SDL_PROP_WINDOW_CREATE_FULLSCREEN_BOOLEAN,
-                           params.isFullscreen);
+    SDL_SetBooleanProperty(
+        winProps, SDL_PROP_WINDOW_CREATE_FULLSCREEN_BOOLEAN, params.isFullscreen);
     window_.reset(SDL_CreateWindowWithProperties(winProps));
     SDL_DestroyProperties(winProps);
     if (!window_)
@@ -90,7 +90,7 @@ void App::Init(const WindowParams &params)
     camera_ = std::make_unique<Camera>();
 
     // Subscribe to Event Bus..
-    Listen<InvaderKilled>([this](const InvaderKilled &e) { handleInvaderKill(e.pos, e.type); });
+    Listen<InvaderKilled>([this](const InvaderKilled &e) { handleInvaderKilled(e.pos, e.type); });
     Listen<PlayerHit>([this](const PlayerHit &) { handlePlayerHit(); });
     Listen<WaveCleared>([this](const WaveCleared &) { handleFormationKill(); });
     Listen<ShotFired>([this](const ShotFired &e) { handleBulletShoot(e.pos, e.isPlayerFire); });
@@ -359,17 +359,21 @@ void App::RefreshHud()
 
 void App::handlePlayerHit()
 {
+    world_->DamagePlayer(1);
+
     playerLives_ -= 1;
     RefreshHud();
 
-    if (playerLives_ == 0)
-        SetPendingState(GameStateID::GameOver);
-    else
-        SetPendingState(GameStateID::PlayerDying);
+    // if (playerLives_ == 0)
+    //     SetPendingState(GameStateID::GameOver);
+    // else
+    //     SetPendingState(GameStateID::PlayerDying);
 }
 
-void App::handleInvaderKill(Vector2<float> /*pos*/, InvaderType /*type*/)
+void App::handleInvaderKilled(Vector2<float> pos, InvaderType /*type*/)
 {
+    world_->SpawnExplosion(pos);
+
     // audio_.play(Sfx::Explode);
     playerScore_ += 1;
     RefreshHud();
