@@ -123,9 +123,8 @@ void App::MainLoop()
         // dt
         Uint64 nextTick = SDL_GetTicksNS();
         double frame = (nextTick - prevTick) / 1e9;
-        // float dt = static_cast<float>(nextTick - prevTick) / 1000.0f;
         prevTick = nextTick;
-        if (frame > 0.25) frame = 0.25;
+        frame = std::min(frame, 0.25);  // avoid "spiral of death"
         accumulator += frame;
 
         while (accumulator >= FRAME_STEP)

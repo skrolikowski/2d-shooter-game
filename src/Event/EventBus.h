@@ -34,7 +34,12 @@ private:
     EventBus() = default;
     ~EventBus() = default;
 
-    struct Sub { Subscription::Token id; std::function<void(const Event&)> fn; bool isSubbed = true; };
+    struct Sub
+    {
+        Subscription::Token id;
+        std::function<void(const Event&)> fn;
+        bool isSubbed = true; // Why? -> Unsubs can happen during Update()
+    };
 
     std::unordered_map<std::type_index, std::vector<Sub>> subs_;
     std::vector<Event> pending_, processing_;
@@ -43,6 +48,11 @@ private:
 };
 
 // --
+/**
+ * Dev-Notes:
+ * 
+ * The compiler must see the template's body wherever it's used; put template methods in .h or .tpp
+ */
 template <typename T, typename F>
 Subscription EventBus::Subscribe(F&& fn)
 {

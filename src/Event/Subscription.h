@@ -24,6 +24,7 @@ public:
     explicit Subscription(Token id) : id_(id) {}
     Subscription(Subscription&& o) noexcept : id_(std::exchange(o.id_, 0)) {}
     ~Subscription();
+    
     Subscription& operator=(Subscription&&) = delete;
     Subscription(const Subscription&) = delete;
 
