@@ -17,7 +17,6 @@ class Camera : public EventListener
   private:
     std::mt19937 rng_{ std::random_device{}() };
     float trauma_ = 0.F;
-    const float maxOffset_ = 5.F;
 
     inline float rand(float min, float max);
 };

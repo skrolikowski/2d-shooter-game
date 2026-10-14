@@ -1,6 +1,7 @@
 #include <algorithm>
 
 #include "Camera.h"
+#include "Defs.h"
 
 Camera::Camera()
 {
@@ -16,8 +17,8 @@ void Camera::Update(float dt)
     float shake = trauma_ * trauma_; // squared = punchy, then a soft falloff
 
     Offset = {
-        maxOffset_ * shake * rand(-1, 1),
-        maxOffset_ * shake * rand(-1, 1),
+        MAX_CAMERA_SHAKE * shake * rand(-1, 1),
+        MAX_CAMERA_SHAKE * shake * rand(-1, 1),
     };
 }
 

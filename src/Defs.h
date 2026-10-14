@@ -12,5 +12,6 @@
 #define BUNKER_BLAST_RADIUS 16
 #define MOTION_EVENT_COOLDOWN 40
 #define AXIS_DEADZONE 8000 // axis range is -32768..32767
+#define MAX_CAMERA_SHAKE 25.F
 
 #endif // DEFS_H
