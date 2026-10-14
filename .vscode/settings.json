@@ -1,3 +1,17 @@
 {
-    "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json"
+    // Turn off cpptools' IntelliSense so it doesn't fight clangd
+    "C_Cpp.intelliSenseEngine": "disabled",
+    // "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
+    "clangd.path": "/usr/bin/clangd",
+    "clangd.arguments": [
+        "--compile-commands-dir=${workspaceFolder}/build",
+        "--clang-tidy",
+        "--background-index",
+        "--header-insertion=never"
+    ],
+    "editor.formatOnSave": true,
+    // "editor.inlayHints.enabled": "offUnlessPressed",
+    "[cpp]": {
+        "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+    }
 }
