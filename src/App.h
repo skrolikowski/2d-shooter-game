@@ -2,7 +2,6 @@
 #define APP_H
 
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_audio.h>
 #include <SDL3/SDL_events.h>
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
@@ -75,10 +74,6 @@ class App : public EventListener
     GameStateID stateID_ = GameStateID::Title;
     std::optional<GameStateID> pendingStateID_;
     std::unique_ptr<GameState> state_;
-
-    SDL_AudioStreamPtr audioStream_;
-    SDL_WaveBufferPtr wavBuffer_;
-    Uint32 wavLength_ = 0;
 
     TTF_FontPtr fontH1_;
     TTF_FontPtr fontH2_;

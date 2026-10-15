@@ -58,6 +58,7 @@ add_library(src STATIC
   src/Event/EventBus.cpp
   src/Event/Subscription.cpp
   src/Input/Input.cpp
+  src/Util/Audio.cpp
   src/Util/Camera.cpp
   src/Util/Texture.cpp
   src/World/World.cpp

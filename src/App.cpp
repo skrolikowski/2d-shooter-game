@@ -6,6 +6,7 @@
 #include "GameStates/PlayingState.h"
 #include "GameStates/TitleState.h"
 #include "Input/Input.h"
+#include "Util/Audio.h"
 #include "Util/Texture.h"
 #include "Util/Utility.h"
 
@@ -62,26 +63,18 @@ void App::Init(const WindowParams &params)
     playerLivesText_.reset(TTF_CreateText(fontEngine_.get(), fontH3_.get(), "LIVES 3x", 0));
     TTF_SetTextColor(playerLivesText_.get(), 255, 255, 255, 255);
 
-    // Audio..
-    SDL_AudioSpec spec;
-    Uint8 *buf = nullptr;
-    if (!SDL_LoadWAV("res/audio/laserShoot.wav", &spec, &buf, &wavLength_))
+    // Audio
+    if (Audio::Init())
     {
-        SDL_Log("SDL_LoadWAV failed: %s", SDL_GetError());
-        return;
+        if (Audio::Load("laserShoot", "res/audio/laserShoot.wav"))
+        {
+            SDL_Log("Failed to load %s", "res/audio/laserShoot.wav");
+        }
+        if (Audio::Load("explosion", "res/audio/explosion.wav"))
+        {
+            SDL_Log("Failed to load %s", "res/audio/explosion.wav");
+        }
     }
-    wavBuffer_.reset(buf);
-
-    audioStream_.reset(
-        SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec, NULL, NULL));
-    if (!audioStream_)
-    {
-        SDL_Log("SDL_OpenAudioDeviceStream failed: %s", SDL_GetError());
-        return;
-    }
-
-    // SDL_PutAudioStreamData(audioStream_, buf, len);
-    SDL_ResumeAudioStreamDevice(audioStream_.get());
 
     // Create World..
     world_ = std::make_unique<World>();
@@ -281,8 +274,7 @@ void App::Quit()
     }
 
     // Destroy audio..
-    audioStream_.reset();
-    wavBuffer_.reset();
+    Audio::Shutdown();
 
     // Unload loaded textures..
     Texture::UnloadFile();
@@ -372,16 +364,16 @@ void App::handlePlayerHit()
 
 void App::handleInvaderKilled(Vector2<float> pos, InvaderType /*type*/)
 {
+    Audio::Play("explosion");
     world_->SpawnExplosion(pos);
 
-    // audio_.play(Sfx::Explode);
     playerScore_ += 1;
     RefreshHud();
 }
 
 void App::handleBulletShoot(Vector2<float> /*pos*/, bool /*isPlayerFire*/)
 {
-    SDL_PutAudioStreamData(audioStream_.get(), wavBuffer_.get(), static_cast<int>(wavLength_));
+    Audio::Play("laserShoot");
 }
 
 void App::handleFormationKill()
