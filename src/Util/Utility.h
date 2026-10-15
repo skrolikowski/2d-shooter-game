@@ -2,6 +2,7 @@
 #define UTILITY_H
 
 #include <SDL3_ttf/SDL_ttf.h>
+#include <cstdint>
 
 enum class TextAlign : uint8_t
 {
