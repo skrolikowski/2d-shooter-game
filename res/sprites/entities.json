@@ -162,7 +162,7 @@
 },
 {
 	"filename": "laserBlue04.png",
-	"frame": {"x":415,"y":173,"w":13,"h":37},
+	"frame": {"x":418,"y":1,"w":13,"h":37},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":13,"h":37},
@@ -170,11 +170,43 @@
 },
 {
 	"filename": "laserGreen08.png",
-	"frame": {"x":415,"y":212,"w":13,"h":37},
+	"frame": {"x":418,"y":40,"w":13,"h":37},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":13,"h":37},
 	"sourceSize": {"w":13,"h":37}
+},
+{
+	"filename": "pill_blue.png",
+	"frame": {"x":415,"y":173,"w":22,"h":21},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":21},
+	"sourceSize": {"w":22,"h":21}
+},
+{
+	"filename": "pill_green.png",
+	"frame": {"x":419,"y":79,"w":22,"h":21},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":21},
+	"sourceSize": {"w":22,"h":21}
+},
+{
+	"filename": "pill_red.png",
+	"frame": {"x":419,"y":102,"w":22,"h":21},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":21},
+	"sourceSize": {"w":22,"h":21}
+},
+{
+	"filename": "pill_yellow.png",
+	"frame": {"x":419,"y":125,"w":22,"h":21},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":21},
+	"sourceSize": {"w":22,"h":21}
 },
 {
 	"filename": "playerShip2_red.png",
@@ -189,8 +221,8 @@
 	"version": "1.0",
 	"image": "entities.png",
 	"format": "RGBA8888",
-	"size": {"w":431,"h":430},
+	"size": {"w":442,"h":430},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:a060631c4c4850059a2f356b0b082ccf:48ac5f1f569b5e6d95bc19e0cbf95a78:d80676a5e85c5032e708efda4f84d8e3$"
+	"smartupdate": "$TexturePacker:SmartUpdate:989479c4aeb58b32978f8da0ae3f34b1:b3e3868911654fb462012c2a8912e761:d80676a5e85c5032e708efda4f84d8e3$"
 }
 }

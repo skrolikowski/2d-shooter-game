@@ -8,6 +8,27 @@ Player::Player()
 {
     textureName_ = "playerShip2_red.png";
     speed_ = 250.F;
+
+    // Init PowerUp timers..
+    for (auto &timer : powerUpTimers_)
+        timer = 0.F;
+}
+
+bool Player::HasPowerUp(PowerUpType powerUpType) const
+{
+    return powerUpTimers_[static_cast<std::size_t>(powerUpType)] > 0.F;
+}
+
+void Player::GainPowerUp(PowerUpType powerUpType)
+{
+    powerUpTimers_[static_cast<std::size_t>(powerUpType)] = 1.F;
+}
+
+void Player::UpdatePowerUps(float dt)
+{
+    // Decrement PowerUp health..
+    for (auto &powerUp : powerUpTimers_)
+        powerUp = std::max<float>(0, powerUp - (dt * POWERUP_DECAY));
 }
 
 void Player::HandleInput()
@@ -30,6 +51,7 @@ void Player::HandleInput()
 void Player::Update(float dt)
 {
     Entity::Update(dt);
+    UpdatePowerUps(dt);
 
     // shoot timer / bullets..
     if (isShooting)

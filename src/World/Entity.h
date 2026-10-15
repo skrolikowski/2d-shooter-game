@@ -3,17 +3,26 @@
 
 #include <SDL3/SDL.h>
 
-#include <memory>
+#include <cstdint>
 #include <string>
 
 #include "Defs.h"
 #include "Util/Vector2.h"
 
-enum class InvaderType
+enum class InvaderType : std::uint8_t
 {
     A,
     B,
-    C
+    C,
+    Count,
+};
+
+enum class PowerUpType : std::uint8_t
+{
+    RapidFire,
+    SpreadShot,
+    Shield,
+    Count,
 };
 
 class World; // forward declaration, NOT #include "World.h"
@@ -32,8 +41,6 @@ class Entity
     void SetWorld(World *world) noexcept { world_ = world; }
 
     void SetDir(Vector2<float> dir) { dir_ = dir; }
-    void SetType(InvaderType type) { type_ = type; }
-    [[nodiscard]] InvaderType GetType() const { return type_; }
     void SetTexture(const std::string &texture) { textureName_ = texture; }
 
     void SetX(float x) noexcept { pos_.x = x; }
@@ -63,7 +70,6 @@ class Entity
     float width_ = ENTITY_SIZE;
     float height_ = ENTITY_SIZE;
 
-    InvaderType type_;
     std::string textureName_;
 
     World *world_ = nullptr;

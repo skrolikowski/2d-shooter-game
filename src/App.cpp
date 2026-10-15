@@ -66,13 +66,17 @@ void App::Init(const WindowParams &params)
     // Audio
     if (Audio::Init())
     {
-        if (Audio::Load("laserShoot", "res/audio/laserShoot.wav"))
+        if (!Audio::Load("laserShoot", "res/audio/laserShoot.wav"))
         {
             SDL_Log("Failed to load %s", "res/audio/laserShoot.wav");
         }
-        if (Audio::Load("explosion", "res/audio/explosion.wav"))
+        if (!Audio::Load("explosion", "res/audio/explosion.wav"))
         {
             SDL_Log("Failed to load %s", "res/audio/explosion.wav");
+        }
+        if (!Audio::Load("powerUp", "res/audio/powerUp.wav"))
+        {
+            SDL_Log("Failed to load %s", "res/audio/powerUp.wav");
         }
     }
 
@@ -87,6 +91,8 @@ void App::Init(const WindowParams &params)
     Listen<PlayerHit>([this](const PlayerHit &) { handlePlayerHit(); });
     Listen<WaveCleared>([this](const WaveCleared &) { handleFormationKill(); });
     Listen<ShotFired>([this](const ShotFired &e) { handleBulletShoot(e.pos, e.isPlayerFire); });
+    Listen<PowerUpGrabbed>(
+        [this](const PowerUpGrabbed &e) { handlePowerUpGrabbed(e.powerUpType); });
 
     // --
     // Load level data..
@@ -364,9 +370,22 @@ void App::handlePlayerHit()
 
 void App::handleInvaderKilled(Vector2<float> pos, InvaderType /*type*/)
 {
+    // Explosion!!
     Audio::Play("explosion");
     world_->SpawnExplosion(pos);
 
+    // PowerUp (10% spawn chance)..
+    std::bernoulli_distribution _spawnChance(0.1);
+    if (_spawnChance(rng_))
+    {
+        int spawnTypeCount = static_cast<int>(PowerUpType::Count);
+        std::uniform_int_distribution<int> _spawnType(0, spawnTypeCount - 1);
+        auto spawnType = _spawnType(rng_);
+
+        world_->SpawnPowerUp(pos, static_cast<PowerUpType>(spawnType));
+    }
+
+    // Update score..
     playerScore_ += 1;
     RefreshHud();
 }
@@ -403,4 +422,15 @@ void App::handleFormationKill()
     {
         // changeState(GameStateID::Win);
     }
+}
+
+void App::handlePowerUpGrabbed(PowerUpType powerUpType)
+{
+    // TODO: Check if player has power up
+    // TODO:
+    Audio::Play("powerUp");
+    world_->GivePlayerPowerUp(powerUpType);
+
+    // TODO: Show PowerUps in HUD
+    //  RefreshHud();
 }

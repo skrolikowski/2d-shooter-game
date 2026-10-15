@@ -8,6 +8,7 @@
 #include "Bullet.h"
 #include "Bunker.h"
 #include "Formation.h"
+#include "PowerUp.h"
 #include "Util/Pool.h"
 #include "Util/Vector2.h"
 
@@ -21,6 +22,8 @@ class World
 
     void Clear();
     bool SpawnBunker(Vector2<float> pos);
+    void GivePlayerPowerUp(PowerUpType powerUpType);
+    bool SpawnPowerUp(Vector2<float> pos, PowerUpType powerUpType);
     bool SpawnInvaderBullet(Vector2<float> pos);
     bool SpawnPlayerBullet(Vector2<float> pos);
     void DamagePlayer(int amount);
@@ -39,6 +42,7 @@ class World
     Pool<Bullet, 3> playerBullets_;
     Pool<Bullet, 2> invaderBullets_;
     Pool<Bunker, 3> bunkers_;
+    Pool<PowerUp, 3> powerUps_;
     Pool<Particle, EXPLOSION_PARTICLES> particles_;
 };
 

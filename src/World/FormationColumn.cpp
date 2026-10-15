@@ -1,4 +1,5 @@
 #include "FormationColumn.h"
+#include "World/Invader.h"
 
 #include <algorithm>
 #include <nlohmann/json.hpp>
@@ -11,36 +12,27 @@ FormationColumn::FormationColumn(Vector2<float> pos, const json &data)
     {
         float px = pos.x;
         float py = pos.y + (static_cast<float>(r) * (ENTITY_SIZE + INVADER_GAP));
+        std::string value = data.at(static_cast<unsigned long>(r)).get<std::string>();
 
-        Entity e(Vector2<float>{ px, py });
+        Invader inv(Vector2<float>{ px, py });
 
-        std::string value = data.at(r).get<std::string>();
         if (value == "A")
-        {
-            e.SetType(InvaderType::A);
-            e.SetTexture("enemyBlack1.png");
-        }
+            inv.SetType(InvaderType::A);
         else if (value == "B")
-        {
-            e.SetType(InvaderType::B);
-            e.SetTexture("enemyBlack2.png");
-        }
+            inv.SetType(InvaderType::B);
         else if (value == "C")
-        {
-            e.SetType(InvaderType::C);
-            e.SetTexture("enemyBlack3.png");
-        }
+            inv.SetType(InvaderType::C);
         else
-            e.SetHealth(0);
+            inv.SetHealth(0);
 
-        invaders_.push_back(std::move(e));
+        invaders_.push_back(std::move(inv));
     }
 }
 
-const Entity *FormationColumn::GetLowestInvader() const
+const Invader *FormationColumn::GetLowestInvader() const
 {
     auto it = std::ranges::find_if(
-        invaders_.rbegin(), invaders_.rend(), [](const Entity &inv) { return !inv.IsDead(); });
+        invaders_.rbegin(), invaders_.rend(), [](const Invader &inv) { return !inv.IsDead(); });
     if (it != invaders_.rend())
     {
         const auto index = std::distance(it, invaders_.rend()) - 1;
@@ -50,7 +42,7 @@ const Entity *FormationColumn::GetLowestInvader() const
     return nullptr;
 }
 
-Entity *FormationColumn::TryHit(const SDL_FRect &other)
+Invader *FormationColumn::TryHit(const SDL_FRect &other)
 {
     for (auto &inv : std::views::reverse(invaders_))
     {

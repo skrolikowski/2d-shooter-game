@@ -35,6 +35,23 @@ bool World::SpawnBunker(Vector2<float> pos)
     return b != nullptr;
 }
 
+void World::GivePlayerPowerUp(PowerUpType powerUpType)
+{
+    if (player_ != nullptr)
+        player_->GainPowerUp(powerUpType);
+}
+
+bool World::SpawnPowerUp(Vector2<float> pos, PowerUpType powerUpType)
+{
+    PowerUp *p = powerUps_.Spawn(pos);
+    if (p != nullptr)
+    {
+        p->SetType(powerUpType);
+        return true;
+    }
+    return false;
+}
+
 bool World::SpawnInvaderBullet(Vector2<float> pos)
 {
     Bullet *b = invaderBullets_.Spawn(pos);
@@ -111,6 +128,7 @@ void World::Clear()
     invaderBullets_.Clear();
     bunkers_.Clear();
     particles_.Clear();
+    powerUps_.Clear();
 
     if (formation_ != nullptr)
         formation_->Clear();
@@ -135,42 +153,11 @@ void World::Update(float dt)
         player_->Update(dt);
 
     // --
-    // Update Player Bullets..
-    playerBullets_.ForEach(
-        [&](Bullet &bullet)
-        {
-            /**
-             * Dev notes:
-             * Create a SDL_FRect of the full Bullet path to combat Collision Tunneling
-             */
-            SDL_FRect before;
-            SDL_FRect after;
-            SDL_FRect sweep;
-            before = bullet.GetRect();
-            bullet.Update(dt);
-            after = bullet.GetRect();
-            SDL_GetRectUnionFloat(&before, &after, &sweep);
-            bullet.SetSweep(sweep);
-        });
-
-    // --
-    // Update Invader Bullets..
-    invaderBullets_.ForEach(
-        [&](Bullet &bullet)
-        {
-            /**
-             * Dev notes:
-             * Create a SDL_FRect of the full Bullet path to combat Collision Tunneling
-             */
-            SDL_FRect before;
-            SDL_FRect after;
-            SDL_FRect sweep;
-            before = bullet.GetRect();
-            bullet.Update(dt);
-            after = bullet.GetRect();
-            SDL_GetRectUnionFloat(&before, &after, &sweep);
-            bullet.SetSweep(sweep);
-        });
+    // Update pools..
+    playerBullets_.ForEach([&](Bullet &bullet) { bullet.UpdateAndSweep(dt); });
+    invaderBullets_.ForEach([&](Bullet &bullet) { bullet.UpdateAndSweep(dt); });
+    powerUps_.ForEach([&](PowerUp &powerUp) { powerUp.Update(dt); });
+    particles_.ForEach([&](Particle &p) { p.Update(dt); });
 
     // ----
     // Collision Detection
@@ -192,15 +179,17 @@ void World::Update(float dt)
                 if (bullet.IsDead())
                     return; // bullet may have died already..
 
-                if (Entity *invader = formation_->TryHit(bullet.GetSweep()))
+                if (Invader *invader = formation_->TryHit(bullet.GetSweep()))
                 {
                     invader->Damage(1);
                     bullet.Damage(1); // Warning: bullets may die
 
                     if (invader->IsDead())
                     {
-                        EventBus::GetInstance().Push(
-                            InvaderKilled{ invader->GetCenter(), invader->GetType() });
+                        InvaderKilled ev;
+                        ev.pos = invader->GetCenter();
+                        ev.type = invader->GetType();
+                        EventBus::GetInstance().Push(ev);
 
                         if (formation_->IsDead())
                         {
@@ -211,14 +200,14 @@ void World::Update(float dt)
             });
     }
 
-    // Check Invader Bullet / Player..
     if (player_)
     {
+        // Check Invader Bullet / Player..
         invaderBullets_.ForEach(
             [&](Bullet &bullet)
             {
                 if (bullet.IsDead())
-                    return; // bullet may have died already..
+                    return; // may have died already..
 
                 SDL_FRect playerRect = player_->GetRect();
                 if (SDL_HasRectIntersectionFloat(&playerRect, &bullet.GetSweep()))
@@ -226,6 +215,22 @@ void World::Update(float dt)
                     bullet.Damage(1); // Warning: bullets may die
 
                     EventBus::GetInstance().Push(PlayerHit{});
+                }
+            });
+
+        powerUps_.ForEach(
+            [&](PowerUp &powerUp)
+            {
+                if (powerUp.IsDead())
+                    return; // may have died already..
+
+                SDL_FRect playerRect = player_->GetRect();
+                SDL_FRect powerUpRect = powerUp.GetRect();
+                if (SDL_HasRectIntersectionFloat(&playerRect, &powerUpRect))
+                {
+                    powerUp.Damage(1);
+
+                    EventBus::GetInstance().Push(PowerUpGrabbed{ powerUp.GetType() });
                 }
             });
     }
@@ -263,8 +268,6 @@ void World::Update(float dt)
                     }
                 });
         });
-
-    particles_.ForEach([&](Particle &p) { p.Update(dt); });
 }
 
 void World::Draw() const
@@ -276,6 +279,7 @@ void World::Draw() const
     invaderBullets_.ForEach([&](const Bullet &b) { b.Draw(); });
     bunkers_.ForEach([&](const Bunker &b) { b.Draw(); });
     particles_.ForEach([](const Particle &p) { p.Draw(); });
+    powerUps_.ForEach([](const PowerUp &p) { p.Draw(); });
 
     if (formation_ != nullptr)
         formation_->Draw();

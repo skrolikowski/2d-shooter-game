@@ -15,5 +15,6 @@
 #define MAX_CAMERA_SHAKE 25.F
 #define EXPLOSION_PARTICLES 300
 #define EXPLOSION_PARTICLES_PER 100
+#define POWERUP_DECAY 0.2F // should allow power up to last 5 sec
 
 #endif // DEFS_H

@@ -37,10 +37,10 @@ void Formation::CreateWave(const json &data)
     bulletTimer_ = delay(rng_);
 }
 
-Entity *Formation::TryHit(const SDL_FRect &rect)
+Invader *Formation::TryHit(const SDL_FRect &rect)
 {
     for (auto &col : columns_)
-        if (Entity *invader = col.TryHit(rect))
+        if (Invader *invader = col.TryHit(rect))
             return invader;
 
     return nullptr;
@@ -55,8 +55,7 @@ void Formation::Clear()
 int Formation::GetNumInvaders() const
 {
     return std::accumulate(columns_.begin(), columns_.end(), 0,
-                           [](int acc, const FormationColumn &column)
-                           { return acc + column.Size(); });
+        [](int acc, const FormationColumn &column) { return acc + column.Size(); });
 }
 
 void Formation::Update(float dt)

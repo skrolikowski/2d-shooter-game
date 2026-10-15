@@ -68,6 +68,8 @@ add_library(src STATIC
   src/World/Entity.cpp
   src/World/Bullet.cpp
   src/World/Player.cpp
+  src/World/Invader.cpp
+  src/World/PowerUp.cpp
   src/GameStates/GameOverState.cpp
   src/GameStates/TitleState.cpp
   src/GameStates/PlayingState.cpp

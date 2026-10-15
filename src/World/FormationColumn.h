@@ -5,7 +5,7 @@
 #include <vector>
 using json = nlohmann::json;
 
-#include "Entity.h"
+#include "Invader.h"
 
 class FormationColumn
 {
@@ -18,8 +18,8 @@ class FormationColumn
      */
     // ~FormationColumn() {}
 
-    [[nodiscard]] const Entity *GetLowestInvader() const;
-    Entity *TryHit(const SDL_FRect &other);
+    [[nodiscard]] const Invader *GetLowestInvader() const;
+    Invader *TryHit(const SDL_FRect &other);
     [[nodiscard]] bool CheckForStepFormationHit(float dx) const;
     void StepFormation(float dx, float dy, bool hitDetected = false);
 
@@ -28,7 +28,7 @@ class FormationColumn
     void Draw() const;
 
   private:
-    std::vector<Entity> invaders_;
+    std::vector<Invader> invaders_;
 
     int dir_ = 1;
 };

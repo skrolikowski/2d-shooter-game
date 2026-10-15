@@ -19,10 +19,10 @@ class Formation
   public:
     void CreateWave(const json &data);
     void SetWorld(World *world) { world_ = world; }
-    int GetNumInvaders() const;
-    Entity *TryHit(const SDL_FRect &rect);
+    [[nodiscard]] int GetNumInvaders() const;
+    Invader *TryHit(const SDL_FRect &rect);
     void StepFormation();
-    bool IsDead() const { return GetNumInvaders() == 0; }
+    [[nodiscard]] bool IsDead() const { return GetNumInvaders() == 0; }
     void Clear();
     void Update(float dt);
     void Draw() const;
