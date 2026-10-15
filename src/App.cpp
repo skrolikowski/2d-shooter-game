@@ -373,8 +373,8 @@ void App::handleInvaderKilled(Vector2<float> pos, InvaderType /*type*/)
     Audio::Play("explosion");
     world_->SpawnExplosion(pos);
 
-    // PowerUp (10% spawn chance)..
-    std::bernoulli_distribution _spawnChance(0.1);
+    // PowerUp (% spawn chance)..
+    std::bernoulli_distribution _spawnChance(POWERUP_SPAWN_CHANCE);
     if (_spawnChance(rng_))
     {
         int spawnTypeCount = static_cast<int>(PowerUpType::Count);
