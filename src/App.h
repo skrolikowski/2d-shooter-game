@@ -48,7 +48,8 @@ class App : public EventListener
 
     void HandleInput();
     void Update(float dt);
-    void Draw();
+    void Draw() const;
+    void DrawUI() const;
     void Quit();
 
     void RefreshHud();
@@ -62,7 +63,6 @@ class App : public EventListener
     bool isPlaying_ = false;
 
     TTF_TextPtr playerScoreText_;
-    TTF_TextPtr playerLivesText_;
     int playerScore_ = 0;
     int playerLives_ = 0;
     int playerInitLives_ = 3;

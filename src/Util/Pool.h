@@ -63,7 +63,8 @@ template <Poolable T, std::size_t N> class Pool
 
     [[nodiscard]] std::size_t CountAlive() const
     {
-        return std::ranges::count_if(items_, [](const T &t) { return !t.IsDead(); });
+        return static_cast<std::size_t>(
+            std::ranges::count_if(items_, [](const T &t) { return !t.IsDead(); }));
     }
 
     void Clear()

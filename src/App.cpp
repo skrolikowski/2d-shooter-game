@@ -54,14 +54,12 @@ void App::Init(const WindowParams &params)
     TTF_Init();
     fontH1_.reset(TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 24.0F));
     fontH2_.reset(TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 16.0F));
-    fontH3_.reset(TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 8.0F));
+    fontH3_.reset(TTF_OpenFont("res/font/PressStart2P-Regular.ttf", 12.0F));
     fontEngine_.reset(TTF_CreateRendererTextEngine(renderer_.get()));
 
     // --
     playerScoreText_.reset(TTF_CreateText(fontEngine_.get(), fontH3_.get(), "SCORE 0000", 0));
     TTF_SetTextColor(playerScoreText_.get(), 255, 255, 255, 255);
-    playerLivesText_.reset(TTF_CreateText(fontEngine_.get(), fontH3_.get(), "LIVES 3x", 0));
-    TTF_SetTextColor(playerLivesText_.get(), 255, 255, 255, 255);
 
     // Load Audio Library..
     if (Audio::Init())
@@ -209,7 +207,7 @@ void App::Update(float dt)
     }
 }
 
-void App::Draw()
+void App::Draw() const
 {
     SDL_SetRenderDrawColor(renderer_.get(), 25, 15, 16, 0);
     SDL_RenderClear(renderer_.get());
@@ -217,15 +215,9 @@ void App::Draw()
 
     // Draw Score or High Score..
     DrawText(playerScoreText_.get(), 16.F, 16.F, TextAlign::Left);
-    DrawText(playerLivesText_.get(), SCREEN_WIDTH - 16.F, 16.F, TextAlign::Right);
 
     // Set Render Viewport (Camera Shake)
-    SDL_FRect rect{
-        Camera::Offset.x,
-        Camera::Offset.y,
-        SCREEN_WIDTH,
-        SCREEN_HEIGHT,
-    };
+    SDL_FRect rect{ Camera::Offset.x, Camera::Offset.y, SCREEN_WIDTH, SCREEN_HEIGHT };
     SDL_SetRenderViewportFloat(renderer_.get(), &rect);
 
     // Handle World draw..
@@ -243,17 +235,52 @@ void App::Draw()
     if (state_ != nullptr)
         state_->Draw(renderer_.get());
 
-    // Reset Render Viewport
-    // SDL_FRect origRect{
-    //     0.F,
-    //     0.F,
-    //     SCREEN_WIDTH,
-    //     SCREEN_HEIGHT,
-    // };
-    // SDL_SetRenderViewportFloat(renderer_.get(), &origRect);
+    DrawUI();
 
     // --
     SDL_RenderPresent(renderer_.get());
+}
+
+void App::DrawUI() const
+{
+    // Reset Render Viewport
+    SDL_FRect origRect{ 0.F, 0.F, SCREEN_WIDTH, SCREEN_HEIGHT };
+    SDL_SetRenderViewportFloat(renderer_.get(), &origRect);
+
+    //
+    int startX = SCREEN_WIDTH - 124;
+    float startY = 16.F;
+    int padX = 24;
+    float w = 18.F;
+    float h = 18.F;
+
+    for (int i = 0, j = startX; i < playerInitLives_; ++i)
+    {
+        j += padX;
+
+        if (i < playerLives_)
+        {
+            const Frame *frame = Texture::GetFrame("star_gold.png");
+            if (frame != nullptr)
+            {
+                auto x = static_cast<float>(j);
+                float sx = w / frame->rect.w;
+                float sy = h / frame->rect.h;
+                Texture::Draw(frame, x, startY, sx, sy);
+            }
+        }
+        else
+        {
+            const Frame *frame = Texture::GetFrame("star_silver.png");
+            if (frame != nullptr)
+            {
+                auto x = static_cast<float>(j);
+                float sx = w / frame->rect.w;
+                float sy = h / frame->rect.h;
+                Texture::Draw(frame, x, startY, sx, sy);
+            }
+        }
+    }
 }
 
 void App::Quit()
@@ -278,7 +305,6 @@ void App::Quit()
 
     // Destroy TTF
     playerScoreText_.reset();
-    playerLivesText_.reset();
     fontEngine_.reset();
     fontH1_.reset();
     fontH2_.reset();
@@ -342,7 +368,6 @@ void App::ResetPlayerStats()
 
 void App::RefreshHud()
 {
-    TTF_SetTextString(playerLivesText_.get(), std::format("LIVES {:01}x", playerLives_).c_str(), 0);
     TTF_SetTextString(playerScoreText_.get(), std::format("SCORE {:04}", playerScore_).c_str(), 0);
 }
 
@@ -358,8 +383,6 @@ void App::handlePlayerHit(bool isInvaderFire)
     // Player takes damage..
     world_->DamagePlayer(1);
     playerLives_ -= 1;
-
-    RefreshHud();
 
     // if (playerLives_ == 0)
     //     SetPendingState(GameStateID::GameOver);

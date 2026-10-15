@@ -186,7 +186,7 @@
 },
 {
 	"filename": "pill_green.png",
-	"frame": {"x":404,"y":173,"w":22,"h":21},
+	"frame": {"x":445,"y":87,"w":22,"h":21},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":21},
@@ -194,7 +194,7 @@
 },
 {
 	"filename": "pill_red.png",
-	"frame": {"x":404,"y":196,"w":22,"h":21},
+	"frame": {"x":445,"y":110,"w":22,"h":21},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":21},
@@ -202,7 +202,7 @@
 },
 {
 	"filename": "pill_yellow.png",
-	"frame": {"x":404,"y":219,"w":22,"h":21},
+	"frame": {"x":445,"y":133,"w":22,"h":21},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":21},
@@ -223,6 +223,22 @@
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":133,"h":108},
 	"sourceSize": {"w":133,"h":108}
+},
+{
+	"filename": "star_gold.png",
+	"frame": {"x":404,"y":173,"w":31,"h":30},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":31,"h":30},
+	"sourceSize": {"w":31,"h":30}
+},
+{
+	"filename": "star_silver.png",
+	"frame": {"x":404,"y":205,"w":31,"h":30},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":31,"h":30},
+	"sourceSize": {"w":31,"h":30}
 }],
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
@@ -231,6 +247,6 @@
 	"format": "RGBA8888",
 	"size": {"w":475,"h":445},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:e8b1e8c80c16ae7100985216a05b05b5:a15ea264d355b2e40a7b3172d865ab0a:d80676a5e85c5032e708efda4f84d8e3$"
+	"smartupdate": "$TexturePacker:SmartUpdate:b69b038890243fcb2fb64c9f5a63776c:d6d2b50db35b414897993cce1f454102:d80676a5e85c5032e708efda4f84d8e3$"
 }
 }
