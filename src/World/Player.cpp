@@ -8,10 +8,6 @@ Player::Player()
 {
     textureName_ = "playerShip2_red.png";
     speed_ = 250.F;
-
-    // Init PowerUp timers..
-    for (auto &timer : powerUpTimers_)
-        timer = 0.F;
 }
 
 bool Player::HasPowerUp(PowerUpType powerUpType) const
@@ -21,7 +17,7 @@ bool Player::HasPowerUp(PowerUpType powerUpType) const
 
 void Player::GainPowerUp(PowerUpType powerUpType)
 {
-    powerUpTimers_[static_cast<std::size_t>(powerUpType)] = 1.F;
+    powerUpTimers_[static_cast<std::size_t>(powerUpType)] = POWERUP_DURATION;
 }
 
 void Player::LosePowerUp(PowerUpType powerUpType)
@@ -32,8 +28,16 @@ void Player::LosePowerUp(PowerUpType powerUpType)
 void Player::UpdatePowerUps(float dt)
 {
     // Decrement PowerUp health..
-    for (auto &powerUp : powerUpTimers_)
-        powerUp = std::max<float>(0, powerUp - (dt * POWERUP_DECAY));
+    for (std::size_t i = 0; i < powerUpTimers_.size(); ++i)
+    {
+        auto type = static_cast<PowerUpType>(i);
+
+        // Shield doesn't decay..
+        if (type == PowerUpType::Shield)
+            continue;
+
+        powerUpTimers_[i] = std::max<float>(0, powerUpTimers_[i] - dt);
+    }
 }
 
 void Player::HandleInput()

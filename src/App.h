@@ -64,7 +64,7 @@ class App : public EventListener
 
     TTF_TextPtr playerScoreText_;
     int playerScore_ = 0;
-    int playerLives_ = 0;
+    int playerLives_ = 3;
     int playerInitLives_ = 3;
 
     unsigned long level_ = 0;

@@ -32,6 +32,7 @@ class World
     void SetPlayerPosition(Vector2<float> pos);
     [[nodiscard]] bool PlayerHasPowerUp(PowerUpType powerUpType) const;
 
+    Player *GetPlayer() { return player_.get(); }
     Formation *GetFormation() { return formation_.get(); }
 
     void HandleInput();

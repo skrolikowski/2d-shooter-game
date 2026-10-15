@@ -213,9 +213,6 @@ void App::Draw() const
     SDL_RenderClear(renderer_.get());
     // --
 
-    // Draw Score or High Score..
-    DrawText(playerScoreText_.get(), 16.F, 16.F, TextAlign::Left);
-
     // Set Render Viewport (Camera Shake)
     SDL_FRect rect{ Camera::Offset.x, Camera::Offset.y, SCREEN_WIDTH, SCREEN_HEIGHT };
     SDL_SetRenderViewportFloat(renderer_.get(), &rect);
@@ -247,38 +244,74 @@ void App::DrawUI() const
     SDL_FRect origRect{ 0.F, 0.F, SCREEN_WIDTH, SCREEN_HEIGHT };
     SDL_SetRenderViewportFloat(renderer_.get(), &origRect);
 
-    //
-    int startX = SCREEN_WIDTH - 124;
-    float startY = 16.F;
+    // Draw Score or High Score..
+    DrawText(playerScoreText_.get(), SCREEN_WIDTH / 2.F, 16.F, TextAlign::Center);
+
+    // Draw Player live count display..
+    int x1 = SCREEN_WIDTH - 96;
+    float y1 = 16.F;
     int padX = 24;
     float w = 18.F;
     float h = 18.F;
 
-    for (int i = 0, j = startX; i < playerInitLives_; ++i)
+    for (int i = 0, j = x1; i < playerInitLives_; ++i)
     {
-        j += padX;
-
         if (i < playerLives_)
         {
-            const Frame *frame = Texture::GetFrame("star_gold.png");
+            const Frame *frame =
+                Texture::GetFrame(i < playerLives_ ? "star_gold.png" : "star_silver.png");
             if (frame != nullptr)
             {
                 auto x = static_cast<float>(j);
                 float sx = w / frame->rect.w;
                 float sy = h / frame->rect.h;
-                Texture::Draw(frame, x, startY, sx, sy);
+                Texture::Draw(frame, x, y1, sx, sy);
             }
         }
-        else
+        j += padX;
+    }
+
+    // --
+    // -- PowerUp Display
+    int x2 = 16;
+    float y2 = 16.F;
+
+    bool hasRapidFire = world_->PlayerHasPowerUp(PowerUpType::RapidFire);
+    if (hasRapidFire)
+    {
+        const Frame *f = Texture::GetFrame("pill_red.png");
+        if (f != nullptr)
         {
-            const Frame *frame = Texture::GetFrame("star_silver.png");
-            if (frame != nullptr)
-            {
-                auto x = static_cast<float>(j);
-                float sx = w / frame->rect.w;
-                float sy = h / frame->rect.h;
-                Texture::Draw(frame, x, startY, sx, sy);
-            }
+            auto x = static_cast<float>(x2);
+            float sx = w / f->rect.w;
+            float sy = h / f->rect.h;
+            Texture::Draw(f, x, y2, sx, sy);
+        }
+        x2 += padX;
+    }
+    bool hasSpreadShot = world_->PlayerHasPowerUp(PowerUpType::SpreadShot);
+    if (hasSpreadShot)
+    {
+        const Frame *f = Texture::GetFrame("pill_yellow.png");
+        if (f != nullptr)
+        {
+            auto x = static_cast<float>(x2);
+            float sx = w / f->rect.w;
+            float sy = h / f->rect.h;
+            Texture::Draw(f, x, y2, sx, sy);
+        }
+        x2 += padX;
+    }
+    bool hasShield = world_->PlayerHasPowerUp(PowerUpType::Shield);
+    if (hasShield)
+    {
+        const Frame *f = Texture::GetFrame("pill_blue.png");
+        if (f != nullptr)
+        {
+            auto x = static_cast<float>(x2);
+            float sx = w / f->rect.w;
+            float sy = h / f->rect.h;
+            Texture::Draw(f, x, y2, sx, sy);
         }
     }
 }
@@ -448,11 +481,7 @@ void App::handleFormationKill()
 
 void App::handlePowerUpGrabbed(PowerUpType powerUpType)
 {
-    // TODO: Check if player has power up
-    // TODO:
     Audio::Play("powerUp");
-    world_->GivePlayerPowerUp(powerUpType);
 
-    // TODO: Show PowerUps in HUD
-    //  RefreshHud();
+    world_->GivePlayerPowerUp(powerUpType);
 }
