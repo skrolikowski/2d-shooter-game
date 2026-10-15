@@ -6,13 +6,7 @@
 
 std::optional<SDL_FPoint> Bunker::FindImpact(const SDL_FRect &swept, bool fromBelow) const
 {
-    SDL_FRect rect{
-        .x = pos_.x,
-        .y = pos_.y,
-        .w = NumCols,
-        .h = NumRows,
-    };
-
+    SDL_FRect rect = GetRect();
     if (!SDL_HasRectIntersectionFloat(&rect, &swept))
         return std::nullopt;
 
@@ -67,6 +61,25 @@ void Bunker::Erode(const SDL_FPoint &point)
                 cells_[static_cast<unsigned long>(row)][static_cast<unsigned long>(col)] = false;
         }
     }
+}
+
+void Bunker::Carve(const SDL_FRect &otherRect)
+{
+
+    SDL_FRect rect = GetRect();
+    SDL_FRect hit;
+    if (!SDL_GetRectIntersectionFloat(&rect, &otherRect, &hit))
+        return;
+
+    // World space -> cell space (relative to the Bunker's top-left)
+    int r0 = std::max(0, int(std::floor(hit.y - pos_.y)));
+    int r1 = std::min(NumRows, int(std::ceil(hit.y + hit.h - pos_.y)));
+    int c0 = std::max(0, int(std::floor(hit.x - pos_.x)));
+    int c1 = std::min(NumCols, int(std::ceil(hit.x + hit.w - pos_.x)));
+
+    for (int row = r0; row < r1; ++row)
+        for (int col = c0; col < c1; ++col)
+            cells_[static_cast<std::size_t>(row)][static_cast<std::size_t>(col)] = false;
 }
 
 void Bunker::Draw() const

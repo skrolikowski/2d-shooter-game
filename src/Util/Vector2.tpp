@@ -15,6 +15,16 @@ template <typename T> T Vector2<T>::Magnitude() const
     return std::sqrt((x * x) + (y * y));
 }
 
+template <typename T> Vector2<T> Vector2<T>::Normalize() const
+{
+    float len = Magnitude();
+    if (len > 0.0F)
+    {
+        return { x / len, y / len };
+    }
+    return {};
+}
+
 template <typename T> void Vector2<T>::Reset()
 {
     x = 0;

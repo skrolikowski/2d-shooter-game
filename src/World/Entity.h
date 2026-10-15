@@ -56,7 +56,7 @@ class Entity
     [[nodiscard]] virtual float GetHeight() const { return height_; }
 
     void Damage(int amount);
-    bool IsDead() const noexcept { return health_ <= 0; }
+    [[nodiscard]] bool IsDead() const noexcept { return health_ <= 0; }
 
     virtual void HandleInput() {} // Player Only!!
     virtual void Update(float dt);

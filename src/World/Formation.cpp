@@ -20,7 +20,7 @@ void Formation::CreateWave(const json &data)
     auto fNumCols = static_cast<float>(numCols);
     float formationWidth = (fNumCols * ENTITY_SIZE) + ((fNumCols - 1) * INVADER_GAP);
     float startX = (SCREEN_WIDTH - formationWidth) / 2.F;
-    float startY = 64.F;
+    float startY = FORMATION_Y_START;
 
     for (int c = 0; c < numCols; ++c)
     {
@@ -110,8 +110,8 @@ void Formation::Update(float dt)
 
 void Formation::StepFormation()
 {
-    float dx = SCREEN_WIDTH / ENTITY_SIZE / 2.F;
-    float dy = ENTITY_SIZE / 4.F;
+    float dx = FORMATION_DX_STEP;
+    float dy = FORMATION_DY_STEP;
 
     bool hitEdge = false;
     for (const auto &col : columns_)

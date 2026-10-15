@@ -14,7 +14,7 @@ void Entity::Damage(int amount)
 
 void Entity::Update(float dt)
 {
-    vel_ = dir_ * speed_ * dt;
+    vel_ = dir_.Normalize() * speed_ * dt;
     pos_ += vel_;
 
     // TODO: check collision

@@ -27,6 +27,14 @@ class Formation
     void Update(float dt);
     void Draw() const;
 
+    template <typename F> void ForEachInvader(F &&f)
+    {
+        for (auto &column : columns_)
+        {
+            column.ForEach(f);
+        }
+    }
+
   private:
     World *world_ = nullptr;
     std::vector<FormationColumn> columns_;

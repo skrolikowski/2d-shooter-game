@@ -23,10 +23,17 @@ class Bunker
 
     void SetPosition(Vector2<float> pos) { pos_ = pos; }
     void SetHealth(int health) noexcept { health_ = health; }
-    bool IsDead() const noexcept { return health_ <= 0; }
-    std::optional<SDL_FPoint> FindImpact(const SDL_FRect &swept, bool fromBelow = true) const;
+    [[nodiscard]] bool IsDead() const noexcept { return health_ <= 0; }
+    [[nodiscard]] std::optional<SDL_FPoint> FindImpact(
+        const SDL_FRect &swept, bool fromBelow = true) const;
     void Erode(const SDL_FPoint &point);
+    void Carve(const SDL_FRect &rect);
     void Draw() const;
+
+    [[nodiscard]] SDL_FRect GetRect() const
+    {
+        return SDL_FRect{ .x = pos_.x, .y = pos_.y, .w = NumCols, .h = NumRows };
+    }
 
   private:
     std::array<std::array<bool, NumCols>, NumRows> cells_;

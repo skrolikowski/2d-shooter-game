@@ -9,6 +9,7 @@ template <typename T> class Vector2
 
     T Dot(const Vector2 &other) const;
     T Magnitude() const;
+    Vector2 Normalize() const;
 
     T x = 0.0F;
     T y = 0.0F;

@@ -23,6 +23,15 @@ class FormationColumn
     [[nodiscard]] bool CheckForStepFormationHit(float dx) const;
     void StepFormation(float dx, float dy, bool hitDetected = false);
 
+    template <typename F> void ForEach(F &&f)
+    {
+        for (auto &invader : invaders_)
+        {
+            if (!invader.IsDead())
+                f(invader);
+        }
+    }
+
     [[nodiscard]] int Size() const;
     void Clear();
     void Draw() const;

@@ -249,6 +249,14 @@ void World::Update(float dt)
                     }
                 }
             });
+
+        // Formation / Bunker Collision Check..
+        bunkers_.ForEach(
+            [&](Bunker &bunker)
+            {
+                formation_->ForEachInvader(
+                    [&](Invader &invader) { bunker.Carve(invader.GetRect()); });
+            });
     }
 
     if (player_)
