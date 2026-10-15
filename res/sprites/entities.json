@@ -2,7 +2,7 @@
 
 {
 	"filename": "enemyBlack1.png",
-	"frame": {"x":106,"y":259,"w":93,"h":84},
+	"frame": {"x":107,"y":259,"w":93,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":93,"h":84},
@@ -10,7 +10,7 @@
 },
 {
 	"filename": "enemyBlack2.png",
-	"frame": {"x":1,"y":1,"w":104,"h":84},
+	"frame": {"x":1,"y":111,"w":104,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":104,"h":84},
@@ -18,7 +18,7 @@
 },
 {
 	"filename": "enemyBlack3.png",
-	"frame": {"x":1,"y":164,"w":103,"h":84},
+	"frame": {"x":1,"y":283,"w":103,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":103,"h":84},
@@ -26,7 +26,7 @@
 },
 {
 	"filename": "enemyBlack4.png",
-	"frame": {"x":96,"y":345,"w":82,"h":84},
+	"frame": {"x":392,"y":259,"w":82,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":82,"h":84},
@@ -34,7 +34,7 @@
 },
 {
 	"filename": "enemyBlack5.png",
-	"frame": {"x":221,"y":87,"w":97,"h":84},
+	"frame": {"x":346,"y":87,"w":97,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":97,"h":84},
@@ -42,7 +42,7 @@
 },
 {
 	"filename": "enemyBlue1.png",
-	"frame": {"x":1,"y":336,"w":93,"h":84},
+	"frame": {"x":202,"y":259,"w":93,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":93,"h":84},
@@ -50,7 +50,7 @@
 },
 {
 	"filename": "enemyBlue2.png",
-	"frame": {"x":107,"y":1,"w":104,"h":84},
+	"frame": {"x":136,"y":1,"w":104,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":104,"h":84},
@@ -58,7 +58,7 @@
 },
 {
 	"filename": "enemyBlue3.png",
-	"frame": {"x":106,"y":173,"w":103,"h":84},
+	"frame": {"x":348,"y":1,"w":103,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":103,"h":84},
@@ -66,7 +66,7 @@
 },
 {
 	"filename": "enemyBlue4.png",
-	"frame": {"x":180,"y":345,"w":82,"h":84},
+	"frame": {"x":210,"y":345,"w":82,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":82,"h":84},
@@ -74,7 +74,7 @@
 },
 {
 	"filename": "enemyBlue5.png",
-	"frame": {"x":319,"y":1,"w":97,"h":84},
+	"frame": {"x":107,"y":173,"w":97,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":97,"h":84},
@@ -82,7 +82,7 @@
 },
 {
 	"filename": "enemyGreen1.png",
-	"frame": {"x":201,"y":259,"w":93,"h":84},
+	"frame": {"x":297,"y":259,"w":93,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":93,"h":84},
@@ -90,7 +90,7 @@
 },
 {
 	"filename": "enemyGreen2.png",
-	"frame": {"x":115,"y":87,"w":104,"h":84},
+	"frame": {"x":1,"y":197,"w":104,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":104,"h":84},
@@ -98,7 +98,7 @@
 },
 {
 	"filename": "enemyGreen3.png",
-	"frame": {"x":1,"y":250,"w":103,"h":84},
+	"frame": {"x":136,"y":87,"w":103,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":103,"h":84},
@@ -106,7 +106,7 @@
 },
 {
 	"filename": "enemyGreen4.png",
-	"frame": {"x":264,"y":345,"w":82,"h":84},
+	"frame": {"x":294,"y":345,"w":82,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":82,"h":84},
@@ -114,7 +114,7 @@
 },
 {
 	"filename": "enemyGreen5.png",
-	"frame": {"x":316,"y":173,"w":97,"h":84},
+	"frame": {"x":206,"y":173,"w":97,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":97,"h":84},
@@ -122,7 +122,7 @@
 },
 {
 	"filename": "enemyRed1.png",
-	"frame": {"x":296,"y":259,"w":93,"h":84},
+	"frame": {"x":115,"y":345,"w":93,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":93,"h":84},
@@ -130,7 +130,7 @@
 },
 {
 	"filename": "enemyRed2.png",
-	"frame": {"x":213,"y":1,"w":104,"h":84},
+	"frame": {"x":242,"y":1,"w":104,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":104,"h":84},
@@ -138,7 +138,7 @@
 },
 {
 	"filename": "enemyRed3.png",
-	"frame": {"x":211,"y":173,"w":103,"h":84},
+	"frame": {"x":241,"y":87,"w":103,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":103,"h":84},
@@ -146,7 +146,7 @@
 },
 {
 	"filename": "enemyRed4.png",
-	"frame": {"x":348,"y":345,"w":82,"h":84},
+	"frame": {"x":378,"y":345,"w":82,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":82,"h":84},
@@ -154,7 +154,7 @@
 },
 {
 	"filename": "enemyRed5.png",
-	"frame": {"x":320,"y":87,"w":97,"h":84},
+	"frame": {"x":305,"y":173,"w":97,"h":84},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":97,"h":84},
@@ -162,7 +162,7 @@
 },
 {
 	"filename": "laserBlue04.png",
-	"frame": {"x":418,"y":1,"w":13,"h":37},
+	"frame": {"x":107,"y":111,"w":13,"h":37},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":13,"h":37},
@@ -170,7 +170,7 @@
 },
 {
 	"filename": "laserGreen08.png",
-	"frame": {"x":418,"y":40,"w":13,"h":37},
+	"frame": {"x":453,"y":1,"w":13,"h":37},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":13,"h":37},
@@ -178,7 +178,7 @@
 },
 {
 	"filename": "pill_blue.png",
-	"frame": {"x":415,"y":173,"w":22,"h":21},
+	"frame": {"x":107,"y":150,"w":22,"h":21},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":21},
@@ -186,7 +186,7 @@
 },
 {
 	"filename": "pill_green.png",
-	"frame": {"x":419,"y":79,"w":22,"h":21},
+	"frame": {"x":404,"y":173,"w":22,"h":21},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":21},
@@ -194,7 +194,7 @@
 },
 {
 	"filename": "pill_red.png",
-	"frame": {"x":419,"y":102,"w":22,"h":21},
+	"frame": {"x":404,"y":196,"w":22,"h":21},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":21},
@@ -202,7 +202,7 @@
 },
 {
 	"filename": "pill_yellow.png",
-	"frame": {"x":419,"y":125,"w":22,"h":21},
+	"frame": {"x":404,"y":219,"w":22,"h":21},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":21},
@@ -210,19 +210,27 @@
 },
 {
 	"filename": "playerShip2_red.png",
-	"frame": {"x":1,"y":87,"w":112,"h":75},
+	"frame": {"x":1,"y":369,"w":112,"h":75},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":112,"h":75},
 	"sourceSize": {"w":112,"h":75}
+},
+{
+	"filename": "shield1.png",
+	"frame": {"x":1,"y":1,"w":133,"h":108},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":133,"h":108},
+	"sourceSize": {"w":133,"h":108}
 }],
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "entities.png",
 	"format": "RGBA8888",
-	"size": {"w":442,"h":430},
+	"size": {"w":475,"h":445},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:989479c4aeb58b32978f8da0ae3f34b1:b3e3868911654fb462012c2a8912e761:d80676a5e85c5032e708efda4f84d8e3$"
+	"smartupdate": "$TexturePacker:SmartUpdate:e8b1e8c80c16ae7100985216a05b05b5:a15ea264d355b2e40a7b3172d865ab0a:d80676a5e85c5032e708efda4f84d8e3$"
 }
 }

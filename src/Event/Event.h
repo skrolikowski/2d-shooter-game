@@ -13,6 +13,7 @@ struct InvaderKilled
 
 struct PlayerHit
 {
+    bool isInvaderFire = false;
 };
 
 struct WaveCleared

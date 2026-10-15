@@ -41,6 +41,12 @@ void World::GivePlayerPowerUp(PowerUpType powerUpType)
         player_->GainPowerUp(powerUpType);
 }
 
+void World::RemovePlayerPowerUp(PowerUpType powerUpType)
+{
+    if (player_ != nullptr)
+        player_->LosePowerUp(powerUpType);
+}
+
 bool World::SpawnPowerUp(Vector2<float> pos, PowerUpType powerUpType)
 {
     PowerUp *p = powerUps_.Spawn(pos);
@@ -65,13 +71,48 @@ bool World::SpawnInvaderBullet(Vector2<float> pos)
 
 bool World::SpawnPlayerBullet(Vector2<float> pos)
 {
-    Bullet *b = playerBullets_.Spawn(pos);
-    if (b != nullptr)
+    // Check PowerUps!!
+    bool hasRapidFire = player_->HasPowerUp(PowerUpType::RapidFire);
+    bool hasSpreadShot = player_->HasPowerUp(PowerUpType::SpreadShot);
+
+    // Set hard-cap bullet spawn limit..
+    std::size_t limit = PLAYER_BULLET_LIMIT;
+    if (hasRapidFire)
+        limit *= POWERUP_RAPIDFIRE_MULTIPLIER;
+    if (hasSpreadShot)
+        limit *= POWERUP_SPREAD_MULTIPLIER;
+    limit = std::max<std::size_t>(PLAYER_BULLET_LIMIT, limit);
+
+    // Hard-cap limit.. (based on PowerUp status)
+    if (playerBullets_.CountAlive() >= limit)
+        return false;
+
+    auto spawnBullet = [&](Vector2<float> dir)
     {
-        b->SetDir(Vector2<float>{ 0.F, -1.F });
-        return true;
+        Bullet *b = playerBullets_.Spawn(pos);
+        if (b != nullptr)
+        {
+            b->SetDir(dir);
+        }
+    };
+
+    if (hasSpreadShot)
+    {
+        // Spawn spread shot..
+        double degrees = 60.0;
+        double radians = degrees * M_PI / 180.0;
+        float spreadX = static_cast<float>(std::cos(radians));
+
+        spawnBullet(Vector2<float>{ 0.F, -1.F });
+        spawnBullet(Vector2<float>{ -spreadX, -1.F });
+        spawnBullet(Vector2<float>{ spreadX, -1.F });
     }
-    return false;
+    else
+    {
+        // Spawn single bullet..
+        spawnBullet(Vector2<float>{ 0.F, -1.F });
+    }
+    return true;
 }
 
 void World::DamagePlayer(int amount)
@@ -80,6 +121,11 @@ void World::DamagePlayer(int amount)
 
     if (player_->IsDead())
         SpawnExplosion(player_->GetCenter());
+}
+
+bool World::PlayerHasPowerUp(PowerUpType powerUpType) const
+{
+    return player_->HasPowerUp(powerUpType);
 }
 
 void World::SpawnExplosion(Vector2<float> pos)
@@ -166,8 +212,13 @@ void World::Update(float dt)
     // Check Player / Formation..
     if (player_ && formation_)
     {
-        if (formation_->TryHit(player_->GetRect()) != nullptr)
-            EventBus::GetInstance().Push(PlayerHit{});
+        Invader *invader = formation_->TryHit(player_->GetRect());
+        if (invader != nullptr)
+        {
+            PlayerHit ev;
+            ev.isInvaderFire = false;
+            EventBus::GetInstance().Push(ev);
+        }
     }
 
     // Check Player Bullet / Formation..
@@ -214,7 +265,9 @@ void World::Update(float dt)
                 {
                     bullet.Damage(1); // Warning: bullets may die
 
-                    EventBus::GetInstance().Push(PlayerHit{});
+                    PlayerHit ev{};
+                    ev.isInvaderFire = true;
+                    EventBus::GetInstance().Push(ev);
                 }
             });
 

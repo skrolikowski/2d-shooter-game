@@ -24,6 +24,11 @@ void Player::GainPowerUp(PowerUpType powerUpType)
     powerUpTimers_[static_cast<std::size_t>(powerUpType)] = 1.F;
 }
 
+void Player::LosePowerUp(PowerUpType powerUpType)
+{
+    powerUpTimers_[static_cast<std::size_t>(powerUpType)] = 0.F;
+}
+
 void Player::UpdatePowerUps(float dt)
 {
     // Decrement PowerUp health..
@@ -71,12 +76,39 @@ void Player::Update(float dt)
             }
         }
 
-        // --
+        // Shot Delay (can be affected by PowerUp)
+        float shotDelay =
+            HasPowerUp(PowerUpType::RapidFire) ? PLAYER_RAPID_SHOOT_DELAY : PLAYER_SHOOT_DELAY;
         shootTimer += dt;
-        if (shootTimer >= PLAYER_SHOOT_DT)
+        if (shootTimer >= shotDelay)
             isShooting = false;
     }
 
     // clamp to screen
     pos_.x = std::clamp(pos_.x, 0.F, SCREEN_WIDTH - GetWidth());
+}
+
+void Player::Draw() const
+{
+    Entity::Draw();
+
+    // Draw Shield..
+    bool hasShield = HasPowerUp(PowerUpType::Shield);
+    if (hasShield)
+    {
+        const Frame *frame = Texture::GetFrame("shield1.png");
+        if (frame != nullptr)
+        {
+            float w = width_ * 1.5F;
+            float h = height_ * 1.5F;
+
+            // calculate position offsets based on added width..
+            float ox = (w - width_) / 2.F;
+            float oy = (h - height_) / 2.F;
+
+            float sx = w / frame->rect.w;
+            float sy = h / frame->rect.h;
+            Texture::Draw(frame, pos_.x - ox, pos_.y - oy, sx, sy);
+        }
+    }
 }

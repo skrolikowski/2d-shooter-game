@@ -5,15 +5,6 @@
 
 #include "Entity.h"
 
-// struct PowerUpStatus
-// {
-//     int powerUpID;
-//     float health = 0.F;
-
-//     [[nodiscard]] PowerUpType GetPowerUpType() const { return
-//     static_cast<PowerUpType>(powerUpID); }
-// };
-
 class Player : public Entity
 {
   public:
@@ -22,9 +13,11 @@ class Player : public Entity
 
     [[nodiscard]] bool HasPowerUp(PowerUpType powerUpType) const;
     void GainPowerUp(PowerUpType powerUpType);
+    void LosePowerUp(PowerUpType powerUpType);
     void UpdatePowerUps(float dt);
     void HandleInput() override;
     void Update(float dt) override;
+    void Draw() const override;
 
   private:
     bool isShooting = false;

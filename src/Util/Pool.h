@@ -11,12 +11,12 @@
 
 #include <SDL3/SDL.h>
 
+#include <algorithm>
 #include <array>
 #include <cstddef>
 
 #include "Poolable.h"
 #include "Texture.h"
-#include "Utility.h"
 #include "Vector2.h"
 
 struct Particle
@@ -61,7 +61,10 @@ template <Poolable T, std::size_t N> class Pool
   public:
     Pool() { Clear(); }
 
-    [[nodiscard]] std::size_t Size() const { return N; }
+    [[nodiscard]] std::size_t CountAlive() const
+    {
+        return std::ranges::count_if(items_, [](const T &t) { return !t.IsDead(); });
+    }
 
     void Clear()
     {

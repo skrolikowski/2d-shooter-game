@@ -79,7 +79,7 @@ void App::Init(const WindowParams &params)
 
     // Subscribe to Event Bus..
     Listen<InvaderKilled>([this](const InvaderKilled &e) { handleInvaderKilled(e.pos, e.type); });
-    Listen<PlayerHit>([this](const PlayerHit &) { handlePlayerHit(); });
+    Listen<PlayerHit>([this](const PlayerHit &e) { handlePlayerHit(e.isInvaderFire); });
     Listen<WaveCleared>([this](const WaveCleared &) { handleFormationKill(); });
     Listen<ShotFired>([this](const ShotFired &e) { handleBulletShoot(e.pos, e.isPlayerFire); });
     Listen<PowerUpGrabbed>(
@@ -346,11 +346,19 @@ void App::RefreshHud()
     TTF_SetTextString(playerScoreText_.get(), std::format("SCORE {:04}", playerScore_).c_str(), 0);
 }
 
-void App::handlePlayerHit()
+void App::handlePlayerHit(bool isInvaderFire)
 {
-    world_->DamagePlayer(1);
+    bool playerHasShield = world_->PlayerHasPowerUp(PowerUpType::Shield);
+    if (playerHasShield)
+        world_->RemovePlayerPowerUp(PowerUpType::Shield);
 
+    if (isInvaderFire && playerHasShield)
+        return;
+
+    // Player takes damage..
+    world_->DamagePlayer(1);
     playerLives_ -= 1;
+
     RefreshHud();
 
     // if (playerLives_ == 0)
