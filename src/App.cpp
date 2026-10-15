@@ -63,21 +63,12 @@ void App::Init(const WindowParams &params)
     playerLivesText_.reset(TTF_CreateText(fontEngine_.get(), fontH3_.get(), "LIVES 3x", 0));
     TTF_SetTextColor(playerLivesText_.get(), 255, 255, 255, 255);
 
-    // Audio
+    // Load Audio Library..
     if (Audio::Init())
     {
-        if (!Audio::Load("laserShoot", "res/audio/laserShoot.wav"))
-        {
-            SDL_Log("Failed to load %s", "res/audio/laserShoot.wav");
-        }
-        if (!Audio::Load("explosion", "res/audio/explosion.wav"))
-        {
-            SDL_Log("Failed to load %s", "res/audio/explosion.wav");
-        }
-        if (!Audio::Load("powerUp", "res/audio/powerUp.wav"))
-        {
-            SDL_Log("Failed to load %s", "res/audio/powerUp.wav");
-        }
+        Audio::Load("laserShoot", "res/audio/laserShoot.wav");
+        Audio::Load("explosion", "res/audio/explosion.wav");
+        Audio::Load("powerUp", "res/audio/powerUp.wav");
     }
 
     // Create World..

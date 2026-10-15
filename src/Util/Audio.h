@@ -21,7 +21,7 @@ class Audio
 {
   public:
     static bool Init(); // open device, create stream pool
-    static bool Load(const std::string &name, const std::string &path);
+    static void Load(const std::string &name, const std::string &path);
     static void Play(const std::string &name);
     static void Shutdown(); // free sounds, destroy streams, close device
 

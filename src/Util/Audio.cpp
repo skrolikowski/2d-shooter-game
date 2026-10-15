@@ -20,7 +20,7 @@ bool Audio::Init()
     return true;
 }
 
-bool Audio::Load(const std::string &name, const std::string &path)
+void Audio::Load(const std::string &name, const std::string &path)
 {
     // Audio..
     Sound s;
@@ -28,11 +28,10 @@ bool Audio::Load(const std::string &name, const std::string &path)
     if (!SDL_LoadWAV(path.c_str(), &s.spec, &buf, &s.length))
     {
         SDL_Log("SDL_LoadWAV failed: %s", SDL_GetError());
-        return false;
+        return;
     }
     s.data.reset(buf);
     Sounds.emplace(name, std::move(s));
-    return true;
 }
 
 void Audio::Play(const std::string &name)
