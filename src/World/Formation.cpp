@@ -58,7 +58,55 @@ int Formation::GetNumInvaders() const
         [](int acc, const FormationColumn &column) { return acc + column.Size(); });
 }
 
-void Formation::Update(float dt)
+void Formation::UpdateDiverInvader(float dt)
+{
+    diveTimer_ += dt;
+    if (diveTimer_ >= diveTimerDelay_)
+    {
+        SelectRandomDiverInvader();
+        diveTimer_ = 0.F; // reset;
+    }
+}
+
+void Formation::SelectRandomDiverInvader()
+{
+    std::vector<Invader *> candidates;
+
+    ForEachInvader(
+        [&](Invader &invader)
+        {
+            if (invader.GetState() == InvaderState::InFormation &&
+                invader.GetType() == InvaderType::Diver)
+            {
+                candidates.push_back(&invader);
+            }
+        });
+
+    if (candidates.empty())
+        return;
+
+    // ..
+    std::uniform_int_distribution<std::size_t> select(0, candidates.size() - 1);
+    std::size_t randIndex = select(rng_);
+
+    Invader *inv = candidates[randIndex];
+    inv->SetState(InvaderState::Diving);
+
+    bool invaderOnLeft = inv->GetCenter().x < (SCREEN_WIDTH / 2.F);
+    float padX = 16.F;
+    float padY = 160.F;
+    float px1 = invaderOnLeft ? padX : SCREEN_WIDTH + padX;
+    float px2 = invaderOnLeft ? SCREEN_WIDTH + padX : padX;
+
+    // control points
+    Vector2<float> p0 = inv->GetPosition();
+    Vector2<float> p1 = Vector2<float>{ px1, SCREEN_HEIGHT + padY };
+    Vector2<float> p2 = Vector2<float>{ px2, SCREEN_HEIGHT + padY };
+    Vector2<float> p3 = Vector2<float>{ px2, p0.y };
+    inv->SetControlPoints(p0, p1, p2, p3);
+}
+
+void Formation::UpdateStepFormation(float dt)
 {
     stepTimer_ -= dt;
     if (stepTimer_ <= 0)
@@ -72,7 +120,10 @@ void Formation::Update(float dt)
         stepTimer_ = stepInterval_ - (stepTimer_ - 0);
         stepInterval_ = minInterval + ((baseStepInterval_ - minInterval) * ratio);
     }
+}
 
+void Formation::UpdateSpawnBullet(float dt)
+{
     bulletTimer_ -= dt;
     if (bulletTimer_ <= 0)
     {
@@ -106,6 +157,20 @@ void Formation::Update(float dt)
         std::uniform_real_distribution<float> delay(bulletTimerRange_[0], bulletTimerRange_[1]);
         bulletTimer_ = delay(rng_);
     }
+}
+
+void Formation::Update(float dt)
+{
+    UpdateDiverInvader(dt);
+    UpdateStepFormation(dt);
+    UpdateSpawnBullet(dt);
+
+    ForEachInvader(
+        [&](Invader &invader)
+        {
+            if (!invader.IsDead())
+                invader.Update(dt);
+        });
 }
 
 void Formation::StepFormation()

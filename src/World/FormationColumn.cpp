@@ -15,13 +15,14 @@ FormationColumn::FormationColumn(Vector2<float> pos, const json &data)
         std::string value = data.at(static_cast<unsigned long>(r)).get<std::string>();
 
         Invader inv(Vector2<float>{ px, py });
+        inv.SetHomePosition(Vector2<float>{ px, py });
 
         if (value == "A")
             inv.SetType(InvaderType::A);
         else if (value == "B")
             inv.SetType(InvaderType::B);
         else if (value == "C")
-            inv.SetType(InvaderType::C);
+            inv.SetType(InvaderType::Diver);
         else
             inv.SetHealth(0);
 
@@ -84,7 +85,8 @@ bool FormationColumn::CheckForStepFormationHit(float dx) const
     return std::ranges::any_of(invaders_,
         [&](const auto &inv)
         {
-            if (inv.IsDead())
+            // Only Invaders "InFormation" will move with Formation
+            if (inv.IsDead() or inv.GetState() != InvaderState::InFormation)
                 return false;
             // --
             float nextX = inv.GetX() + (static_cast<float>(dir_) * dx);
@@ -102,9 +104,20 @@ void FormationColumn::StepFormation(float dx, float dy, bool hitDetected)
         if (inv.IsDead())
             continue;
 
+        // Next position..
+        Vector2<float> nextPos = inv.GetPosition();
+
+        if (inv.GetState() != InvaderState::InFormation)
+            nextPos = inv.GetHomePosition();
+
         if (hitDetected)
-            inv.SetY(inv.GetY() + dy);
+            nextPos.y += dy;
         else
-            inv.SetX(inv.GetX() + (static_cast<float>(dir_) * dx));
+            nextPos.x += static_cast<float>(dir_) * dx;
+
+        inv.SetHomePosition(nextPos);
+
+        if (inv.GetState() == InvaderState::InFormation)
+            inv.SetPosition(nextPos);
     }
 }

@@ -19,12 +19,16 @@ class Formation
   public:
     void CreateWave(const json &data);
     void SetWorld(World *world) { world_ = world; }
+    void SelectRandomDiverInvader();
     [[nodiscard]] int GetNumInvaders() const;
     Invader *TryHit(const SDL_FRect &rect);
     void StepFormation();
     [[nodiscard]] bool IsDead() const { return GetNumInvaders() == 0; }
     void Clear();
     void Update(float dt);
+    void UpdateDiverInvader(float dt);
+    void UpdateStepFormation(float dt);
+    void UpdateSpawnBullet(float dt);
     void Draw() const;
 
     template <typename F> void ForEachInvader(F &&f)
@@ -44,6 +48,9 @@ class Formation
     float stepTimer_ = 0.F;
     float stepInterval_ = 0.F;
     float baseStepInterval_ = 0.F;
+
+    float diveTimer_ = 0.F;
+    float diveTimerDelay_ = INVADER_DIVE_DELAY;
 
     float bulletTimer_ = 0.F;
     std::array<float, 2> bulletTimerRange_ = { 1.F, 1.5F };

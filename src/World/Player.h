@@ -15,7 +15,7 @@ class Player : public Entity
     void GainPowerUp(PowerUpType powerUpType);
     void LosePowerUp(PowerUpType powerUpType);
     void UpdatePowerUps(float dt);
-    void HandleInput() override;
+    void HandleInput();
     void Update(float dt) override;
     void Draw() const override;
 

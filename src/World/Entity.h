@@ -13,8 +13,15 @@ enum class InvaderType : std::uint8_t
 {
     A,
     B,
-    C,
+    Diver,
     Count,
+};
+
+enum class InvaderState : std::uint8_t
+{
+    InFormation,
+    Diving,
+    Returning
 };
 
 enum class PowerUpType : std::uint8_t
@@ -58,7 +65,6 @@ class Entity
     void Damage(int amount);
     [[nodiscard]] bool IsDead() const noexcept { return health_ <= 0; }
 
-    virtual void HandleInput() {} // Player Only!!
     virtual void Update(float dt);
     virtual void Draw() const;
 
