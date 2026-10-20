@@ -64,7 +64,7 @@ void PlayingState::StartNewWave()
     if (waveType == "invaders")
         app_->world_->GetFormation()->CreateWave(waveData);
     else if (waveType == "boss")
-        app_->world_->SpawnBoss();
+        app_->world_->SpawnBoss(waveData);
 
     // --
     // Add Bunkers..

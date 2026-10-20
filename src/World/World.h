@@ -29,7 +29,7 @@ class World
     bool SpawnEnemyBullet(Vector2<float> pos);
     bool SpawnPlayerBullet(Vector2<float> pos);
     void DamagePlayer(int amount);
-    void SpawnBoss();
+    void SpawnBoss(const json &data);
     void SpawnExplosion(Vector2<float> pos);
     void SetPlayerPosition(Vector2<float> pos);
     [[nodiscard]] bool PlayerHasPowerUp(PowerUpType powerUpType) const;

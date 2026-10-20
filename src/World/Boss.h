@@ -4,13 +4,16 @@
 #include <array>
 #include <random>
 
+#include <nlohmann/json_fwd.hpp>
+using json = nlohmann::json;
+
 #include "Entity.h"
 
 class Boss : public Entity
 {
   public:
     using Entity::Entity;
-    Boss(const Vector2<float> &pos);
+    Boss(const Vector2<float> &pos, const json &data);
 
     void SetState(BossState state) { state_ = state; }
     [[nodiscard]] BossState GetState() const { return state_; };

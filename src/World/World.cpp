@@ -130,9 +130,10 @@ bool World::PlayerHasPowerUp(PowerUpType powerUpType) const
     return player_->HasPowerUp(powerUpType);
 }
 
-void World::SpawnBoss()
+void World::SpawnBoss(const json &data)
 {
-    boss_ = std::make_unique<Boss>(Vector2{ (SCREEN_WIDTH / 2.F) - 64.F, SCREEN_HEIGHT * 0.25F });
+    boss_ =
+        std::make_unique<Boss>(Vector2{ (SCREEN_WIDTH / 2.F) - 64.F, SCREEN_HEIGHT * 0.25F }, data);
     boss_->SetWorld(this);
 }
 

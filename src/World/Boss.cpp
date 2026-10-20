@@ -7,7 +7,9 @@
 #include "Util/Vector2.h"
 #include "World.h"
 
-Boss::Boss(const Vector2<float> &pos) : Entity(pos)
+#include <nlohmann/json.hpp>
+
+Boss::Boss(const Vector2<float> &pos, const json &data) : Entity(pos)
 {
     textureName_ = "enemyRed1.png";
     speed_ = 200.F;
@@ -17,6 +19,8 @@ Boss::Boss(const Vector2<float> &pos) : Entity(pos)
     height_ = 124;
 
     dir_ = Vector2<float>{ 1.F, 0 };
+
+    bulletTimerRange_ = data.at("fire_rate");
 }
 
 void Boss::updateSpawnBullet(float dt)
