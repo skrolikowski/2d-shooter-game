@@ -3,6 +3,7 @@
 
 #include <SDL3/SDL.h>
 
+#include <array>
 #include <cstdint>
 #include <string>
 
@@ -53,6 +54,14 @@ class Entity
     void SetHealth(int health) noexcept { health_ = health; }
     void SetWorld(World *world) noexcept { world_ = world; }
 
+    void SetControlPoints(
+        Vector2<float> p0, Vector2<float> p1, Vector2<float> p2, Vector2<float> p3)
+    {
+        controlPoints_[0] = p0;
+        controlPoints_[1] = p1;
+        controlPoints_[2] = p2;
+        controlPoints_[3] = p3;
+    }
     void SetSpeed(float speed) { speed_ = speed; }
     void SetDir(Vector2<float> dir) { dir_ = dir; }
     void SetTexture(const std::string &texture) { textureName_ = texture; }
@@ -83,6 +92,8 @@ class Entity
     Vector2<float> vel_;
     float width_ = ENTITY_SIZE;
     float height_ = ENTITY_SIZE;
+
+    std::array<Vector2<float>, 4> controlPoints_{};
 
     std::string textureName_;
 

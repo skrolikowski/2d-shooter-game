@@ -26,10 +26,6 @@ class Boss : public Entity
 
     float diveT_ = 0.F;
     float diveChance_ = 0.2F;
-    Vector2<float> p0_;
-    Vector2<float> p1_;
-    Vector2<float> p2_;
-    Vector2<float> p3_;
 
     float bulletTimer_ = 0.F;
     std::array<float, 2> bulletTimerRange_ = { 0.5F, 1.F };

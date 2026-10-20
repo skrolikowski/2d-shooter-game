@@ -11,7 +11,7 @@ Boss::Boss(const Vector2<float> &pos) : Entity(pos)
 {
     textureName_ = "enemyRed1.png";
     speed_ = 200.F;
-    health_ = 25;
+    health_ = 8;
     healthMax_ = health_;
     width_ = 124;
     height_ = 124;
@@ -67,19 +67,20 @@ void Boss::Update(float dt)
                     SetState(BossState::Diving);
 
                     // control points
-                    p0_ = GetPosition();
-                    p1_ = Vector2<float>{
+                    Vector2<float> p0 = GetPosition();
+                    Vector2<float> p1 = Vector2<float>{
                         dir_.x < 0 ? (SCREEN_WIDTH * 0.9F) - width_ : SCREEN_WIDTH * 0.1F,
                         SCREEN_HEIGHT + (height_ * 2.5F),
                     };
-                    p2_ = Vector2<float>{
+                    Vector2<float> p2 = Vector2<float>{
                         dir_.x < 0 ? SCREEN_WIDTH * 0.1F : (SCREEN_WIDTH * 0.9F) - width_,
                         SCREEN_HEIGHT + (height_ * 2.5F),
                     };
-                    p3_ = Vector2<float>{
+                    Vector2<float> p3 = Vector2<float>{
                         dir_.x < 0 ? 32.F : SCREEN_WIDTH - 32.F - width_,
-                        p0_.y,
+                        p0.y,
                     };
+                    SetControlPoints(p0, p1, p2, p3);
                 }
             }
             break;
@@ -87,7 +88,8 @@ void Boss::Update(float dt)
         case BossState::Diving:
         {
             diveT_ = std::min(1.F, diveT_ + (dt / BOSS_DIVE_DURATION));
-            pos_ = Vector2<float>::GetCubicBezierPoint(p0_, p1_, p2_, p3_, diveT_);
+            pos_ = Vector2<float>::GetCubicBezierPoint(
+                controlPoints_[0], controlPoints_[1], controlPoints_[2], controlPoints_[3], diveT_);
 
             if (diveT_ >= 1.F)
             {
