@@ -9,6 +9,12 @@
 #include "Defs.h"
 #include "Util/Vector2.h"
 
+enum class BossState : std::uint8_t
+{
+    StrafeAndAttacking,
+    Diving,
+};
+
 enum class InvaderType : std::uint8_t
 {
     A,
@@ -70,6 +76,7 @@ class Entity
 
   protected:
     int health_ = 1;
+    int healthMax_ = 1;
     float speed_ = 50.F;
     Vector2<float> dir_;
     Vector2<float> pos_;

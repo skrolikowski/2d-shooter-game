@@ -86,6 +86,7 @@ class App : public EventListener
     std::unique_ptr<World> world_;
 
     void handlePlayerHit(bool isInvaderFire);
+    void handleBossKilled(Vector2<float> pos, int points);
     void handleBulletShoot(Vector2<float> pos, bool isPlayerFire = false);
     void handleInvaderKilled(Vector2<float> pos, InvaderType type);
     void handleFormationKill();

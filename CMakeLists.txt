@@ -66,6 +66,7 @@ add_library(src STATIC
   src/World/FormationColumn.cpp
   src/World/Formation.cpp
   src/World/Entity.cpp
+  src/World/Boss.cpp
   src/World/Bullet.cpp
   src/World/Player.cpp
   src/World/Invader.cpp

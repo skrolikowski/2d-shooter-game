@@ -1,6 +1,7 @@
 #include <cmath>
 #include <numbers>
 
+#include "Boss.h"
 #include "Event/EventBus.h"
 #include "Player.h"
 #include "Util/Utility.h"
@@ -58,9 +59,9 @@ bool World::SpawnPowerUp(Vector2<float> pos, PowerUpType powerUpType)
     return false;
 }
 
-bool World::SpawnInvaderBullet(Vector2<float> pos)
+bool World::SpawnEnemyBullet(Vector2<float> pos)
 {
-    Bullet *b = invaderBullets_.Spawn(pos);
+    Bullet *b = enemyBullets_.Spawn(pos);
     if (b != nullptr)
     {
         b->SetDir(Vector2<float>{ 0.F, 1.F });
@@ -92,6 +93,7 @@ bool World::SpawnPlayerBullet(Vector2<float> pos)
         Bullet *b = playerBullets_.Spawn(pos);
         if (b != nullptr)
         {
+            b->SetSpeed(500);
             b->SetDir(dir);
         }
     };
@@ -126,6 +128,12 @@ void World::DamagePlayer(int amount)
 bool World::PlayerHasPowerUp(PowerUpType powerUpType) const
 {
     return player_->HasPowerUp(powerUpType);
+}
+
+void World::SpawnBoss()
+{
+    boss_ = std::make_unique<Boss>(Vector2{ (SCREEN_WIDTH / 2.F) - 64.F, SCREEN_HEIGHT * 0.25F });
+    boss_->SetWorld(this);
 }
 
 void World::SpawnExplosion(Vector2<float> pos)
@@ -171,13 +179,16 @@ void World::SetPlayerPosition(Vector2<float> pos)
 void World::Clear()
 {
     playerBullets_.Clear();
-    invaderBullets_.Clear();
+    enemyBullets_.Clear();
     bunkers_.Clear();
     particles_.Clear();
     powerUps_.Clear();
 
     if (formation_ != nullptr)
         formation_->Clear();
+
+    if (boss_ != nullptr)
+        boss_.reset();
 }
 
 void World::HandleInput()
@@ -189,19 +200,14 @@ void World::HandleInput()
 void World::Update(float dt)
 {
     // --
-    // Update Formation..
-    if (formation_ != nullptr)
-        formation_->Update(dt);
-
-    // --
-    // Update Player..
-    if (player_ != nullptr)
-        player_->Update(dt);
+    updateFormation(dt);
+    updateBoss(dt);
+    updatePlayer(dt);
 
     // --
     // Update pools..
     playerBullets_.ForEach([&](Bullet &bullet) { bullet.UpdateAndSweep(dt); });
-    invaderBullets_.ForEach([&](Bullet &bullet) { bullet.UpdateAndSweep(dt); });
+    enemyBullets_.ForEach([&](Bullet &bullet) { bullet.UpdateAndSweep(dt); });
     powerUps_.ForEach([&](PowerUp &powerUp) { powerUp.Update(dt); });
     particles_.ForEach([&](Particle &p) { p.Update(dt); });
 
@@ -220,6 +226,18 @@ void World::Update(float dt)
             EventBus::GetInstance().Push(ev);
         }
     }
+
+    // if (player_ && boss_)
+    // {
+    //     SDL_FRect playerRect = player_->GetRect();
+    //     SDL_FRect bossRect = boss_->GetRect();
+    //     if (SDL_HasRectIntersectionFloat(&playerRect, &bossRect))
+    //     {
+    //         PlayerHit ev;
+    //         ev.isInvaderFire = false;
+    //         EventBus::GetInstance().Push(ev);
+    //     }
+    // }
 
     // Check Player Bullet / Formation..
     if (formation_)
@@ -262,7 +280,7 @@ void World::Update(float dt)
     if (player_)
     {
         // Check Invader Bullet / Player..
-        invaderBullets_.ForEach(
+        enemyBullets_.ForEach(
             [&](Bullet &bullet)
             {
                 if (bullet.IsDead())
@@ -296,6 +314,33 @@ void World::Update(float dt)
             });
     }
 
+    if (boss_ != nullptr)
+    {
+        playerBullets_.ForEach(
+            [&](Bullet &bullet)
+            {
+                if (bullet.IsDead())
+                    return; // may have died already..
+
+                SDL_FRect bossRect = boss_->GetRect();
+                if (SDL_HasRectIntersectionFloat(&bossRect, &bullet.GetSweep()))
+                {
+                    boss_->Damage(1);
+                    bullet.Damage(1); // Warning: bullets may die
+
+                    if (boss_->IsDead())
+                    {
+                        BossKilled ev;
+                        ev.pos = boss_->GetCenter();
+                        ev.points = BOSS_POINT_AMOUNT;
+                        EventBus::GetInstance().Push(ev);
+
+                        EventBus::GetInstance().Push(WaveCleared{});
+                    }
+                }
+            });
+    }
+
     // Check Bullet / Bunker Collision..
     bunkers_.ForEach(
         [&](Bunker &bunker)
@@ -314,7 +359,7 @@ void World::Update(float dt)
                     }
                 });
 
-            invaderBullets_.ForEach(
+            enemyBullets_.ForEach(
                 [&](Bullet &bullet)
                 {
                     if (bullet.IsDead())
@@ -333,15 +378,37 @@ void World::Update(float dt)
 
 void World::Draw() const
 {
-    if (player_ != nullptr && !player_->IsDead())
+    if (player_ != nullptr)
         player_->Draw();
-
-    playerBullets_.ForEach([&](const Bullet &b) { b.Draw(); });
-    invaderBullets_.ForEach([&](const Bullet &b) { b.Draw(); });
-    bunkers_.ForEach([&](const Bunker &b) { b.Draw(); });
-    particles_.ForEach([](const Particle &p) { p.Draw(); });
-    powerUps_.ForEach([](const PowerUp &p) { p.Draw(); });
 
     if (formation_ != nullptr)
         formation_->Draw();
+
+    if (boss_ != nullptr)
+        boss_->Draw();
+
+    // Draw pools..
+    playerBullets_.ForEach([&](const Bullet &b) { b.Draw(); });
+    enemyBullets_.ForEach([&](const Bullet &b) { b.Draw(); });
+    bunkers_.ForEach([&](const Bunker &b) { b.Draw(); });
+    particles_.ForEach([](const Particle &p) { p.Draw(); });
+    powerUps_.ForEach([](const PowerUp &p) { p.Draw(); });
+}
+
+void World::updateFormation(float dt)
+{
+    if (formation_ != nullptr)
+        formation_->Update(dt);
+}
+
+void World::updateBoss(float dt)
+{
+    if (boss_ != nullptr)
+        boss_->Update(dt);
+}
+
+void World::updatePlayer(float dt)
+{
+    if (player_ != nullptr)
+        player_->Update(dt);
 }

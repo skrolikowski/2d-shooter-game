@@ -79,6 +79,7 @@ void App::Init(const WindowParams &params)
     // Subscribe to Event Bus..
     Listen<InvaderKilled>([this](const InvaderKilled &e) { handleInvaderKilled(e.pos, e.type); });
     Listen<PlayerHit>([this](const PlayerHit &e) { handlePlayerHit(e.isInvaderFire); });
+    Listen<BossKilled>([this](const BossKilled &e) { handleBossKilled(e.pos, e.points); });
     Listen<WaveCleared>([this](const WaveCleared &) { handleFormationKill(); });
     Listen<ShotFired>([this](const ShotFired &e) { handleBulletShoot(e.pos, e.isPlayerFire); });
     Listen<PowerUpGrabbed>(
@@ -422,6 +423,17 @@ void App::handlePlayerHit(bool isInvaderFire)
     //     SetPendingState(GameStateID::GameOver);
     // else
     //     SetPendingState(GameStateID::PlayerDying);
+}
+
+void App::handleBossKilled(Vector2<float> pos, int points)
+{
+    // Explosion!!
+    Audio::Play("explosion");
+    world_->SpawnExplosion(pos);
+
+    // Update score..
+    playerScore_ += points;
+    RefreshHud();
 }
 
 void App::handleInvaderKilled(Vector2<float> pos, InvaderType /*type*/)

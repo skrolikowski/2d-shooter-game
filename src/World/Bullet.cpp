@@ -8,6 +8,17 @@ Bullet::Bullet()
     height_ = 14.F;
 }
 
+void Bullet::Update(float dt)
+{
+    Entity::Update(dt);
+
+    // check if out of bounds..
+    float w = GetWidth();
+    float h = GetHeight();
+    if (pos_.x + w < 0 || pos_.x > SCREEN_WIDTH || pos_.y + h < 0 || pos_.y > SCREEN_HEIGHT)
+        health_ = 0; // dead; out of bounds
+}
+
 void Bullet::UpdateAndSweep(float dt)
 {
     /**
@@ -17,7 +28,7 @@ void Bullet::UpdateAndSweep(float dt)
     SDL_FRect before;
     SDL_FRect after;
     before = GetRect();
-    Entity::Update(dt);
+    Update(dt);
     after = GetRect();
     SDL_GetRectUnionFloat(&before, &after, &sweep_);
 }

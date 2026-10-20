@@ -12,6 +12,12 @@ using json = nlohmann::json;
 #include "FormationColumn.h"
 #include "Util/Texture.h"
 
+enum class WaveType : std::uint8_t
+{
+    Invaders,
+    Boss
+};
+
 class World; // forward declaration
 
 class Formation

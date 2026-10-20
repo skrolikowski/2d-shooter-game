@@ -33,8 +33,8 @@ void PlayingState::Draw(SDL_Renderer * /*renderer*/) const
         DrawText(levelText_.get(), SCREEN_WIDTH / 2.F, SCREEN_HEIGHT / 2.F, TextAlign::Center);
 
     if (waveText_)
-        DrawText(waveText_.get(), SCREEN_WIDTH / 2.F, (SCREEN_HEIGHT / 2.F) + 32.F,
-                 TextAlign::Center);
+        DrawText(
+            waveText_.get(), SCREEN_WIDTH / 2.F, (SCREEN_HEIGHT / 2.F) + 32.F, TextAlign::Center);
 }
 
 void PlayingState::startNewGame()
@@ -50,16 +50,21 @@ void PlayingState::StartNewWave()
 {
     // Wave notification..
     levelText_.reset(TTF_CreateText(app_->fontEngine_.get(), app_->fontH1_.get(),
-                                    std::format("Level {:01}", (app_->level_ + 1)).c_str(), 0));
+        std::format("Level {:01}", (app_->level_ + 1)).c_str(), 0));
     waveText_.reset(TTF_CreateText(app_->fontEngine_.get(), app_->fontH2_.get(),
-                                   std::format("Wave {:01}", (app_->levelWave_ + 1)).c_str(), 0));
+        std::format("Wave {:01}", (app_->levelWave_ + 1)).c_str(), 0));
     TTF_SetTextColor(levelText_.get(), 255, 255, 255, 255);
     TTF_SetTextColor(waveText_.get(), 255, 255, 255, 255);
-    waveTextTimer_ = 0.f;
+    waveTextTimer_ = 0.F;
 
     // --
+    // Add Wave..
     const json &waveData = app_->GetLevelData();
-    app_->world_->GetFormation()->CreateWave(waveData);
+    std::string waveType = waveData.at("type").get<std::string>();
+    if (waveType == "invaders")
+        app_->world_->GetFormation()->CreateWave(waveData);
+    else if (waveType == "boss")
+        app_->world_->SpawnBoss();
 
     // --
     // Add Bunkers..

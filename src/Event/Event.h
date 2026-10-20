@@ -16,6 +16,12 @@ struct PlayerHit
     bool isInvaderFire = false;
 };
 
+struct BossKilled
+{
+    Vector2<float> pos;
+    int points;
+};
+
 struct WaveCleared
 {
 };
@@ -32,4 +38,5 @@ struct PowerUpGrabbed
 };
 
 // --
-using Event = std::variant<InvaderKilled, PlayerHit, WaveCleared, ShotFired, PowerUpGrabbed>;
+using Event =
+    std::variant<InvaderKilled, PlayerHit, BossKilled, WaveCleared, ShotFired, PowerUpGrabbed>;

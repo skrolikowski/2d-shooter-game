@@ -94,6 +94,10 @@ void Player::Update(float dt)
 
 void Player::Draw() const
 {
+    if (IsDead())
+        return;
+
+    // --
     Entity::Draw();
 
     // Draw Shield..

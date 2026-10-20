@@ -13,7 +13,6 @@ void Formation::CreateWave(const json &data)
     const json &invaders = data.at("invaders");
     const int numCols = static_cast<int>(invaders.size());
 
-    // --
     Clear();
     columns_.reserve(static_cast<unsigned long>(numCols));
 
@@ -144,7 +143,7 @@ void Formation::UpdateSpawnBullet(float dt)
             const float by = lowestInvader->GetY() + 32.F;
             Vector2 bPos = Vector2{ bx, by };
 
-            if (world_->SpawnInvaderBullet(bPos))
+            if (world_->SpawnEnemyBullet(bPos))
             {
                 ShotFired ev;
                 ev.pos = bPos;

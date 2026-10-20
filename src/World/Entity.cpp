@@ -16,14 +16,6 @@ void Entity::Update(float dt)
 {
     vel_ = dir_.Normalize() * speed_ * dt;
     pos_ += vel_;
-
-    // TODO: check collision
-
-    // TODO: check if out of bounds
-    float w = GetWidth();
-    float h = GetHeight();
-    if (pos_.x + w < 0 || pos_.x > SCREEN_WIDTH || pos_.y + h < 0 || pos_.y > SCREEN_HEIGHT)
-        health_ = 0; // dead; out of bounds
 }
 
 void Entity::Draw() const
