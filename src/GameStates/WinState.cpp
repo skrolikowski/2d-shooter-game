@@ -1,6 +1,7 @@
 #include "WinState.h"
 #include "App.h"
 #include "Input/Input.h"
+#include "Util/Audio.h"
 #include "Util/Utility.h"
 
 void WinState::Enter()
@@ -18,7 +19,10 @@ void WinState::Enter()
 void WinState::HandleInput()
 {
     if (Input::IsPressed(Action::Confirm))
+    {
+        Audio::Play("blipSelect");
         app_->SetPendingState(GameStateID::Title);
+    }
 }
 
 void WinState::Draw(SDL_Renderer * /*renderer*/) const

@@ -70,6 +70,7 @@ void App::Init(const WindowParams &params)
         Audio::Load("laserShoot", "res/audio/laserShoot.wav");
         Audio::Load("explosion", "res/audio/explosion.wav");
         Audio::Load("powerUp", "res/audio/powerUp.wav");
+        Audio::Load("blipSelect", "res/audio/blipSelect.wav");
     }
 
     // Create World..

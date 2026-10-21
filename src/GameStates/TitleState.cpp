@@ -1,6 +1,7 @@
 #include "TitleState.h"
 #include "App.h"
 #include "Input/Input.h"
+#include "Util/Audio.h"
 #include "Util/Utility.h"
 
 void TitleState::Enter()
@@ -22,7 +23,10 @@ void TitleState::HandleInput()
     if (Input::IsPressed(Action::Back))
         app_->isRunning_ = false;
     else if (Input::IsPressed(Action::Confirm))
+    {
+        Audio::Play("blipSelect");
         app_->SetPendingState(GameStateID::Playing);
+    }
 }
 
 void TitleState::Draw(SDL_Renderer * /*renderer*/) const
