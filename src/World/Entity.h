@@ -20,7 +20,7 @@ enum class InvaderType : std::uint8_t
 {
     A,
     B,
-    Diver,
+    C,
     Count,
 };
 

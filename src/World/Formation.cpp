@@ -58,54 +58,6 @@ int Formation::GetNumInvaders() const
         [](int acc, const FormationColumn &column) { return acc + column.Size(); });
 }
 
-void Formation::UpdateDiverInvader(float dt)
-{
-    diveTimer_ += dt;
-    if (diveTimer_ >= diveTimerDelay_)
-    {
-        SelectRandomDiverInvader();
-        diveTimer_ = 0.F; // reset;
-    }
-}
-
-void Formation::SelectRandomDiverInvader()
-{
-    std::vector<Invader *> candidates;
-
-    ForEachInvader(
-        [&](Invader &invader)
-        {
-            if (invader.GetState() == InvaderState::InFormation &&
-                invader.GetType() == InvaderType::Diver)
-            {
-                candidates.push_back(&invader);
-            }
-        });
-
-    if (candidates.empty())
-        return;
-
-    // ..
-    std::uniform_int_distribution<std::size_t> select(0, candidates.size() - 1);
-    std::size_t randIndex = select(App::RNG);
-
-    Invader *inv = candidates[randIndex];
-    inv->SetState(InvaderState::Diving);
-
-    bool invaderOnLeft = inv->GetCenter().x < (SCREEN_WIDTH / 2.F);
-    float padX = 16.F;
-    float padY = 160.F;
-    float px1 = invaderOnLeft ? padX : SCREEN_WIDTH + padX;
-    float px2 = invaderOnLeft ? SCREEN_WIDTH + padX : padX;
-
-    // control points
-    Vector2<float> p0 = inv->GetPosition();
-    Vector2<float> p1 = Vector2<float>{ px1, SCREEN_HEIGHT + padY };
-    Vector2<float> p2 = Vector2<float>{ px2, SCREEN_HEIGHT + padY };
-    Vector2<float> p3 = Vector2<float>{ px2, p0.y };
-    inv->GetDivePath().Start(p0, p1, p2, p3, INVADER_DIVE_DURATION);
-}
-
 void Formation::UpdateStepFormation(float dt)
 {
     stepTimer_ -= dt;
@@ -161,7 +113,6 @@ void Formation::UpdateSpawnBullet(float dt)
 
 void Formation::Update(float dt)
 {
-    UpdateDiverInvader(dt);
     UpdateStepFormation(dt);
     UpdateSpawnBullet(dt);
 

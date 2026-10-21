@@ -15,14 +15,13 @@ FormationColumn::FormationColumn(Vector2<float> pos, const json &data)
         std::string value = data.at(static_cast<unsigned long>(r)).get<std::string>();
 
         Invader inv(Vector2<float>{ px, py });
-        inv.SetHomePosition(Vector2<float>{ px, py });
 
         if (value == "A")
             inv.SetType(InvaderType::A);
         else if (value == "B")
             inv.SetType(InvaderType::B);
         else if (value == "C")
-            inv.SetType(InvaderType::Diver);
+            inv.SetType(InvaderType::C);
         else
             inv.SetHealth(0);
 
@@ -107,17 +106,11 @@ void FormationColumn::StepFormation(float dx, float dy, bool hitDetected)
         // Next position..
         Vector2<float> nextPos = inv.GetPosition();
 
-        if (inv.GetState() != InvaderState::InFormation)
-            nextPos = inv.GetHomePosition();
-
         if (hitDetected)
             nextPos.y += dy;
         else
             nextPos.x += static_cast<float>(dir_) * dx;
 
-        inv.SetHomePosition(nextPos);
-
-        if (inv.GetState() == InvaderState::InFormation)
-            inv.SetPosition(nextPos);
+        inv.SetPosition(nextPos);
     }
 }
