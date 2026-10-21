@@ -15,7 +15,7 @@ include(FetchContent)
 # # SDL3
 FetchContent_Declare(SDL3
   GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-  GIT_TAG main
+  GIT_TAG release-3.4.18
   GIT_SHALLOW TRUE)
 
 # # SDL3_image: PNG loading.
@@ -26,7 +26,7 @@ set(SDLIMAGE_TIF OFF CACHE BOOL "" FORCE)
 set(SDLIMAGE_WEBP OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(SDL3_image
   GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
-  GIT_TAG main
+  GIT_TAG release-3.4.8
   GIT_SHALLOW TRUE)
 
 # # SDL3_ttf: text.
@@ -34,7 +34,7 @@ FetchContent_Declare(SDL3_image
 set(SDLTTF_VENDORED ON CACHE BOOL "" FORCE)
 FetchContent_Declare(SDL3_ttf
   GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
-  GIT_TAG main
+  GIT_TAG release-3.2.2
   GIT_SHALLOW TRUE)
 
 FetchContent_Declare(nlohmann_json

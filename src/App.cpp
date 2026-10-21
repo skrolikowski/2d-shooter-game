@@ -219,8 +219,9 @@ void App::Draw() const
     // --
 
     // Set Render Viewport (Camera Shake)
-    SDL_FRect rect{ Camera::Offset.x, Camera::Offset.y, SCREEN_WIDTH, SCREEN_HEIGHT };
-    SDL_SetRenderViewportFloat(renderer_.get(), &rect);
+    SDL_Rect rect{ static_cast<int>(Camera::Offset.x), static_cast<int>(Camera::Offset.y),
+        SCREEN_WIDTH, SCREEN_HEIGHT };
+    SDL_SetRenderViewport(renderer_.get(), &rect);
 
     // Handle World draw..
     switch (stateID_)
@@ -246,8 +247,8 @@ void App::Draw() const
 void App::DrawUI() const
 {
     // Reset Render Viewport
-    SDL_FRect origRect{ 0.F, 0.F, SCREEN_WIDTH, SCREEN_HEIGHT };
-    SDL_SetRenderViewportFloat(renderer_.get(), &origRect);
+    SDL_Rect origRect{ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+    SDL_SetRenderViewport(renderer_.get(), &origRect);
 
     // Draw Score or High Score..
     DrawText(playerScoreText_.get(), 16.F, SCREEN_HEIGHT - 24.F, TextAlign::Left);
