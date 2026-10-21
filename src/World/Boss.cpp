@@ -52,17 +52,19 @@ void Boss::Update(float dt)
 {
     Entity::Update(dt);
 
-    // At edge check..
-    bool isAtEdge = pos_.x <= 16.F || pos_.x + width_ > SCREEN_WIDTH - 16.F;
-    if (isAtEdge)
-        dir_ = -dir_;
-
     switch (state_)
     {
         case BossState::StrafeAndAttacking:
         {
+            // At edge check..
+            bool isAtEdge = pos_.x <= 16.F || pos_.x + width_ > SCREEN_WIDTH - 16.F;
+            if (isAtEdge)
+                dir_ = -dir_;
+
+            // Possibly spawn bullets..
             updateSpawnBullet(dt);
 
+            // Possibly dive..
             if (isAtEdge)
             {
                 std::bernoulli_distribution diveChance(diveChance_);
@@ -70,18 +72,20 @@ void Boss::Update(float dt)
                 {
                     SetState(BossState::Diving);
 
+                    bool headingLeft = dir_.x < 0;
+
                     // control points
                     Vector2<float> p0 = GetPosition();
                     Vector2<float> p1 = Vector2<float>{
-                        dir_.x < 0 ? (SCREEN_WIDTH * 0.9F) - width_ : SCREEN_WIDTH * 0.1F,
-                        SCREEN_HEIGHT + (height_ * 2.5F),
+                        headingLeft ? (SCREEN_WIDTH * 0.9F) - width_ : SCREEN_WIDTH * 0.1F,
+                        SCREEN_HEIGHT,
                     };
                     Vector2<float> p2 = Vector2<float>{
-                        dir_.x < 0 ? SCREEN_WIDTH * 0.1F : (SCREEN_WIDTH * 0.9F) - width_,
-                        SCREEN_HEIGHT + (height_ * 2.5F),
+                        headingLeft ? SCREEN_WIDTH * 0.1F : (SCREEN_WIDTH * 0.9F) - width_,
+                        SCREEN_HEIGHT,
                     };
                     Vector2<float> p3 = Vector2<float>{
-                        dir_.x < 0 ? 32.F : SCREEN_WIDTH - 32.F - width_,
+                        headingLeft ? 32.F : SCREEN_WIDTH - 32.F - width_,
                         p0.y,
                     };
                     divePath_.Start(p0, p1, p2, p3, BOSS_DIVE_DURATION);
