@@ -102,7 +102,7 @@ void Formation::SelectRandomDiverInvader()
     Vector2<float> p1 = Vector2<float>{ px1, SCREEN_HEIGHT + padY };
     Vector2<float> p2 = Vector2<float>{ px2, SCREEN_HEIGHT + padY };
     Vector2<float> p3 = Vector2<float>{ px2, p0.y };
-    inv->SetControlPoints(p0, p1, p2, p3);
+    inv->GetDivePath().Start(p0, p1, p2, p3, INVADER_DIVE_DURATION);
 }
 
 void Formation::UpdateStepFormation(float dt)

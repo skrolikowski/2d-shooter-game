@@ -84,22 +84,17 @@ void Boss::Update(float dt)
                         dir_.x < 0 ? 32.F : SCREEN_WIDTH - 32.F - width_,
                         p0.y,
                     };
-                    SetControlPoints(p0, p1, p2, p3);
+                    divePath_.Start(p0, p1, p2, p3, BOSS_DIVE_DURATION);
                 }
             }
             break;
         }
         case BossState::Diving:
         {
-            diveT_ = std::min(1.F, diveT_ + (dt / BOSS_DIVE_DURATION));
-            pos_ = Vector2<float>::GetCubicBezierPoint(
-                controlPoints_[0], controlPoints_[1], controlPoints_[2], controlPoints_[3], diveT_);
+            pos_ = divePath_.Step(dt);
 
-            if (diveT_ >= 1.F)
-            {
+            if (divePath_.IsDone())
                 SetState(BossState::StrafeAndAttacking);
-                diveT_ = 0.F;
-            }
             break;
         }
     }

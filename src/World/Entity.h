@@ -39,6 +39,29 @@ enum class PowerUpType : std::uint8_t
     Count,
 };
 
+struct DivePath
+{
+    std::array<Vector2<float>, 4> points{};
+    float t = 0.F;
+    float duration = 2.F;
+
+    [[nodiscard]] bool IsDone() const { return t >= 1.F; }
+
+    void Start(
+        Vector2<float> p0, Vector2<float> p1, Vector2<float> p2, Vector2<float> p3, float length)
+    {
+        points = { p0, p1, p2, p3 };
+        duration = length;
+        t = 0.F;
+    }
+
+    Vector2<float> Step(float dt)
+    {
+        t = std::min(1.F, t + (dt / duration));
+        return Vector2<float>::GetCubicBezierPoint(points[0], points[1], points[2], points[3], t);
+    }
+};
+
 class World; // forward declaration, NOT #include "World.h"
 
 class Entity
@@ -54,14 +77,6 @@ class Entity
     void SetHealth(int health) noexcept { health_ = health; }
     void SetWorld(World *world) noexcept { world_ = world; }
 
-    void SetControlPoints(
-        Vector2<float> p0, Vector2<float> p1, Vector2<float> p2, Vector2<float> p3)
-    {
-        controlPoints_[0] = p0;
-        controlPoints_[1] = p1;
-        controlPoints_[2] = p2;
-        controlPoints_[3] = p3;
-    }
     void SetSpeed(float speed) { speed_ = speed; }
     void SetDir(Vector2<float> dir) { dir_ = dir; }
     void SetTexture(const std::string &texture) { textureName_ = texture; }
@@ -92,8 +107,6 @@ class Entity
     Vector2<float> vel_;
     float width_ = ENTITY_SIZE;
     float height_ = ENTITY_SIZE;
-
-    std::array<Vector2<float>, 4> controlPoints_{};
 
     std::string textureName_;
 

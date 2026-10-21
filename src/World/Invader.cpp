@@ -29,35 +29,40 @@ void Invader::Update(float dt)
     switch (state_)
     {
         case InvaderState::Diving:
-            diveT_ = std::min(1.F, diveT_ + (dt / INVADER_DIVE_DURATION));
-            pos_ = Vector2<float>::GetCubicBezierPoint(
-                controlPoints_[0], controlPoints_[1], controlPoints_[2], controlPoints_[3], diveT_);
+            pos_ = divePath_.Step(dt);
 
-            if (diveT_ >= 1.F)
+            if (divePath_.IsDone())
             {
-                returnT_ = 0.F;
+                SetState(InvaderState::Returning);
+
                 Vector2<float> p0 = pos_;
                 Vector2<float> p3 = home_;
                 Vector2<float> p1 = p0.x < p3.x ? Vector2<float>{ p0.x + 64.F, p3.y - 64.F }
                                                 : Vector2<float>{ p0.x - 64.F, p3.y - 64.F };
                 Vector2<float> p2 = p0.x < p3.x ? Vector2<float>{ p3.x - 64.F, p3.y - 64.F }
                                                 : Vector2<float>{ p3.x + 64.F, p3.y - 64.F };
-                SetControlPoints(p0, p1, p2, p3);
-                state_ = InvaderState::Returning;
+                divePath_.Start(p0, p1, p2, p3, INVADER_RETURN_DURATION);
             }
             break;
         case InvaderState::Returning:
         {
-            returnT_ = std::min(1.F, returnT_ + (dt / INVADER_RETURN_DURATION));
-            pos_ = Vector2<float>::GetCubicBezierPoint(controlPoints_[0], controlPoints_[1],
-                controlPoints_[2], controlPoints_[3], returnT_);
-            if (returnT_ >= 1.F)
+            pos_ = divePath_.Step(dt);
+
+            if (divePath_.IsDone())
             {
+                SetState(InvaderState::InFormation);
                 pos_ = home_;
-                state_ = InvaderState::InFormation;
-                returnT_ = 0.F;
-                diveT_ = 0.F;
             }
+            // returnT_ = std::min(1.F, returnT_ + (dt / INVADER_RETURN_DURATION));
+            // pos_ = Vector2<float>::GetCubicBezierPoint(controlPoints_[0], controlPoints_[1],
+            //     controlPoints_[2], controlPoints_[3], returnT_);
+            // if (returnT_ >= 1.F)
+            // {
+            //     pos_ = home_;
+            //     state_ = InvaderState::InFormation;
+            //     returnT_ = 0.F;
+            //     diveT_ = 0.F;
+            // }
             // Vector2<float> toHome = home_ - pos_;
             // float dist = toHome.Magnitude();
             // float step = speed_ * dt;

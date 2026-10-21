@@ -27,7 +27,7 @@ class Boss : public Entity
     std::mt19937 rng_{ std::random_device{}() };
     BossState state_{};
 
-    float diveT_ = 0.F;
+    DivePath divePath_;
     float diveChance_ = 0.2F;
 
     float bulletTimer_ = 0.F;
