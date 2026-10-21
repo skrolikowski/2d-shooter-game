@@ -13,7 +13,8 @@ enum class GameStateID : uint8_t
     Title,
     Playing,
     PlayerDying,
-    GameOver
+    GameOver,
+    Win,
 };
 
 class GameState

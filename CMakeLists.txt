@@ -74,7 +74,8 @@ add_library(src STATIC
   src/GameStates/GameOverState.cpp
   src/GameStates/TitleState.cpp
   src/GameStates/PlayingState.cpp
-  src/GameStates/PlayerDyingState.cpp)
+  src/GameStates/PlayerDyingState.cpp
+  src/GameStates/WinState.cpp)
 
 target_include_directories(src PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(src PUBLIC SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf nlohmann_json::nlohmann_json)

@@ -7,6 +7,7 @@
 #include "GameStates/PlayerDyingState.h"
 #include "GameStates/PlayingState.h"
 #include "GameStates/TitleState.h"
+#include "GameStates/WinState.h"
 #include "Input/Input.h"
 #include "Util/Audio.h"
 #include "Util/Texture.h"
@@ -384,6 +385,9 @@ void App::changeState(GameStateID stateID)
         case GameStateID::GameOver:
             state_ = std::make_unique<GameOverState>(this);
             break;
+        case GameStateID::Win:
+            state_ = std::make_unique<WinState>(this);
+            break;
     }
 
     state_->Enter();
@@ -473,7 +477,7 @@ void App::handleWaveCleared()
     }
     else
     {
-        // changeState(GameStateID::Win);
+        changeState(GameStateID::Win);
     }
 }
 

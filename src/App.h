@@ -34,6 +34,7 @@ class App : public EventListener
     friend class PlayingState;
     friend class PlayerDyingState;
     friend class GameOverState;
+    friend class WinState;
 
   public:
     inline static std::mt19937 RNG{ std::random_device{}() };
