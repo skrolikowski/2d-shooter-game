@@ -6,7 +6,10 @@
 void PlayingState::Enter()
 {
     if (app_->isPlaying_)
+    {
+        waveStarted_ = true;
         respawnPlayer();
+    }
     else
         StartNewWave();
 }
@@ -44,6 +47,7 @@ void PlayingState::Draw(SDL_Renderer * /*renderer*/) const
 void PlayingState::StartNewWave()
 {
     app_->world_->Clear();
+    waveStarted_ = false;
     app_->isPlaying_ = true;
 
     // Wave notification..
