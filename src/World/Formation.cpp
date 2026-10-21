@@ -1,4 +1,5 @@
 #include "Formation.h"
+#include "App.h"
 #include "Event/EventBus.h"
 #include "World.h"
 
@@ -33,7 +34,7 @@ void Formation::CreateWave(const json &data)
 
     // --
     std::uniform_real_distribution<float> delay(bulletTimerRange_[0], bulletTimerRange_[1]);
-    bulletTimer_ = delay(rng_);
+    bulletTimer_ = delay(App::RNG);
 }
 
 Invader *Formation::TryHit(const SDL_FRect &rect)
@@ -86,7 +87,7 @@ void Formation::SelectRandomDiverInvader()
 
     // ..
     std::uniform_int_distribution<std::size_t> select(0, candidates.size() - 1);
-    std::size_t randIndex = select(rng_);
+    std::size_t randIndex = select(App::RNG);
 
     Invader *inv = candidates[randIndex];
     inv->SetState(InvaderState::Diving);
@@ -137,7 +138,7 @@ void Formation::UpdateSpawnBullet(float dt)
         if (lowestInvaders.size() > 0)
         {
             std::uniform_int_distribution<size_t> pick(0, lowestInvaders.size() - 1);
-            const Entity *lowestInvader = lowestInvaders[pick(rng_)];
+            const Entity *lowestInvader = lowestInvaders[pick(App::RNG)];
             const auto bx =
                 static_cast<float>(lowestInvader->GetX() + (lowestInvader->GetWidth() * 0.5));
             const float by = lowestInvader->GetY() + 32.F;
@@ -154,7 +155,7 @@ void Formation::UpdateSpawnBullet(float dt)
 
         // Reset timer..
         std::uniform_real_distribution<float> delay(bulletTimerRange_[0], bulletTimerRange_[1]);
-        bulletTimer_ = delay(rng_);
+        bulletTimer_ = delay(App::RNG);
     }
 }
 

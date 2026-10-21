@@ -24,9 +24,7 @@ class Boss : public Entity
   private:
     void updateSpawnBullet(float dt);
 
-    std::mt19937 rng_{ std::random_device{}() };
     BossState state_{};
-
     DivePath divePath_;
     float diveChance_ = 0.2F;
 

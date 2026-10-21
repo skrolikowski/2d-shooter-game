@@ -4,6 +4,8 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include <cstdint>
 
+#include "App.h"
+
 enum class TextAlign : uint8_t
 {
     Left,
@@ -31,6 +33,12 @@ inline SDL_FColor Lerp(SDL_FColor a, SDL_FColor b, float t)
         a.b + ((b.b - a.b) * t),
         a.a + ((b.a - a.a) * t),
     };
+}
+
+inline float Rand(float min, float max)
+{
+    std::uniform_real_distribution<float> dis(min, max);
+    return dis(App::RNG);
 }
 
 #endif // UTILITY_H

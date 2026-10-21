@@ -1,6 +1,6 @@
 #include <SDL3/SDL.h>
-#include <iostream>
 
+#include "App.h"
 #include "Boss.h"
 #include "Event/EventBus.h"
 #include "Util/Texture.h"
@@ -44,7 +44,7 @@ void Boss::updateSpawnBullet(float dt)
 
         // Reset timer..
         std::uniform_real_distribution<float> delay(bulletTimerRange_[0], bulletTimerRange_[1]);
-        bulletTimer_ = delay(rng_);
+        bulletTimer_ = delay(App::RNG);
     }
 }
 
@@ -68,7 +68,7 @@ void Boss::Update(float dt)
             if (isAtEdge)
             {
                 std::bernoulli_distribution diveChance(diveChance_);
-                if (diveChance(rng_))
+                if (diveChance(App::RNG))
                 {
                     SetState(BossState::Diving);
 

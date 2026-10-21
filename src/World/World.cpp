@@ -1,6 +1,7 @@
 #include <cmath>
 #include <numbers>
 
+#include "App.h"
 #include "Boss.h"
 #include "Event/EventBus.h"
 #include "Player.h"
@@ -152,7 +153,6 @@ void World::SpawnBoss(const json &data)
 
 void World::SpawnExplosion(Vector2<float> pos)
 {
-    std::mt19937 rng_{ std::random_device{}() };
     std::uniform_real_distribution<float> angle(0.F, 2.F * static_cast<float>(std::numbers::pi));
     std::uniform_real_distribution<float> health(1.F, 2.5F);
     std::uniform_real_distribution<float> speed(50.F, 150.F);
@@ -161,11 +161,11 @@ void World::SpawnExplosion(Vector2<float> pos)
 
     for (std::size_t i = 0; i < EXPLOSION_PARTICLES_PER; ++i)
     {
-        const float randParticleAngle = angle(rng_);
-        const float randParticleHealth = health(rng_);
-        const float randParticleSpeed = speed(rng_);
-        const int randParticleSize = size(rng_);
-        const float randParticleTint = tint(rng_);
+        const float randParticleAngle = angle(App::RNG);
+        const float randParticleHealth = health(App::RNG);
+        const float randParticleSpeed = speed(App::RNG);
+        const int randParticleSize = size(App::RNG);
+        const float randParticleTint = tint(App::RNG);
 
         Particle *p = particles_.Spawn(pos);
         if (p != nullptr)

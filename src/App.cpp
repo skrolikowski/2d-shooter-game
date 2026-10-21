@@ -117,8 +117,6 @@ void App::MainLoop()
 
     while (isRunning_)
     {
-        HandleInput();
-
         // dt
         Uint64 nextTick = SDL_GetTicksNS();
         double frame = static_cast<double>(nextTick - prevTick) / 1e9;
@@ -128,6 +126,7 @@ void App::MainLoop()
 
         while (accumulator >= FRAME_STEP)
         {
+            HandleInput();
             Update(static_cast<float>(FRAME_STEP));
             accumulator -= FRAME_STEP;
         }
@@ -444,11 +443,11 @@ void App::handleInvaderKilled(Vector2<float> pos, InvaderType /*type*/)
 
     // PowerUp (% spawn chance)..
     std::bernoulli_distribution _spawnChance(POWERUP_SPAWN_CHANCE);
-    if (_spawnChance(rng_))
+    if (_spawnChance(RNG))
     {
         int spawnTypeCount = static_cast<int>(PowerUpType::Count);
         std::uniform_int_distribution<int> _spawnType(0, spawnTypeCount - 1);
-        auto spawnType = _spawnType(rng_);
+        auto spawnType = _spawnType(RNG);
 
         world_->SpawnPowerUp(pos, static_cast<PowerUpType>(spawnType));
     }

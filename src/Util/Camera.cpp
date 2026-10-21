@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 #include "Defs.h"
+#include "Util/Utility.h"
 
 Camera::Camera()
 {
@@ -17,13 +18,7 @@ void Camera::Update(float dt)
     float shake = trauma_ * trauma_; // squared = punchy, then a soft falloff
 
     Offset = {
-        MAX_CAMERA_SHAKE * shake * rand(-1, 1),
-        MAX_CAMERA_SHAKE * shake * rand(-1, 1),
+        MAX_CAMERA_SHAKE * shake * Rand(-1, 1),
+        MAX_CAMERA_SHAKE * shake * Rand(-1, 1),
     };
-}
-
-float Camera::rand(float min, float max)
-{
-    std::uniform_real_distribution<float> dis(min, max);
-    return dis(rng_);
 }

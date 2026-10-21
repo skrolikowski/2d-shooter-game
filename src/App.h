@@ -36,6 +36,8 @@ class App : public EventListener
     friend class GameOverState;
 
   public:
+    inline static std::mt19937 RNG{ std::random_device{}() };
+
     App() = default;
     ~App() { Quit(); }
 
@@ -79,8 +81,6 @@ class App : public EventListener
     TTF_FontPtr fontH2_;
     TTF_FontPtr fontH3_;
     TTF_TextEnginePtr fontEngine_;
-
-    std::mt19937 rng_{ std::random_device{}() };
 
     std::unique_ptr<Camera> camera_;
     std::unique_ptr<World> world_;

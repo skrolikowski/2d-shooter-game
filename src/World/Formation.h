@@ -4,7 +4,6 @@
 #include <array>
 #include <cassert>
 #include <nlohmann/json_fwd.hpp>
-#include <random>
 #include <vector>
 using json = nlohmann::json;
 
@@ -49,7 +48,6 @@ class Formation
     World *world_ = nullptr;
     std::vector<FormationColumn> columns_;
 
-    std::mt19937 rng_{ std::random_device{}() };
     int numInvadersInit_ = 0;
     float stepTimer_ = 0.F;
     float stepInterval_ = 0.F;
