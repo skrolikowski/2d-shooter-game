@@ -77,11 +77,11 @@ void PlayingState::spawnWaveEntities()
 
     // --
     // Add Bunkers..
-    app_->world_->SpawnBunker(Vector2{ 128.F - (NumCols / 2.F), SCREEN_HEIGHT - 150.F });
+    app_->world_->SpawnBunker(Vector2{ 128.F - (NumCols / 2.F), SCREEN_HEIGHT - 224.F });
     app_->world_->SpawnBunker(
-        Vector2{ (SCREEN_WIDTH / 2.F) - (NumCols / 2.F), SCREEN_HEIGHT - 150.F });
+        Vector2{ (SCREEN_WIDTH / 2.F) - (NumCols / 2.F), SCREEN_HEIGHT - 224.F });
     app_->world_->SpawnBunker(
-        Vector2{ SCREEN_WIDTH - 128.F - (NumCols / 2.F), SCREEN_HEIGHT - 150.F });
+        Vector2{ SCREEN_WIDTH - 128.F - (NumCols / 2.F), SCREEN_HEIGHT - 224.F });
 }
 
 void PlayingState::respawnPlayer()
