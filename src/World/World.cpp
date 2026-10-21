@@ -77,6 +77,7 @@ bool World::SpawnBossBullet(Vector2<float> pos)
     Bullet *b = enemyBullets_.Spawn(pos);
     if (b != nullptr)
     {
+        b->SetSize(b->GetWidth() * 1.5F, b->GetHeight() * 1.5F);
         b->SetTravelTween({ .from = 50.F, .to = 400.F, .duration = 0.5F, .ease = Easing::InQuad });
         b->SetDir(Vector2<float>{ 0.F, 1.F });
         return true;

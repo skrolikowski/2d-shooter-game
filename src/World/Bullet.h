@@ -12,6 +12,12 @@ class Bullet : public Entity
     [[nodiscard]] const SDL_FRect &GetSweep() const { return sweep_; }
     void SetSweep(const SDL_FRect &s) { sweep_ = s; }
 
+    void SetSize(float w, float h)
+    {
+        width_ = w;
+        height_ = h;
+    }
+
     void SetTravelTween(TravelTween tween) { tween_ = tween; }
     void Update(float dt) override;
     void UpdateAndSweep(float dt);
