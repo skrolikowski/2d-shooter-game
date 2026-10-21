@@ -28,6 +28,7 @@ void Bullet::UpdateAndSweep(float dt)
     SDL_FRect before;
     SDL_FRect after;
     before = GetRect();
+    speed_ = tween_.Step(dt);
     Update(dt);
     after = GetRect();
     SDL_GetRectUnionFloat(&before, &after, &sweep_);

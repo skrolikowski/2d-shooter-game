@@ -32,8 +32,8 @@ void Boss::updateSpawnBullet(float dt)
         Vector2 bPosLeft = Vector2{ centerPos.x - (width_ / 2.F), centerPos.y + (height_ / 2.F) };
         Vector2 bPosRight = Vector2{ centerPos.x + (width_ / 2.F), centerPos.y + (height_ / 2.F) };
 
-        bool bulletSpawnLeft = world_->SpawnEnemyBullet(bPosLeft);
-        bool bulletSpawnRight = world_->SpawnEnemyBullet(bPosRight);
+        bool bulletSpawnLeft = world_->SpawnBossBullet(bPosLeft);
+        bool bulletSpawnRight = world_->SpawnBossBullet(bPosRight);
         if (bulletSpawnLeft || bulletSpawnRight)
         {
             ShotFired ev;
