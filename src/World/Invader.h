@@ -26,7 +26,6 @@ class Invader : public Entity
     InvaderType type_{};
 
     DivePath divePath_;
-    float returnT_ = 0.F;
     Vector2<float> home_;
 };
 
