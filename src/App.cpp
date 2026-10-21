@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cassert>
 #include <fstream>
 
 #include "App.h"
@@ -80,7 +81,7 @@ void App::Init(const WindowParams &params)
     Listen<InvaderKilled>([this](const InvaderKilled &e) { handleInvaderKilled(e.pos, e.type); });
     Listen<PlayerHit>([this](const PlayerHit &e) { handlePlayerHit(e.isInvaderFire); });
     Listen<BossKilled>([this](const BossKilled &e) { handleBossKilled(e.pos, e.points); });
-    Listen<WaveCleared>([this](const WaveCleared &) { handleFormationKill(); });
+    Listen<WaveCleared>([this](const WaveCleared &) { handleWaveCleared(); });
     Listen<ShotFired>([this](const ShotFired &e) { handleBulletShoot(e.pos, e.isPlayerFire); });
     Listen<PowerUpGrabbed>(
         [this](const PowerUpGrabbed &e) { handlePowerUpGrabbed(e.powerUpType); });
@@ -187,6 +188,7 @@ void App::Update(float dt)
     switch (stateID_)
     {
         case GameStateID::Playing:
+        case GameStateID::PlayerDying:
             world_->Update(dt);
             break;
         default:
@@ -255,21 +257,16 @@ void App::DrawUI() const
     float w = 18.F;
     float h = 18.F;
 
-    for (int i = 0, j = x1; i < playerInitLives_; ++i)
+    for (int i = 0; i < playerLives_ - 1; ++i)
     {
-        if (i < playerLives_)
+        const Frame *frame = Texture::GetFrame("star_gold.png");
+        if (frame != nullptr)
         {
-            const Frame *frame =
-                Texture::GetFrame(i < playerLives_ ? "star_gold.png" : "star_silver.png");
-            if (frame != nullptr)
-            {
-                auto x = static_cast<float>(j);
-                float sx = w / frame->rect.w;
-                float sy = h / frame->rect.h;
-                Texture::Draw(frame, x, y1, sx, sy);
-            }
+            auto x = static_cast<float>(x1 + (i * padX));
+            float sx = w / frame->rect.w;
+            float sy = h / frame->rect.h;
+            Texture::Draw(frame, x, y1, sx, sy);
         }
-        j += padX;
     }
 
     // --
@@ -395,7 +392,7 @@ void App::changeState(GameStateID stateID)
 
 void App::ResetPlayerStats()
 {
-    playerLives_ = playerInitLives_;
+    playerLives_ = playerLivesMax_;
     playerScore_ = 0;
     RefreshHud();
 }
@@ -418,10 +415,10 @@ void App::handlePlayerHit(bool isInvaderFire)
     world_->DamagePlayer(1);
     playerLives_ -= 1;
 
-    // if (playerLives_ == 0)
-    //     SetPendingState(GameStateID::GameOver);
-    // else
-    //     SetPendingState(GameStateID::PlayerDying);
+    if (playerLives_ == 0)
+        SetPendingState(GameStateID::GameOver);
+    else
+        SetPendingState(GameStateID::PlayerDying);
 }
 
 void App::handleBossKilled(Vector2<float> pos, int points)
@@ -462,33 +459,33 @@ void App::handleBulletShoot(Vector2<float> /*pos*/, bool /*isPlayerFire*/)
     Audio::Play("laserShoot");
 }
 
-void App::handleFormationKill()
+void App::handleWaveCleared()
 {
     // Check for new Wave..
     if (levelWave_ + 1 < GetNumWaves())
     {
-        // Go to next wave..
-        ++levelWave_;
-        if (stateID_ == GameStateID::Playing)
-        {
-            auto *state = dynamic_cast<PlayingState *>(state_.get());
-            if (state != nullptr)
-                state->StartNewWave();
-        }
-        else
-            changeState(GameStateID::Playing);
+        advanceToWave(levelWave_ + 1);
     }
-
-    // Check for new Level..
     else if (level_ + 1 < GetNumLevels())
     {
         ++level_;
-        levelWave_ = 0;
+        advanceToWave(0);
     }
     else
     {
         // changeState(GameStateID::Win);
     }
+}
+
+void App::advanceToWave(std::size_t wave)
+{
+    assert(stateID_ == GameStateID::Playing);
+
+    levelWave_ = wave;
+
+    auto *state = dynamic_cast<PlayingState *>(state_.get());
+    if (state != nullptr)
+        state->StartNewWave();
 }
 
 void App::handlePowerUpGrabbed(PowerUpType powerUpType)

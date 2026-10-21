@@ -6,6 +6,7 @@
 void TitleState::Enter()
 {
     app_->isPlaying_ = false;
+    app_->ResetPlayerStats();
 
     titleText_.reset(
         TTF_CreateText(app_->fontEngine_.get(), app_->fontH1_.get(), "2D Shooter Game", 0));
@@ -28,6 +29,6 @@ void TitleState::Draw(SDL_Renderer * /*renderer*/) const
 {
     // Draw Score or High Score..
     DrawText(titleText_.get(), SCREEN_WIDTH / 2.F, SCREEN_HEIGHT / 2.F, TextAlign::Center);
-    DrawText(subtitleText_.get(), SCREEN_WIDTH / 2.F, (SCREEN_HEIGHT / 2.F) + 32.F,
-             TextAlign::Center);
+    DrawText(
+        subtitleText_.get(), SCREEN_WIDTH / 2.F, (SCREEN_HEIGHT / 2.F) + 32.F, TextAlign::Center);
 }

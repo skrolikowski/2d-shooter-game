@@ -16,7 +16,7 @@ class PlayerDyingState : public GameState
 
   private:
     float stateTimer_ = 0.F;
-    float stateEndTime_ = 2.5F;
+    float stateEndTime_ = 2.0F;
 
     TTF_TextPtr titleText_;
     TTF_TextPtr subtitleText_;

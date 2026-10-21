@@ -6,18 +6,22 @@
 void PlayingState::Enter()
 {
     if (app_->isPlaying_)
-        resetPlayerPosition();
+        respawnPlayer();
     else
-        startNewGame();
+        StartNewWave();
 }
 
 void PlayingState::Update(float dt)
 {
-    waveTextTimer_ += dt;
-    if (waveTextTimer_ >= waveTextInterval_)
+    waveTextTimer_ = std::min(waveTextInterval_, waveTextTimer_ + dt);
+
+    if (!waveStarted_ && waveTextTimer_ >= waveTextInterval_)
     {
         levelText_.reset();
         waveText_.reset();
+
+        waveStarted_ = true;
+        spawnWaveEntities();
     }
 }
 
@@ -37,17 +41,11 @@ void PlayingState::Draw(SDL_Renderer * /*renderer*/) const
             waveText_.get(), SCREEN_WIDTH / 2.F, (SCREEN_HEIGHT / 2.F) + 32.F, TextAlign::Center);
 }
 
-void PlayingState::startNewGame()
-{
-    app_->world_->Clear();
-    StartNewWave();
-
-    // --
-    app_->isPlaying_ = true;
-}
-
 void PlayingState::StartNewWave()
 {
+    app_->world_->Clear();
+    app_->isPlaying_ = true;
+
     // Wave notification..
     levelText_.reset(TTF_CreateText(app_->fontEngine_.get(), app_->fontH1_.get(),
         std::format("Level {:01}", (app_->level_ + 1)).c_str(), 0));
@@ -56,11 +54,18 @@ void PlayingState::StartNewWave()
     TTF_SetTextColor(levelText_.get(), 255, 255, 255, 255);
     TTF_SetTextColor(waveText_.get(), 255, 255, 255, 255);
     waveTextTimer_ = 0.F;
+    waveStarted_ = false;
+}
 
-    // --
+void PlayingState::spawnWaveEntities()
+{
+    // Create Player.. (if necessary)
+    app_->world_->SpawnPlayer(Vector2<float>{ SCREEN_WIDTH / 2.F, SCREEN_HEIGHT - 80.F });
+
     // Add Wave..
     const json &waveData = app_->GetLevelData();
     std::string waveType = waveData.at("type").get<std::string>();
+    // ..wave type..
     if (waveType == "invaders")
         app_->world_->GetFormation()->CreateWave(waveData);
     else if (waveType == "boss")
@@ -73,11 +78,9 @@ void PlayingState::StartNewWave()
         Vector2{ (SCREEN_WIDTH / 2.F) - (NumCols / 2.F), SCREEN_HEIGHT - 150.F });
     app_->world_->SpawnBunker(
         Vector2{ SCREEN_WIDTH - 128.F - (NumCols / 2.F), SCREEN_HEIGHT - 150.F });
-
-    app_->ResetPlayerStats();
 }
 
-void PlayingState::resetPlayerPosition()
+void PlayingState::respawnPlayer()
 {
-    app_->world_->SetPlayerPosition(Vector2<float>{ SCREEN_WIDTH / 2.F, SCREEN_HEIGHT - 80.F });
+    app_->world_->SpawnPlayer(Vector2<float>{ SCREEN_WIDTH / 2.F, SCREEN_HEIGHT - 80.F });
 }

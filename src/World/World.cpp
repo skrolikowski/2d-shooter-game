@@ -10,11 +10,6 @@
 
 World::World()
 {
-    // Create Player..
-    player_ = std::make_unique<Player>();
-    player_->SetPosition(Vector2<float>{ SCREEN_WIDTH / 2.F, SCREEN_HEIGHT - 80.F });
-    player_->SetWorld(this);
-
     // Create Invader Manager..
     formation_ = std::make_unique<Formation>();
     formation_->SetWorld(this);
@@ -35,6 +30,16 @@ bool World::SpawnBunker(Vector2<float> pos)
 {
     Bunker *b = bunkers_.Spawn(pos);
     return b != nullptr;
+}
+
+void World::SpawnPlayer(Vector2<float> pos)
+{
+    if (player_ == nullptr)
+    {
+        player_ = std::make_unique<Player>();
+        player_->SetPosition(pos);
+        player_->SetWorld(this);
+    }
 }
 
 void World::GivePlayerPowerUp(PowerUpType powerUpType)
@@ -118,7 +123,7 @@ bool World::SpawnPlayerBullet(Vector2<float> pos)
         // Spawn spread shot..
         double degrees = 60.0;
         double radians = degrees * M_PI / 180.0;
-        float spreadX = static_cast<float>(std::cos(radians));
+        auto spreadX = static_cast<float>(std::cos(radians));
 
         spawnBullet(Vector2<float>{ 0.F, -1.F });
         spawnBullet(Vector2<float>{ -spreadX, -1.F });
@@ -137,12 +142,15 @@ void World::DamagePlayer(int amount)
     player_->Damage(amount);
 
     if (player_->IsDead())
+    {
         SpawnExplosion(player_->GetCenter());
+        player_ = nullptr;
+    }
 }
 
 bool World::PlayerHasPowerUp(PowerUpType powerUpType) const
 {
-    return player_->HasPowerUp(powerUpType);
+    return player_ != nullptr ? player_->HasPowerUp(powerUpType) : false;
 }
 
 void World::SpawnBoss(const json &data)
@@ -193,11 +201,16 @@ void World::SetPlayerPosition(Vector2<float> pos)
 
 void World::Clear()
 {
+    // Clear
     playerBullets_.Clear();
     enemyBullets_.Clear();
-    bunkers_.Clear();
     particles_.Clear();
     powerUps_.Clear();
+
+    bunkers_.Clear();
+
+    if (player_ != nullptr)
+        player_.reset();
 
     if (formation_ != nullptr)
         formation_->Clear();

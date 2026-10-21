@@ -20,10 +20,11 @@ class PlayingState : public GameState
     TTF_TextPtr levelText_;
     TTF_TextPtr waveText_;
     float waveTextTimer_ = 0.F;
-    float waveTextInterval_ = 1.5F;
+    float waveTextInterval_ = 1.0F;
+    bool waveStarted_ = false;
 
-    void startNewGame();
-    void resetPlayerPosition();
+    void respawnPlayer();
+    void spawnWaveEntities();
 };
 
 #endif // PLAYINGSTATE_H

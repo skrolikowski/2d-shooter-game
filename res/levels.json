@@ -3,13 +3,6 @@
         {
             "waves": [
                 {
-                    "type": "boss",
-                    "fire_rate": [
-                        0.75,
-                        1.25
-                    ]
-                },
-                {
                     "type": "invaders",
                     "step_interval": 0.8,
                     "fire_rate": [
@@ -163,6 +156,13 @@
                             "x",
                             "x"
                         ]
+                    ]
+                },
+                {
+                    "type": "boss",
+                    "fire_rate": [
+                        0.75,
+                        1.25
                     ]
                 }
             ]

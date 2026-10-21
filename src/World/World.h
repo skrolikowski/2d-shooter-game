@@ -25,6 +25,7 @@ class World
     bool SpawnBunker(Vector2<float> pos);
     void GivePlayerPowerUp(PowerUpType powerUpType);
     void RemovePlayerPowerUp(PowerUpType powerUpType);
+    void SpawnPlayer(Vector2<float> pos);
     bool SpawnPowerUp(Vector2<float> pos, PowerUpType powerUpType);
     bool SpawnBossBullet(Vector2<float> pos);
     bool SpawnEnemyBullet(Vector2<float> pos);

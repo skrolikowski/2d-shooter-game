@@ -67,7 +67,7 @@ class App : public EventListener
     TTF_TextPtr playerScoreText_;
     int playerScore_ = 0;
     int playerLives_ = 3;
-    int playerInitLives_ = 3;
+    int playerLivesMax_ = 3;
 
     unsigned long level_ = 0;
     unsigned long levelWave_ = 0;
@@ -89,7 +89,8 @@ class App : public EventListener
     void handleBossKilled(Vector2<float> pos, int points);
     void handleBulletShoot(Vector2<float> pos, bool isPlayerFire = false);
     void handleInvaderKilled(Vector2<float> pos, InvaderType type);
-    void handleFormationKill();
+    void handleWaveCleared();
+    void advanceToWave(std::size_t wave);
     void handlePowerUpGrabbed(PowerUpType powerUpType);
     void changeState(GameStateID stateID);
 };
