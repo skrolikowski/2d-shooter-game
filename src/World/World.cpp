@@ -265,17 +265,17 @@ void World::Update(float dt)
         }
     }
 
-    // if (player_ && boss_)
-    // {
-    //     SDL_FRect playerRect = player_->GetRect();
-    //     SDL_FRect bossRect = boss_->GetRect();
-    //     if (SDL_HasRectIntersectionFloat(&playerRect, &bossRect))
-    //     {
-    //         PlayerHit ev;
-    //         ev.isInvaderFire = false;
-    //         EventBus::GetInstance().Push(ev);
-    //     }
-    // }
+    if (player_ && boss_)
+    {
+        SDL_FRect playerRect = player_->GetRect();
+        SDL_FRect bossRect = boss_->GetRect();
+        if (SDL_HasRectIntersectionFloat(&playerRect, &bossRect))
+        {
+            PlayerHit ev;
+            ev.isInvaderFire = false;
+            EventBus::GetInstance().Push(ev);
+        }
+    }
 
     // Check Player Bullet / Formation..
     if (formation_)
@@ -374,6 +374,8 @@ void World::Update(float dt)
                         EventBus::GetInstance().Push(ev);
 
                         EventBus::GetInstance().Push(WaveCleared{});
+
+                        boss_ = nullptr;
                     }
                 }
             });
