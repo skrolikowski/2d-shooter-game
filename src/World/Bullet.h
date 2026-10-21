@@ -18,13 +18,18 @@ class Bullet : public Entity
         height_ = h;
     }
 
-    void SetTravelTween(TravelTween tween) { tween_ = tween; }
+    void SetTravelTween(TravelTween tween)
+    {
+        tween_ = tween;
+        hasTween_ = true;
+    }
     void Update(float dt) override;
     void UpdateAndSweep(float dt);
 
   private:
     SDL_FRect sweep_{};
     TravelTween tween_{};
+    bool hasTween_ = false;
 };
 
 #endif // BULLET_H
