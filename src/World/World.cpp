@@ -70,7 +70,12 @@ bool World::SpawnEnemyBullet(Vector2<float> pos)
     Bullet *b = enemyBullets_.Spawn(pos);
     if (b != nullptr)
     {
-        b->SetSpeed(300);
+        b->SetTravelTween({
+            .from = FORMATION_BULLET_SPEED_MAX / 2.F,
+            .to = FORMATION_BULLET_SPEED_MAX,
+            .duration = 0.5F,
+            .ease = Easing::InQuad,
+        });
         b->SetDir(Vector2<float>{ 0.F, 1.F });
         return true;
     }
@@ -83,7 +88,12 @@ bool World::SpawnBossBullet(Vector2<float> pos)
     if (b != nullptr)
     {
         b->SetSize(b->GetWidth() * 1.5F, b->GetHeight() * 1.5F);
-        b->SetTravelTween({ .from = 50.F, .to = 400.F, .duration = 0.5F, .ease = Easing::InQuad });
+        b->SetTravelTween({
+            .from = BOSS_BULLET_SPEED_MAX / 2.F,
+            .to = BOSS_BULLET_SPEED_MAX,
+            .duration = 0.5F,
+            .ease = Easing::InQuad,
+        });
         b->SetDir(Vector2<float>{ 0.F, 1.F });
         return true;
     }
@@ -113,7 +123,7 @@ bool World::SpawnPlayerBullet(Vector2<float> pos)
         Bullet *b = playerBullets_.Spawn(pos);
         if (b != nullptr)
         {
-            b->SetSpeed(500);
+            b->SetSpeed(PLAYER_BULLET_SPEED);
             b->SetDir(dir);
         }
     };

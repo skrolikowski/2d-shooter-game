@@ -18,14 +18,14 @@ void Formation::CreateWave(const json &data)
     columns_.reserve(static_cast<unsigned long>(numCols));
 
     auto fNumCols = static_cast<float>(numCols);
-    float formationWidth = (fNumCols * ENTITY_SIZE) + ((fNumCols - 1) * INVADER_GAP);
+    float formationWidth = (fNumCols * ENTITY_SIZE) + ((fNumCols - 1) * FORMATION_GAP);
     float startX = (SCREEN_WIDTH - formationWidth) / 2.F;
     float startY = FORMATION_Y_START;
 
     for (int c = 0; c < numCols; ++c)
     {
         const json &invaderData = invaders.at(static_cast<unsigned long>(c));
-        float x = startX + (static_cast<float>(c) * (ENTITY_SIZE + INVADER_GAP));
+        float x = startX + (static_cast<float>(c) * (ENTITY_SIZE + FORMATION_GAP));
         FormationColumn column{ Vector2<float>{ x, startY }, invaderData };
         columns_.push_back(std::move(column));
     }

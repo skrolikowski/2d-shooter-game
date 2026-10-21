@@ -11,7 +11,7 @@ FormationColumn::FormationColumn(Vector2<float> pos, const json &data)
     for (int r = 0; r < numRows; ++r)
     {
         float px = pos.x;
-        float py = pos.y + (static_cast<float>(r) * (ENTITY_SIZE + INVADER_GAP));
+        float py = pos.y + (static_cast<float>(r) * (ENTITY_SIZE + FORMATION_GAP));
         std::string value = data.at(static_cast<unsigned long>(r)).get<std::string>();
 
         Invader inv(Vector2<float>{ px, py });
