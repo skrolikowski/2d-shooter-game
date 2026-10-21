@@ -186,7 +186,7 @@
 },
 {
 	"filename": "pill_green.png",
-	"frame": {"x":445,"y":87,"w":22,"h":21},
+	"frame": {"x":404,"y":201,"w":22,"h":21},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":21},
@@ -194,7 +194,7 @@
 },
 {
 	"filename": "pill_red.png",
-	"frame": {"x":445,"y":110,"w":22,"h":21},
+	"frame": {"x":404,"y":224,"w":22,"h":21},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":21},
@@ -202,11 +202,19 @@
 },
 {
 	"filename": "pill_yellow.png",
-	"frame": {"x":445,"y":133,"w":22,"h":21},
+	"frame": {"x":428,"y":201,"w":22,"h":21},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":21},
 	"sourceSize": {"w":22,"h":21}
+},
+{
+	"filename": "playerLife2_red.png",
+	"frame": {"x":404,"y":173,"w":37,"h":26},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":37,"h":26},
+	"sourceSize": {"w":37,"h":26}
 },
 {
 	"filename": "playerShip2_red.png",
@@ -223,22 +231,6 @@
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":133,"h":108},
 	"sourceSize": {"w":133,"h":108}
-},
-{
-	"filename": "star_gold.png",
-	"frame": {"x":404,"y":173,"w":31,"h":30},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":31,"h":30},
-	"sourceSize": {"w":31,"h":30}
-},
-{
-	"filename": "star_silver.png",
-	"frame": {"x":404,"y":205,"w":31,"h":30},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":31,"h":30},
-	"sourceSize": {"w":31,"h":30}
 }],
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
@@ -247,6 +239,6 @@
 	"format": "RGBA8888",
 	"size": {"w":475,"h":445},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:b69b038890243fcb2fb64c9f5a63776c:d6d2b50db35b414897993cce1f454102:d80676a5e85c5032e708efda4f84d8e3$"
+	"smartupdate": "$TexturePacker:SmartUpdate:c5cd5f73f664dc4322d74725c684f115:986fa4db5949a18e65183e78788f731d:d80676a5e85c5032e708efda4f84d8e3$"
 }
 }

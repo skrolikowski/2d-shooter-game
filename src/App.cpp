@@ -249,18 +249,18 @@ void App::DrawUI() const
     SDL_SetRenderViewportFloat(renderer_.get(), &origRect);
 
     // Draw Score or High Score..
-    DrawText(playerScoreText_.get(), SCREEN_WIDTH / 2.F, 16.F, TextAlign::Center);
+    DrawText(playerScoreText_.get(), 16.F, SCREEN_HEIGHT - 24.F, TextAlign::Left);
 
     // Draw Player live count display..
     int x1 = SCREEN_WIDTH - 96;
-    float y1 = 16.F;
+    float y1 = SCREEN_HEIGHT - 32.F;
     int padX = 24;
     float w = 18.F;
     float h = 18.F;
 
     for (int i = 0; i < playerLives_ - 1; ++i)
     {
-        const Frame *frame = Texture::GetFrame("star_gold.png");
+        const Frame *frame = Texture::GetFrame("playerLife2_red.png");
         if (frame != nullptr)
         {
             auto x = static_cast<float>(x1 + (i * padX));

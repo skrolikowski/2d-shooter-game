@@ -64,7 +64,7 @@ void PlayingState::StartNewWave()
 void PlayingState::spawnWaveEntities()
 {
     // Create Player.. (if necessary)
-    app_->world_->SpawnPlayer(Vector2<float>{ SCREEN_WIDTH / 2.F, SCREEN_HEIGHT - 80.F });
+    app_->world_->SpawnPlayer(Vector2<float>{ SCREEN_WIDTH / 2.F, SCREEN_HEIGHT - 96.F });
 
     // Add Wave..
     const json &waveData = app_->GetLevelData();
