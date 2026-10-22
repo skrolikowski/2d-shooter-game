@@ -114,3 +114,8 @@ template <typename T> Vector2<T> &Vector2<T>::operator*=(T s)
     y *= s;
     return *this;
 }
+
+template <typename T> bool Vector2<T>::operator==(const Vector2 &other) const
+{
+    return x == other.x && y == other.y;
+}

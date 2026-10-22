@@ -30,6 +30,7 @@ template <typename T> class Vector2
     Vector2 &operator-=(const Vector2 &other);
     Vector2 &operator*=(const Vector2 &other);
     Vector2 &operator*=(T s);
+    bool operator==(const Vector2 &other) const;
 };
 
 #endif // VECTOR2_H

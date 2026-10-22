@@ -78,6 +78,7 @@ class Entity
     void SetWorld(World *world) noexcept { world_ = world; }
 
     void SetSpeed(float speed) { speed_ = speed; }
+    [[nodiscard]] const Vector2<float> &GetDir() const noexcept { return dir_; }
     void SetDir(Vector2<float> dir) { dir_ = dir; }
     void SetTexture(const std::string &texture) { textureName_ = texture; }
 

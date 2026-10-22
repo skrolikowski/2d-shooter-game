@@ -10,6 +10,16 @@
       "MIMode": "lldb",
       "externalConsole": false,
       "preLaunchTask": "cmake: build"
+    },
+    {
+      "name": "Run Tests",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/tests/formation_test",
+      "cwd": "${workspaceFolder}",
+      "MIMode": "lldb",
+      "externalConsole": false,
+      "preLaunchTask": "cmake: build"
     }
   ]
 }

@@ -7,8 +7,8 @@
 
 void Formation::CreateWave(const json &data)
 {
-    bulletTimerRange_ = data.at("fire_rate");
-    baseStepInterval_ = data.at("step_interval").get<float>();
+    bulletTimerRange_ = data.value("fire_rate", kDefaultFireRate);
+    baseStepInterval_ = data.value("step_interval", 1.F);
     stepInterval_ = baseStepInterval_;
 
     const json &invaders = data.at("invaders");

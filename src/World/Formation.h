@@ -27,6 +27,12 @@ class Formation
     [[nodiscard]] int GetNumInvaders() const;
     Invader *TryHit(const SDL_FRect &rect);
     void StepFormation();
+    [[nodiscard]] FormationColumn *GetColumn(std::size_t index)
+    {
+        assert(index >= 0 && index < columns_.size());
+        return &columns_.at(index);
+    }
+    [[nodiscard]] std::size_t GetNumColumns() const noexcept { return columns_.size(); }
     [[nodiscard]] bool IsDead() const { return GetNumInvaders() == 0; }
     void Clear();
     void Update(float dt);
@@ -43,6 +49,8 @@ class Formation
     }
 
   private:
+    static constexpr std::array<float, 2> kDefaultFireRate{ 1.F, 1.5F };
+
     World *world_ = nullptr;
     std::vector<FormationColumn> columns_;
 
@@ -52,7 +60,7 @@ class Formation
     float baseStepInterval_ = 0.F;
 
     float bulletTimer_ = 0.F;
-    std::array<float, 2> bulletTimerRange_ = { 1.F, 1.5F };
+    std::array<float, 2> bulletTimerRange_ = kDefaultFireRate;
 };
 
 #endif // FORMATION_H
